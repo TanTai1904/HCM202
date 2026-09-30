@@ -6,7 +6,7 @@ import { getRandomMysteryReward } from '@/data/mysteryRewards';
 import { buzzerNetwork } from '@/services/buzzerNetwork';
 import { audio } from '@/utils/audio';
 import type { Question } from '@/types/game';
-import type { BuzzerTeam, BuzzerState, MysteryReward, NetworkMessage } from '@/types/buzzer';
+import type { BuzzerTeam, BuzzerState, MysteryReward, NetworkMessage, AnswerResultRecord } from '@/types/buzzer';
 
 import { BuzzerLobby } from '@/components/buzzer/BuzzerLobby';
 import { BuzzerPlayArena } from '@/components/buzzer/BuzzerPlayArena';
@@ -54,6 +54,7 @@ export const BuzzerHost: React.FC = () => {
   const [lockedTeamIds, setLockedTeamIds] = useState<string[]>([]);
   const [selectedOptionByPhone, setSelectedOptionByPhone] = useState<number | null>(null);
   const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
+  const [lastAnswerResult, setLastAnswerResult] = useState<AnswerResultRecord | null>(null);
 
   // Mystery Gift Modal
   const [mysteryReward, setMysteryReward] = useState<MysteryReward | null>(null);
@@ -108,6 +109,7 @@ export const BuzzerHost: React.FC = () => {
       lockedTeamIds,
       selectedOptionByPhone,
       isCorrectAnswer,
+      lastAnswerResult,
       teams: teams.map(t => ({
         id: t.id,
         name: t.name,
@@ -134,6 +136,7 @@ export const BuzzerHost: React.FC = () => {
     lockedTeamIds, 
     selectedOptionByPhone, 
     isCorrectAnswer, 
+    lastAnswerResult,
     teams
   ]);
 
@@ -301,6 +304,7 @@ export const BuzzerHost: React.FC = () => {
     setLockedTeamIds([]);
     setSelectedOptionByPhone(null);
     setIsCorrectAnswer(null);
+    setLastAnswerResult(null);
   };
 
   // Open the buzzer for all players
@@ -362,7 +366,14 @@ export const BuzzerHost: React.FC = () => {
     }
     setActiveBuzzTeamId(null);
     setSelectedOptionByPhone(null);
+    setIsCorrectAnswer(null);
     handleOpenBuzzer();
+  };
+
+  // Finish question / view explanation directly
+  const handleFinishQuestion = () => {
+    audio.playClick();
+    setBuzzerState('EXPLAINING');
   };
 
   // Host evaluates answer: Correct or Wrong
@@ -374,15 +385,33 @@ export const BuzzerHost: React.FC = () => {
 
     const activeTeam = teams.find(t => t.id === activeBuzzTeamId);
 
+    // Base points (default 100) * question multiplier
+    let pointsToAdd = (currentQ.points || 100) * multiplier;
+    if (activeTeam?.nextQuestionDouble) {
+      pointsToAdd *= 2;
+    }
+
+    const pointsDelta = isCorrect 
+      ? pointsToAdd 
+      : (activeTeam?.shieldActive ? 0 : -30);
+
+    const resultRecord: AnswerResultRecord = {
+      teamId: activeBuzzTeamId,
+      teamName: activeTeam?.name || 'Đội chơi',
+      teamColor: activeTeam?.color || '#9E1B32',
+      teamIcon: activeTeam?.icon || '🏆',
+      isCorrect,
+      pointsDelta,
+      optionIndex: selectedOptionByPhone,
+      optionLetter: selectedOptionByPhone !== null && selectedOptionByPhone >= 0 ? ['A', 'B', 'C', 'D'][selectedOptionByPhone] : undefined,
+      optionText: selectedOptionByPhone !== null && selectedOptionByPhone >= 0 && currentQ.options ? currentQ.options[selectedOptionByPhone] : undefined,
+      timestamp: Date.now(),
+    };
+    setLastAnswerResult(resultRecord);
+
     if (isCorrect) {
       audio.playCorrect();
       setIsCorrectAnswer(true);
-
-      // Base points (default 100) * question multiplier
-      let pointsToAdd = (currentQ.points || 100) * multiplier;
-      if (activeTeam?.nextQuestionDouble) {
-        pointsToAdd *= 2;
-      }
 
       setTeams(prev => prev.map(t => {
         if (t.id === activeBuzzTeamId) {
@@ -409,7 +438,8 @@ export const BuzzerHost: React.FC = () => {
       setIsCorrectAnswer(false);
 
       // Lock out this team for the current question
-      setLockedTeamIds(prev => [...prev, activeBuzzTeamId]);
+      const nextLocked = lockedTeamIds.includes(activeBuzzTeamId) ? lockedTeamIds : [...lockedTeamIds, activeBuzzTeamId];
+      setLockedTeamIds(nextLocked);
 
       setTeams(prev => prev.map(t => {
         if (t.id === activeBuzzTeamId) {
@@ -422,6 +452,11 @@ export const BuzzerHost: React.FC = () => {
         }
         return t;
       }));
+
+      // If all teams locked, show explanation
+      if (nextLocked.length >= teams.length) {
+        setBuzzerState('EXPLAINING');
+      }
     }
   };
 
@@ -543,6 +578,8 @@ export const BuzzerHost: React.FC = () => {
             onNextQuestion={handleNextQuestion}
             onManualBuzz={handleManualBuzz}
             onAdjustScore={handleAdjustScore}
+            lastAnswerResult={lastAnswerResult}
+            onFinishQuestion={handleFinishQuestion}
           />
         )}
 

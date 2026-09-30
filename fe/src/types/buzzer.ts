@@ -49,6 +49,19 @@ export interface MysteryReward {
   value?: number;
 }
 
+export interface AnswerResultRecord {
+  teamId: string;
+  teamName: string;
+  teamColor: string;
+  teamIcon: string;
+  isCorrect: boolean;
+  pointsDelta: number;
+  optionIndex: number | null;
+  optionLetter?: string;
+  optionText?: string;
+  timestamp: number;
+}
+
 export interface BuzzerRoomState {
   roomId: string;
   hostName: string;
@@ -69,6 +82,7 @@ export interface BuzzerRoomState {
   selectedCategory: string;
   selectedOptionByPhone: number | null;
   isCorrectAnswer: boolean | null;
+  lastAnswerResult: AnswerResultRecord | null;
 }
 
 export interface NetworkMessage {

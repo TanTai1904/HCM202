@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { Question } from '@/types/game';
-import type { BuzzerTeam, BuzzerState } from '@/types/buzzer';
+import type { BuzzerTeam, BuzzerState, AnswerResultRecord } from '@/types/buzzer';
 import { audio } from '@/utils/audio';
 import { 
   Bell, 
@@ -35,9 +35,11 @@ interface BuzzerPlayArenaProps {
   teams: BuzzerTeam[];
   lockedTeamIds: string[];
   isCorrectAnswer: boolean | null;
+  lastAnswerResult?: AnswerResultRecord | null;
   onOpenBuzzer: () => void;
   onStartCountdown: () => void;
   onResetBuzzerForSteal: () => void;
+  onFinishQuestion?: () => void;
   onResolveAnswer: (isCorrect: boolean) => void;
   onNextQuestion: () => void;
   onManualBuzz: (teamId: string) => void;
@@ -62,9 +64,11 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
   teams,
   lockedTeamIds,
   isCorrectAnswer,
+  lastAnswerResult,
   onOpenBuzzer,
   onStartCountdown,
   onResetBuzzerForSteal,
+  onFinishQuestion,
   onResolveAnswer,
   onNextQuestion,
   onManualBuzz,
@@ -519,82 +523,126 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                         {answerTimeLeft}s
                       </span>
                     </div>
+
+                    {/* Show what option the phone selected */}
+                    {selectedOptionByPhone !== null && currentQuestion.options[selectedOptionByPhone] && (
+                      <div className="w-full mt-3 p-3 rounded-2xl bg-amber-500/15 border-2 border-amber-400 text-left animate-pulse">
+                        <div className="flex items-center justify-between text-[11px] font-black uppercase text-amber-300 mb-1">
+                          <span>📱 {activeBuzzTeam.name} ĐÃ BẤM CHỌN:</span>
+                          <span className="bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-mono text-[10px] font-bold">LỰA CHỌN</span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 font-black text-sm flex items-center justify-center shrink-0">
+                            {['A', 'B', 'C', 'D'][selectedOptionByPhone]}
+                          </span>
+                          <span className="text-xs sm:text-sm font-extrabold text-white leading-snug line-clamp-2">
+                            {currentQuestion.options[selectedOptionByPhone]}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </motion.div>
 
-                  {/* Host Grading Buttons */}
-                  <div className="w-full grid grid-cols-2 gap-3 mt-4">
-                    <button
-                      onClick={() => {
-                        audio.playClick();
-                        onResolveAnswer(true);
-                      }}
-                      className="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-[0_0_15px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-emerald-400/40"
-                    >
-                      <Check className="w-4 h-4" />
-                      <span>ĐÚNG (+Điểm) [Y]</span>
-                    </button>
+                  {/* If team just answered wrong and hasn't stolen yet */}
+                  {isCorrectAnswer === false ? (
+                    <div className="w-full mt-3 p-3.5 rounded-2xl bg-rose-500/20 border-2 border-rose-500 text-center animate-shake">
+                      <div className="flex items-center justify-center gap-1.5 text-rose-300 font-black text-sm mb-1">
+                        <X className="w-5 h-5 text-rose-400" />
+                        <span>{activeBuzzTeam.name} ĐÃ TRẢ LỜI SAI! (-30Đ)</span>
+                      </div>
+                      <p className="text-xs text-rose-200/80 mb-3">
+                        Đội này bị khóa chuông câu này. Host có thể mở cướp chuông cho các đội khác hoặc xem giải thích!
+                      </p>
 
-                    <button
-                      onClick={() => {
-                        audio.playClick();
-                        onResolveAnswer(false);
-                      }}
-                      className="py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm shadow-[0_0_15px_rgba(225,29,72,0.4)] flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-rose-400/40"
-                    >
-                      <X className="w-4 h-4" />
-                      <span>SAI [N]</span>
-                    </button>
-                  </div>
+                      <div className="flex flex-col gap-2">
+                        {lockedTeamIds.length < teams.length && (
+                          <button
+                            onClick={() => {
+                              audio.playClick();
+                              onResetBuzzerForSteal();
+                            }}
+                            className="w-full py-3 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-600 to-red-600 hover:from-amber-400 hover:to-rose-500 text-white font-extrabold text-xs tracking-wide shadow-lg flex items-center justify-center gap-1.5 cursor-pointer border border-white/20 transition-all uppercase"
+                          >
+                            <Zap className="w-4 h-4 text-white" />
+                            <span>⚡ MỞ CƯỚP CHUÔNG CHO CÁC ĐỘI CÒN LẠI</span>
+                          </button>
+                        )}
 
-                  {/* Quick Score Adjustment for Host */}
-                  {onAdjustScore && activeBuzzTeam && (
-                    <div className="w-full mt-3 p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-slate-300">Cộng/trừ điểm nhanh:</span>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={() => onAdjustScore(activeBuzzTeam.id, 50)}
-                          className="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
-                          title="Cộng 50 điểm"
-                        >
-                          +50
-                        </button>
-                        <button
-                          onClick={() => onAdjustScore(activeBuzzTeam.id, 100)}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-200 border border-emerald-400 text-xs font-mono font-black cursor-pointer transition-colors shadow-sm"
-                          title="Cộng 100 điểm"
-                        >
-                          +100
-                        </button>
-                        <button
-                          onClick={() => onAdjustScore(activeBuzzTeam.id, 200)}
-                          className="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
-                          title="Cộng 200 điểm"
-                        >
-                          +200
-                        </button>
-                        <button
-                          onClick={() => onAdjustScore(activeBuzzTeam.id, -50)}
-                          className="px-2 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
-                          title="Trừ 50 điểm"
-                        >
-                          -50
-                        </button>
+                        {onFinishQuestion && (
+                          <button
+                            onClick={() => onFinishQuestion()}
+                            className="w-full py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-slate-200 font-bold text-xs border border-white/10 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                          >
+                            <BookOpen className="w-3.5 h-3.5 text-slate-300" />
+                            <span>XEM ĐÁP ÁN ĐÚNG & CÂU TIẾP THEO</span>
+                          </button>
+                        )}
                       </div>
                     </div>
-                  )}
+                  ) : (
+                    <>
+                      {/* Host Grading Buttons */}
+                      <div className="w-full grid grid-cols-2 gap-3 mt-4">
+                        <button
+                          onClick={() => {
+                            audio.playClick();
+                            onResolveAnswer(true);
+                          }}
+                          className="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-[0_0_15px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-emerald-400/40"
+                        >
+                          <Check className="w-4 h-4" />
+                          <span>ĐÚNG (+Điểm) [Y]</span>
+                        </button>
 
-                  {/* Steal Buzzer trigger if team answered wrong */}
-                  {lockedTeamIds.length > 0 && lockedTeamIds.length < teams.length && (
-                    <button
-                      onClick={() => {
-                        audio.playClick();
-                        onResetBuzzerForSteal();
-                      }}
-                      className="w-full mt-2.5 py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 font-bold text-xs border border-amber-500/30 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      <Zap className="w-3.5 h-3.5 text-amber-400" />
-                      <span>MỞ CƯỚP CHUÔNG CHO CÁC ĐỘI CÒN LẠI</span>
-                    </button>
+                        <button
+                          onClick={() => {
+                            audio.playClick();
+                            onResolveAnswer(false);
+                          }}
+                          className="py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm shadow-[0_0_15px_rgba(225,29,72,0.4)] flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-rose-400/40"
+                        >
+                          <X className="w-4 h-4" />
+                          <span>SAI [N]</span>
+                        </button>
+                      </div>
+
+                      {/* Quick Score Adjustment for Host */}
+                      {onAdjustScore && activeBuzzTeam && (
+                        <div className="w-full mt-3 p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-slate-300">Cộng/trừ điểm:</span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => onAdjustScore(activeBuzzTeam.id, 50)}
+                              className="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
+                              title="Cộng 50 điểm"
+                            >
+                              +50
+                            </button>
+                            <button
+                              onClick={() => onAdjustScore(activeBuzzTeam.id, 100)}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-200 border border-emerald-400 text-xs font-mono font-black cursor-pointer transition-colors shadow-sm"
+                              title="Cộng 100 điểm"
+                            >
+                              +100
+                            </button>
+                            <button
+                              onClick={() => onAdjustScore(activeBuzzTeam.id, 200)}
+                              className="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
+                              title="Cộng 200 điểm"
+                            >
+                              +200
+                            </button>
+                            <button
+                              onClick={() => onAdjustScore(activeBuzzTeam.id, -50)}
+                              className="px-2 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
+                              title="Trừ 50 điểm"
+                            >
+                              -50
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}
@@ -602,17 +650,73 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
               {/* 5. STATE: EXPLAINING */}
               {buzzerState === 'EXPLAINING' && (
                 <div className="flex flex-col items-center justify-center w-full">
-                  <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center text-3xl mb-3 shadow-sm ${
-                    isCorrectAnswer ? 'bg-emerald-500/15 border-emerald-400 text-emerald-400' : 'bg-rose-500/15 border-rose-400 text-rose-400'
-                  }`}>
-                    {isCorrectAnswer ? '✓' : '✕'}
-                  </div>
-                  <h3 className={`text-xl font-black tracking-tight ${
-                    isCorrectAnswer ? 'text-emerald-300' : 'text-rose-300'
-                  }`}>
-                    {isCorrectAnswer ? 'ĐÁP ÁN CHÍNH XÁC!' : 'ĐÁP ÁN CHƯA ĐÚNG!'}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 max-w-xs">
+                  {lastAnswerResult ? (
+                    <motion.div
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className={`w-full p-4 rounded-2xl border-2 mb-3 shadow-xl ${
+                        lastAnswerResult.isCorrect 
+                          ? 'bg-emerald-500/15 border-emerald-400 text-emerald-100 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
+                          : 'bg-rose-500/15 border-rose-400 text-rose-100 shadow-[0_0_25px_rgba(225,29,72,0.3)]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2 mb-1.5">
+                        <span 
+                          className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black text-white shadow-sm"
+                          style={{ backgroundColor: lastAnswerResult.teamColor }}
+                        >
+                          {lastAnswerResult.teamIcon}
+                        </span>
+                        <span className="text-base sm:text-lg font-black tracking-tight" style={{ color: lastAnswerResult.teamColor }}>
+                          {lastAnswerResult.teamName}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-center gap-2.5 my-2">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-2xl font-black ${
+                          lastAnswerResult.isCorrect ? 'bg-emerald-500 text-slate-950' : 'bg-rose-500 text-white'
+                        }`}>
+                          {lastAnswerResult.isCorrect ? '✓' : '✕'}
+                        </div>
+                        <div className="text-left">
+                          <h3 className={`text-base sm:text-lg font-black leading-tight ${
+                            lastAnswerResult.isCorrect ? 'text-emerald-300' : 'text-rose-300'
+                          }`}>
+                            {lastAnswerResult.isCorrect ? 'ĐÃ TRẢ LỜI CHÍNH XÁC!' : 'ĐÃ TRẢ LỜI CHƯA CHÍNH XÁC!'}
+                          </h3>
+                          <span className={`text-xs font-mono font-black ${
+                            lastAnswerResult.isCorrect ? 'text-emerald-400' : 'text-rose-400'
+                          }`}>
+                            {lastAnswerResult.pointsDelta > 0 ? `+${lastAnswerResult.pointsDelta} ĐIỂM` : `${lastAnswerResult.pointsDelta} ĐIỂM`}
+                          </span>
+                        </div>
+                      </div>
+
+                      {lastAnswerResult.optionLetter && (
+                        <div className="mt-2 p-2 rounded-xl bg-black/40 border border-white/10 text-xs text-left">
+                          <span className="text-slate-400 font-semibold block text-[10px] uppercase">Lựa chọn của đội:</span>
+                          <span className="font-bold text-white">
+                            {lastAnswerResult.optionLetter}. {lastAnswerResult.optionText}
+                          </span>
+                        </div>
+                      )}
+                    </motion.div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center text-3xl mb-3 shadow-sm ${
+                        isCorrectAnswer ? 'bg-emerald-500/15 border-emerald-400 text-emerald-400' : 'bg-rose-500/15 border-rose-400 text-rose-400'
+                      }`}>
+                        {isCorrectAnswer ? '✓' : '✕'}
+                      </div>
+                      <h3 className={`text-xl font-black tracking-tight ${
+                        isCorrectAnswer ? 'text-emerald-300' : 'text-rose-300'
+                      }`}>
+                        {isCorrectAnswer ? 'ĐÁP ÁN CHÍNH XÁC!' : 'ĐÁP ÁN CHƯA ĐÚNG!'}
+                      </h3>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-slate-300 mt-1 max-w-xs text-center">
                     Kiểm tra đáp án đúng và phần giải thích của câu hỏi ở khung bên trái.
                   </p>
 
@@ -621,7 +725,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                       audio.playClick();
                       onNextQuestion();
                     }}
-                    className="w-full mt-5 py-3.5 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-extrabold text-sm sm:text-base shadow-[0_0_20px_rgba(225,29,72,0.4)] flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all border border-white/20"
+                    className="w-full mt-4 py-3.5 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-extrabold text-sm sm:text-base shadow-[0_0_20px_rgba(225,29,72,0.4)] flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all border border-white/20"
                   >
                     <span>CÂU TIẾP THEO [ENTER]</span>
                     <ArrowRight className="w-4 h-4 text-white" />

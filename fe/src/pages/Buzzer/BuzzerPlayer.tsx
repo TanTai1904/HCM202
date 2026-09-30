@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { buzzerNetwork } from '@/services/buzzerNetwork';
 import { audio } from '@/utils/audio';
-import type { BuzzerTeam, BuzzerState, NetworkMessage } from '@/types/buzzer';
+import type { BuzzerTeam, BuzzerState, NetworkMessage, AnswerResultRecord } from '@/types/buzzer';
 import { 
   Bell, 
   Check, 
@@ -41,6 +41,7 @@ export const BuzzerPlayer: React.FC = () => {
   const [lockedTeamIds, setLockedTeamIds] = useState<string[]>([]);
   const [selectedOptionByPhone, setSelectedOptionByPhone] = useState<number | null>(null);
   const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
+  const [lastAnswerResult, setLastAnswerResult] = useState<AnswerResultRecord | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'connecting' | 'disconnected'>('disconnected');
 
   // Local interaction state
@@ -83,6 +84,7 @@ export const BuzzerPlayer: React.FC = () => {
         setLockedTeamIds(payload.lockedTeamIds || []);
         setIsCorrectAnswer(payload.isCorrectAnswer ?? null);
         setSelectedOptionByPhone(payload.selectedOptionByPhone ?? null);
+        setLastAnswerResult(payload.lastAnswerResult ?? null);
 
         if (payload.teams) {
           setTeams(payload.teams);
@@ -354,6 +356,18 @@ export const BuzzerPlayer: React.FC = () => {
           )}
         </AnimatePresence>
 
+        {/* Banner if another team failed and steal is open */}
+        {lastAnswerResult && !lastAnswerResult.isCorrect && lockedTeamIds.includes(lastAnswerResult.teamId) && !isLocked && (buzzerState === 'OPEN' || buzzerState === 'TUG_OF_WAR') && (
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="mb-3 w-full max-w-sm px-3.5 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 shadow-md"
+          >
+            <Zap className="w-4 h-4 text-amber-400 animate-bounce" />
+            <span>Đội {lastAnswerResult.teamName} vừa trả lời sai! Nhanh tay cướp chuông!</span>
+          </motion.div>
+        )}
+
         {/* CASE 1: EXPLAINING / RESULT SCREEN */}
         {buzzerState === 'EXPLAINING' ? (
           <div className="w-full max-w-sm flex flex-col items-center text-center">
@@ -374,18 +388,32 @@ export const BuzzerPlayer: React.FC = () => {
                 {isCorrectAnswer ? '✓' : '✕'}
               </div>
 
-              <h2 className={`text-xl font-black tracking-tight ${
+              <h2 className={`text-xl font-black tracking-tight leading-snug ${
                 isCorrectAnswer ? 'text-emerald-300' : 'text-rose-300'
               }`}>
-                {isMyTeamBuzzed
-                  ? (isCorrectAnswer ? 'ĐỘI BẠN TRẢ LỜI CHÍNH XÁC!' : 'ĐỘI BẠN TRẢ LỜI CHƯA CHÍNH XÁC!')
-                  : (isCorrectAnswer 
-                      ? `${activeBuzzTeam?.name || 'Đội bạn'} ĐÃ TRẢ LỜI ĐÚNG!` 
-                      : `${activeBuzzTeam?.name || 'Đội bạn'} ĐÃ TRẢ LỜI SAI!`)}
+                {lastAnswerResult ? (
+                  lastAnswerResult.teamId === selectedTeam?.id
+                    ? (lastAnswerResult.isCorrect 
+                        ? `🎉 ĐỘI BẠN TRẢ LỜI CHÍNH XÁC! (+${lastAnswerResult.pointsDelta}đ)` 
+                        : `❌ ĐỘI BẠN TRẢ LỜI CHƯA ĐÚNG! (${lastAnswerResult.pointsDelta}đ)`)
+                    : (lastAnswerResult.isCorrect 
+                        ? `🎉 ${lastAnswerResult.teamName} ĐÃ TRẢ LỜI ĐÚNG! (+${lastAnswerResult.pointsDelta}đ)` 
+                        : `❌ ${lastAnswerResult.teamName} ĐÃ TRẢ LỜI SAI!`)
+                ) : isMyTeamBuzzed ? (
+                  isCorrectAnswer ? 'ĐỘI BẠN TRẢ LỜI CHÍNH XÁC!' : 'ĐỘI BẠN TRẢ LỜI CHƯA CHÍNH XÁC!'
+                ) : (
+                  isCorrectAnswer 
+                    ? `${activeBuzzTeam?.name || 'Đội bạn'} ĐÃ TRẢ LỜI ĐÚNG!` 
+                    : `${activeBuzzTeam?.name || 'Đội bạn'} ĐÃ TRẢ LỜI SAI!`
+                )}
               </h2>
 
               <p className="text-xs text-slate-300 mt-1">
-                {isCorrectAnswer ? '🔥 Xuất sắc ghi điểm cho toàn đội!' : 'Cố gắng ở các câu hỏi tiếp theo nhé!'}
+                {lastAnswerResult
+                  ? (lastAnswerResult.isCorrect 
+                      ? `🔥 Xuất sắc ghi điểm cho ${lastAnswerResult.teamId === selectedTeam?.id ? 'đội bạn' : lastAnswerResult.teamName}!` 
+                      : 'Đội bị khóa câu hỏi này, sẵn sàng cho câu hỏi tiếp theo!')
+                  : (isCorrectAnswer ? '🔥 Xuất sắc ghi điểm cho toàn đội!' : 'Cố gắng ở các câu hỏi tiếp theo nhé!')}
               </p>
             </motion.div>
 
@@ -448,16 +476,20 @@ export const BuzzerPlayer: React.FC = () => {
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="flex flex-col items-center text-center p-6 bg-white/[0.04] rounded-2xl border border-rose-500/40 max-w-xs shadow-xl"
+            className="flex flex-col items-center text-center p-6 bg-rose-500/10 rounded-2xl border-2 border-rose-500/50 max-w-xs shadow-xl"
           >
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 mb-3">
-              <Lock className="w-8 h-8" />
+            <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 mb-3 text-3xl font-black">
+              ✕
             </div>
-            <h2 className="text-base font-bold text-rose-300">
-              ĐỘI BẠN TẠM KHÓA CÂU NÀY
+            <h2 className="text-base font-black text-rose-300">
+              {lastAnswerResult?.teamId === selectedTeam?.id && !lastAnswerResult.isCorrect
+                ? 'ĐỘI BẠN VỪA TRẢ LỜI SAI (-30Đ)'
+                : 'ĐỘI BẠN TẠM KHÓA CÂU NÀY'}
             </h2>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              Do vừa trả lời chưa chính xác. Sẵn sàng cho câu hỏi tiếp theo nhé!
+            <p className="text-xs text-rose-200/80 mt-1.5 leading-relaxed font-body">
+              {lastAnswerResult?.teamId === selectedTeam?.id && !lastAnswerResult.isCorrect
+                ? 'Đội bạn bị trừ 30 điểm và tạm thời bị khóa chuông câu này. Hãy quan sát máy chiếu xem các đội khác tranh tài nhé!'
+                : 'Do vừa trả lời chưa chính xác. Sẵn sàng cho câu hỏi tiếp theo nhé!'}
             </p>
           </motion.div>
         ) : buzzerState === 'TUG_OF_WAR' ? (
