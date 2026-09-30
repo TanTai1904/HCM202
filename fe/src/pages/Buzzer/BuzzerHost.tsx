@@ -425,6 +425,19 @@ export const BuzzerHost: React.FC = () => {
     }
   };
 
+  // Direct manual score adjustment by Host (+50, +100, -50)
+  const handleAdjustScore = (teamId: string, delta: number) => {
+    setTeams(prev => prev.map(t => {
+      if (t.id === teamId) {
+        return { ...t, score: Math.max(0, t.score + delta) };
+      }
+      return t;
+    }));
+    if (delta > 0) {
+      audio.playDing();
+    }
+  };
+
   // Claim Mystery Reward
   const handleClaimMysteryReward = () => {
     if (!mysteryReward || !activeBuzzTeamId) {
@@ -529,6 +542,7 @@ export const BuzzerHost: React.FC = () => {
             onResolveAnswer={handleResolveAnswer}
             onNextQuestion={handleNextQuestion}
             onManualBuzz={handleManualBuzz}
+            onAdjustScore={handleAdjustScore}
           />
         )}
 

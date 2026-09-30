@@ -14,6 +14,7 @@ interface LiveQuizHostResultProps {
   roundScoreDelta: Record<TeamId, number>;
   onNextQuestion: () => void;
   onShowLeaderboard: () => void;
+  onAdjustScore?: (teamId: TeamId, delta: number) => void;
 }
 
 const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
@@ -27,6 +28,7 @@ export const LiveQuizHostResult: React.FC<LiveQuizHostResultProps> = ({
   roundScoreDelta,
   onNextQuestion,
   onShowLeaderboard,
+  onAdjustScore,
 }) => {
   const [countdown, setCountdown] = useState(7);
   const [soundOn, setSoundOn] = useState(audio.isSoundOn());
@@ -198,9 +200,29 @@ export const LiveQuizHostResult: React.FC<LiveQuizHostResultProps> = ({
                     {delta > 0 ? `+${delta}` : '+0'}
                   </span>
 
-                  <span className="text-[10px] text-[#172033]/50 font-bold font-body">
-                    Tổng: {team.score.toLocaleString()}đ
-                  </span>
+                  <div className="flex items-center justify-between w-full mt-1 pt-1 border-t border-black/5">
+                    <span className="text-[10px] text-[#172033]/60 font-bold font-body">
+                      Tổng: {team.score.toLocaleString()}đ
+                    </span>
+                    {onAdjustScore && (
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => onAdjustScore(tId, 100)}
+                          className="px-1.5 py-0.5 rounded bg-white hover:bg-emerald-500 hover:text-white border border-[#172033]/15 text-[10px] font-bold text-[#3F7D5A] transition-colors cursor-pointer shadow-xs"
+                          title="Cộng 100 điểm"
+                        >
+                          +100
+                        </button>
+                        <button
+                          onClick={() => onAdjustScore(tId, -50)}
+                          className="px-1.5 py-0.5 rounded bg-white hover:bg-rose-500 hover:text-white border border-[#172033]/15 text-[10px] font-bold text-[#9E1B32] transition-colors cursor-pointer shadow-xs"
+                          title="Trừ 50 điểm"
+                        >
+                          -50
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}

@@ -38,6 +38,7 @@ export const LiveQuizHostPage: React.FC = () => {
     hideLeaderboard,
     endGame,
     resetGame,
+    adjustTeamScore,
   } = useLiveQuizStore();
 
   switch (step) {
@@ -89,6 +90,7 @@ export const LiveQuizHostPage: React.FC = () => {
           onNextQuestion={nextQuestion}
           onShowLeaderboard={showLeaderboard}
           onEndGame={endGame}
+          onAdjustScore={adjustTeamScore}
         />
       );
 
@@ -104,6 +106,7 @@ export const LiveQuizHostPage: React.FC = () => {
           roundScoreDelta={roundScoreDelta}
           onNextQuestion={nextQuestion}
           onShowLeaderboard={showLeaderboard}
+          onAdjustScore={adjustTeamScore}
         />
       );
 

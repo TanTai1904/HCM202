@@ -22,6 +22,7 @@ interface LiveQuizHostQuestionProps {
   onNextQuestion: () => void;
   onShowLeaderboard: () => void;
   onEndGame: () => void;
+  onAdjustScore?: (teamId: TeamId, delta: number) => void;
 }
 
 const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
@@ -50,6 +51,7 @@ export const LiveQuizHostQuestion: React.FC<LiveQuizHostQuestionProps> = ({
   onNextQuestion,
   onShowLeaderboard,
   onEndGame,
+  onAdjustScore,
 }) => {
   const [soundOn, setSoundOn] = useState(audio.isSoundOn());
 
@@ -245,9 +247,29 @@ export const LiveQuizHostQuestion: React.FC<LiveQuizHostQuestionProps> = ({
                     {team.name}
                   </span>
                 </div>
-                <span className="text-base sm:text-lg font-black font-mono text-[#172033]">
-                  {team.score.toLocaleString()}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-base sm:text-lg font-black font-mono text-[#172033]">
+                    {team.score.toLocaleString()}đ
+                  </span>
+                  {onAdjustScore && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => onAdjustScore(tId, 100)}
+                        className="px-1.5 py-0.5 rounded bg-white/80 hover:bg-emerald-500 hover:text-white border border-[#172033]/15 text-[10px] font-bold text-[#3F7D5A] transition-colors cursor-pointer shadow-xs"
+                        title="Cộng 100 điểm cho đội"
+                      >
+                        +100
+                      </button>
+                      <button
+                        onClick={() => onAdjustScore(tId, -50)}
+                        className="px-1.5 py-0.5 rounded bg-white/80 hover:bg-rose-500 hover:text-white border border-[#172033]/15 text-[10px] font-bold text-[#9E1B32] transition-colors cursor-pointer shadow-xs"
+                        title="Trừ 50 điểm của đội"
+                      >
+                        -50
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}

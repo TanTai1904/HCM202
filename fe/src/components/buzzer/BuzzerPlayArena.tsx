@@ -41,6 +41,7 @@ interface BuzzerPlayArenaProps {
   onResolveAnswer: (isCorrect: boolean) => void;
   onNextQuestion: () => void;
   onManualBuzz: (teamId: string) => void;
+  onAdjustScore?: (teamId: string, delta: number) => void;
 }
 
 export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
@@ -67,6 +68,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
   onResolveAnswer,
   onNextQuestion,
   onManualBuzz,
+  onAdjustScore,
 }) => {
   const [answerTimeLeft, setAnswerTimeLeft] = useState(10);
 
@@ -544,6 +546,43 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                     </button>
                   </div>
 
+                  {/* Quick Score Adjustment for Host */}
+                  {onAdjustScore && activeBuzzTeam && (
+                    <div className="w-full mt-3 p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-slate-300">Cộng/trừ điểm nhanh:</span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => onAdjustScore(activeBuzzTeam.id, 50)}
+                          className="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
+                          title="Cộng 50 điểm"
+                        >
+                          +50
+                        </button>
+                        <button
+                          onClick={() => onAdjustScore(activeBuzzTeam.id, 100)}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-500/40 text-emerald-200 border border-emerald-400 text-xs font-mono font-black cursor-pointer transition-colors shadow-sm"
+                          title="Cộng 100 điểm"
+                        >
+                          +100
+                        </button>
+                        <button
+                          onClick={() => onAdjustScore(activeBuzzTeam.id, 200)}
+                          className="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
+                          title="Cộng 200 điểm"
+                        >
+                          +200
+                        </button>
+                        <button
+                          onClick={() => onAdjustScore(activeBuzzTeam.id, -50)}
+                          className="px-2 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold cursor-pointer transition-colors"
+                          title="Trừ 50 điểm"
+                        >
+                          -50
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Steal Buzzer trigger if team answered wrong */}
                   {lockedTeamIds.length > 0 && lockedTeamIds.length < teams.length && (
                     <button
@@ -621,24 +660,46 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
         {teams.map((t) => (
           <div
             key={t.id}
-            className="flex-1 min-w-[120px] p-2 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center gap-2.5"
+            className="flex-1 min-w-[135px] p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] flex flex-col gap-1.5 transition-all hover:border-white/20"
           >
-            <div
-              className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm"
-              style={{ backgroundColor: t.color }}
-            />
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold text-slate-200 truncate">
-                {t.name}
-              </p>
-              <div className="flex items-center justify-between mt-0.5">
-                <span className="text-xs font-mono font-black text-amber-400">
-                  {t.score}
-                </span>
-                <span className="text-[10px] text-slate-500 font-medium">
-                  đúng: {t.correctCount}
-                </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span
+                  className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm"
+                  style={{ backgroundColor: t.color }}
+                />
+                <p className="text-xs font-extrabold text-slate-200 truncate">
+                  {t.name}
+                </p>
               </div>
+              <span className="text-[10px] text-slate-500 font-medium">
+                đúng: {t.correctCount}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between pt-1 border-t border-white/[0.05]">
+              <span className="text-sm font-mono font-black text-amber-400">
+                {t.score.toLocaleString()}đ
+              </span>
+
+              {onAdjustScore && (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => onAdjustScore(t.id, 100)}
+                    className="px-1.5 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold cursor-pointer transition-colors"
+                    title={`Cộng 100 điểm cho ${t.name}`}
+                  >
+                    +100
+                  </button>
+                  <button
+                    onClick={() => onAdjustScore(t.id, -50)}
+                    className="px-1.5 py-0.5 rounded bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/40 text-[10px] font-mono font-bold cursor-pointer transition-colors"
+                    title={`Trừ 50 điểm của ${t.name}`}
+                  >
+                    -50
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

@@ -59,17 +59,30 @@ export const Navbar: React.FC = () => {
 
           {/* Controls */}
           <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Quick Switch to Live Quiz 4 Đội */}
+            <button
+              onClick={() => {
+                audio.playClick();
+                navigate('/');
+              }}
+              className="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-slate-200 hover:text-white border border-white/[0.1] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
+              title="Chuyển sang chế độ Live Quiz 4 đội"
+            >
+              <span>🎯 Live Quiz 4 Đội</span>
+            </button>
+
             {/* Quick Mobile Player Simulator */}
             <button
               onClick={() => {
                 audio.playClick();
-                window.open('/join', '_blank');
+                const playUrl = location.pathname.includes('/buzzer') ? '/buzzer-play' : '/join';
+                window.open(playUrl, '_blank');
               }}
               className="px-3.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 hover:text-white border border-white/[0.1] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
-              title="Mở tab nút bấm chuông điện thoại (Giả lập)"
+              title="Mở tab nút bấm chuông / kéo co trên điện thoại (Giả lập)"
             >
               <Smartphone className="w-3.5 h-3.5 text-rose-400" />
-              <span className="hidden md:inline">Mở chuông điện thoại</span>
+              <span className="hidden md:inline">Mở chuông / kéo co</span>
             </button>
 
             {/* Question Bank Modal Button */}

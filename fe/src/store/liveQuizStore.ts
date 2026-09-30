@@ -55,6 +55,7 @@ interface LiveQuizStore {
   hideLeaderboard: () => void;
   endGame: () => void;
   resetGame: () => void;
+  adjustTeamScore: (teamId: TeamId, delta: number) => void;
 
   // Realtime handlers
   registerPlayer: (player: { id: string; name: string; avatar: string; teamId: TeamId }) => void;
@@ -435,6 +436,23 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
 
   resetGame: () => {
     get().createRoom(get().config);
+  },
+
+  adjustTeamScore: (teamId: TeamId, delta: number) => {
+    const { teams } = get();
+    if (!teams[teamId]) return;
+    const newScore = Math.max(0, teams[teamId].score + delta);
+    set({
+      teams: {
+        ...teams,
+        [teamId]: {
+          ...teams[teamId],
+          score: newScore,
+        },
+      },
+    });
+    if (delta > 0) audio.playDing();
+    get().syncHostStateToNetwork();
   },
 
   syncHostStateToNetwork: () => {
