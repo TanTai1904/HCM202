@@ -34,6 +34,10 @@ interface BuzzerLobbyProps {
   onToggleMultipliers: () => void;
   enableMysteryGifts: boolean;
   onToggleMysteryGifts: () => void;
+  buzzerMode: 'SPEED_TAP' | 'TUG_OF_WAR';
+  onToggleBuzzerMode: () => void;
+  tugThreshold: number;
+  onUpdateTugThreshold: (val: number) => void;
   onStartGame: () => void;
 }
 
@@ -63,6 +67,10 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
   onToggleMultipliers,
   enableMysteryGifts,
   onToggleMysteryGifts,
+  buzzerMode,
+  onToggleBuzzerMode,
+  tugThreshold,
+  onUpdateTugThreshold,
   onStartGame,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -73,7 +81,7 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const origin = window.location.origin;
-      setHostUrl(`${origin}/join?room=${roomId}`);
+      setHostUrl(`${origin}/buzzer-play?room=${roomId}`);
     }
   }, [roomId]);
 
@@ -97,7 +105,7 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
 
   const handleOpenSimulator = () => {
     audio.playClick();
-    window.open(`/join?room=${roomId}`, '_blank');
+    window.open(`/buzzer-play?room=${roomId}`, '_blank');
   };
 
   return (
@@ -249,6 +257,80 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
               </div>
 
               <div className="space-y-3">
+                {/* Mode Selector: Tug of War vs Speed Tap */}
+                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08]">
+                  <label className="block text-[11px] font-bold text-amber-300 mb-1.5 uppercase tracking-wide flex items-center justify-between">
+                    <span>🎮 HÌNH THỨC GIÀNH QUYỀN TRẢ LỜI:</span>
+                    <span className="text-[10px] text-slate-400 font-normal">
+                      {buzzerMode === 'TUG_OF_WAR' ? 'Đấu bấm lực kéo co' : 'Phản xạ bấm 1 chạm'}
+                    </span>
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (buzzerMode !== 'TUG_OF_WAR') {
+                          audio.playClick();
+                          onToggleBuzzerMode();
+                        }
+                      }}
+                      className={`py-2 px-3 rounded-xl text-xs font-black border flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                        buzzerMode === 'TUG_OF_WAR'
+                          ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)] ring-1 ring-amber-400'
+                          : 'bg-white/[0.02] text-slate-400 border-white/[0.06] hover:text-white'
+                      }`}
+                    >
+                      <span className="text-base">🪢</span>
+                      <span>THI KÉO CO (BẤM NHIỀU HƠN)</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (buzzerMode !== 'SPEED_TAP') {
+                          audio.playClick();
+                          onToggleBuzzerMode();
+                        }
+                      }}
+                      className={`py-2 px-3 rounded-xl text-xs font-black border flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                        buzzerMode === 'SPEED_TAP'
+                          ? 'bg-rose-600 text-white border-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.3)] ring-1 ring-rose-400'
+                          : 'bg-white/[0.02] text-slate-400 border-white/[0.06] hover:text-white'
+                      }`}
+                    >
+                      <span className="text-base">⚡</span>
+                      <span>BẤM NHANH (1 CHẠM GIẬT)</span>
+                    </button>
+                  </div>
+
+                  {buzzerMode === 'TUG_OF_WAR' && (
+                    <div className="mt-2.5 pt-2 border-t border-white/[0.06] flex items-center justify-between">
+                      <span className="text-[11px] text-slate-300 font-medium">
+                        Mức kéo co để thắng (vạch đích):
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {[10, 15, 20, 30].map(val => (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => {
+                              audio.playClick();
+                              onUpdateTugThreshold(val);
+                            }}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono border transition-all cursor-pointer ${
+                              tugThreshold === val
+                                ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-sm'
+                                : 'bg-white/[0.03] text-slate-400 border-white/[0.08] hover:text-white'
+                            }`}
+                          >
+                            {val} lần
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Category Selection */}
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase tracking-wide">

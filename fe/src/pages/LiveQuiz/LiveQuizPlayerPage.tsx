@@ -483,9 +483,12 @@ export const LiveQuizPlayerPage: React.FC = () => {
             </motion.div>
           )}
 
-          {/* 4 HUGE Touch Buttons (Section 20) with Color Themes */}
-          <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
-            {OPTION_LETTERS.map((letter, idx) => {
+          {/* Touch Buttons matching actual question options */}
+          <div className={`grid gap-3 max-w-sm mx-auto ${
+            (roomState.currentQuestion?.options?.length || 4) === 2 ? 'grid-cols-2' : 'grid-cols-2'
+          }`}>
+            {(roomState.currentQuestion?.options || OPTION_LETTERS).map((optText, idx) => {
+              const letter = OPTION_LETTERS[idx] || String.fromCharCode(65 + idx);
               const isSelected = selectedChoice === letter;
               const themeColors = [
                 { border: '#9E1B32', bg: 'rgba(158, 27, 50, 0.08)', text: '#9E1B32' },
@@ -494,13 +497,17 @@ export const LiveQuizPlayerPage: React.FC = () => {
                 { border: '#3F7D5A', bg: 'rgba(63, 125, 90, 0.08)', text: '#3F7D5A' },
               ][idx] || { border: '#172033', bg: '#F7F3EA', text: '#172033' };
 
+              const hasText = typeof optText === 'string' && optText !== letter;
+
               return (
                 <button
                   key={letter}
                   type="button"
                   disabled={hasAnsweredCurrentQ}
                   onClick={() => handleSelectAnswer(letter)}
-                  className={`player-option-btn h-24 sm:h-28 rounded-2xl border-3 flex flex-col items-center justify-center gap-1 cursor-pointer shadow-md transition-all ${
+                  className={`player-option-btn p-3 rounded-2xl border-3 flex flex-col items-center justify-center gap-1 cursor-pointer shadow-md transition-all ${
+                    hasText ? 'min-h-[90px]' : 'h-24 sm:h-28'
+                  } ${
                     isSelected
                       ? 'bg-[#172033] text-white border-[#172033] ring-4 ring-[#9E1B32]/30 scale-102'
                       : hasAnsweredCurrentQ
@@ -512,7 +519,12 @@ export const LiveQuizPlayerPage: React.FC = () => {
                     color: isSelected ? '#FFFFFF' : themeColors.text,
                   }}
                 >
-                  <span className="text-3xl sm:text-4xl font-black">{letter}</span>
+                  <span className="text-2xl sm:text-3xl font-black">{letter}</span>
+                  {hasText && (
+                    <span className="text-[11px] font-bold leading-tight line-clamp-2 px-1 text-center">
+                      {optText}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -531,10 +543,11 @@ export const LiveQuizPlayerPage: React.FC = () => {
   // 5. SCREEN: RESULT ON PHONE (Section 22)
   // -------------------------------------------------------------------------
   if (roomState.step === 'RESULT') {
-    const isCorrect = currentPlayerData?.isLastCorrect ?? false;
     const correctLetter = roomState.currentQuestion
       ? OPTION_LETTERS[roomState.currentQuestion.correctAnswer]
       : '';
+    const isLocallyCorrect = selectedChoice !== null && correctLetter !== '' && selectedChoice.toUpperCase() === correctLetter.toUpperCase();
+    const isCorrect = currentPlayerData?.isLastCorrect ?? isLocallyCorrect;
 
     return (
       <div className="min-h-screen bg-ivory-stage flex flex-col justify-between items-center p-6 text-center select-none font-display">

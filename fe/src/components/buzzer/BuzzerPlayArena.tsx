@@ -24,6 +24,11 @@ interface BuzzerPlayArenaProps {
   multiplier: 1 | 2 | 3;
   hasMysteryGift: boolean;
   buzzerState: BuzzerState;
+  buzzerMode: 'SPEED_TAP' | 'TUG_OF_WAR';
+  onToggleBuzzerMode: () => void;
+  tugThreshold: number;
+  onUpdateTugThreshold: (val: number) => void;
+  tugPulls: Record<string, number>;
   activeBuzzTeam: BuzzerTeam | null;
   buzzReactionMs: number | null;
   selectedOptionByPhone: number | null;
@@ -45,12 +50,17 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
   multiplier,
   hasMysteryGift,
   buzzerState,
+  buzzerMode,
+  onToggleBuzzerMode,
+  tugThreshold,
+  onUpdateTugThreshold,
+  tugPulls,
   activeBuzzTeam,
   buzzReactionMs,
   selectedOptionByPhone,
   teams,
   lockedTeamIds,
-  isCorrectAnswer: _isCorrectAnswer,
+  isCorrectAnswer,
   onOpenBuzzer,
   onStartCountdown,
   onResetBuzzerForSteal,
@@ -254,19 +264,63 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
         {/* Right Column: Dynamic Buzzer Control Center (5 cols) */}
         <div className="lg:col-span-5 flex flex-col justify-between gap-4">
           <div className="studio-card flex-1 flex flex-col">
-            <div className="studio-card-inner p-6 sm:p-8 flex flex-col items-center justify-center text-center flex-1 relative overflow-hidden min-h-[350px]">
+            <div className="studio-card-inner p-5 sm:p-7 flex flex-col items-center justify-center text-center flex-1 relative overflow-hidden min-h-[360px]">
+              
+              {/* Mode Switcher Pill in Play Arena */}
+              <div className="w-full flex items-center justify-between pb-3 mb-2 border-b border-white/[0.08]">
+                <div className="flex items-center gap-1.5 text-xs font-bold">
+                  <span className="text-slate-400">Chế độ:</span>
+                  <button
+                    onClick={() => {
+                      if (buzzerState === 'IDLE') {
+                        audio.playClick();
+                        onToggleBuzzerMode();
+                      }
+                    }}
+                    disabled={buzzerState !== 'IDLE'}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-black border transition-all cursor-pointer ${
+                      buzzerMode === 'TUG_OF_WAR'
+                        ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white border-amber-400 shadow-sm'
+                        : 'bg-white/[0.05] text-slate-300 border-white/[0.1] hover:text-white'
+                    }`}
+                  >
+                    {buzzerMode === 'TUG_OF_WAR' ? '🪢 KÉO CO BẤM LỰC' : '⚡ BẤM NHANH'}
+                  </button>
+                </div>
+
+                {buzzerMode === 'TUG_OF_WAR' && (
+                  <div className="flex items-center gap-1 text-[11px]">
+                    <span className="text-slate-400">Mốc thắng:</span>
+                    <select
+                      value={tugThreshold}
+                      disabled={buzzerState !== 'IDLE'}
+                      onChange={(e) => onUpdateTugThreshold(Number(e.target.value))}
+                      className="px-2 py-0.5 rounded bg-black/40 border border-white/10 text-amber-300 font-mono font-bold text-xs"
+                    >
+                      {[10, 15, 20, 25, 30].map(v => (
+                        <option key={v} value={v} className="bg-[#0E111B] text-slate-200">
+                          {v} bấm
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+
               {/* 1. STATE: IDLE */}
               {buzzerState === 'IDLE' && (
                 <div className="flex flex-col items-center gap-4 w-full">
                   <div className="w-20 h-20 rounded-2xl bg-white/[0.04] border border-white/[0.1] flex items-center justify-center text-slate-300 shadow-inner">
-                    <Bell className="w-10 h-10" />
+                    <span className="text-4xl">{buzzerMode === 'TUG_OF_WAR' ? '🪢' : '🔔'}</span>
                   </div>
                   <div>
                     <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                      CHUÔNG ĐANG ĐÓNG
+                      {buzzerMode === 'TUG_OF_WAR' ? 'CHUẨN BỊ KÉO CO' : 'CHUÔNG ĐANG ĐÓNG'}
                     </h3>
                     <p className="text-xs text-slate-400 mt-1 max-w-xs leading-relaxed">
-                      Để các đội đọc kỹ câu hỏi. Sau đó Host bấm nút dưới hoặc phím SPACE để mở chuông!
+                      {buzzerMode === 'TUG_OF_WAR' 
+                        ? `Các đội chuẩn bị bấm liên tục trên điện thoại. Đội nào kéo qua mốc ${tugThreshold} lần bấm trước sẽ giành quyền trả lời!`
+                        : 'Để các đội đọc kỹ câu hỏi. Sau đó Host bấm nút dưới hoặc phím SPACE để mở chuông!'}
                     </p>
                   </div>
 
@@ -278,8 +332,10 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                       }}
                       className="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-extrabold text-sm sm:text-base shadow-[0_0_25px_rgba(225,29,72,0.4)] active:scale-95 transition-all cursor-pointer border border-white/20 flex items-center justify-center gap-2"
                     >
-                      <Bell className="w-4 h-4 fill-current text-white" />
-                      <span>MỞ CHUÔNG NGAY [SPACE]</span>
+                      <span className="text-lg">{buzzerMode === 'TUG_OF_WAR' ? '🪢' : '🔔'}</span>
+                      <span>
+                        {buzzerMode === 'TUG_OF_WAR' ? `MỞ THI KÉO CO (${tugThreshold} BẤM) [SPACE]` : 'MỞ CHUÔNG NGAY [SPACE]'}
+                      </span>
                     </button>
 
                     <button
@@ -299,7 +355,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
               {buzzerState === 'COUNTDOWN' && (
                 <div className="flex flex-col items-center justify-center">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
-                    CHUẨN BỊ BẤM CHUÔNG...
+                    {buzzerMode === 'TUG_OF_WAR' ? 'CHUẨN BỊ KÉO CO...' : 'CHUẨN BỊ BẤM CHUÔNG...'}
                   </span>
                   <motion.div
                     key="countdown"
@@ -308,7 +364,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                     transition={{ repeat: Infinity, duration: 1 }}
                     className="w-28 h-28 rounded-full bg-gradient-to-br from-rose-600 to-amber-600 flex items-center justify-center text-5xl font-black text-white shadow-[0_0_35px_rgba(225,29,72,0.6)] border-2 border-white/30"
                   >
-                    ⚡
+                    {buzzerMode === 'TUG_OF_WAR' ? '🪢' : '⚡'}
                   </motion.div>
                   <p className="text-sm font-bold text-slate-200 mt-4 animate-pulse">
                     TAY ĐẶT SẴN TRÊN NÚT BẤM!
@@ -316,7 +372,81 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                 </div>
               )}
 
-              {/* 3. STATE: OPEN */}
+              {/* 3A. STATE: TUG OF WAR BATTLE (KÉO CO ĐANG DIỄN RA) */}
+              {buzzerState === 'TUG_OF_WAR' && (
+                <div className="w-full flex flex-col items-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-3 h-3 rounded-full bg-amber-400 animate-ping" />
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-300">
+                      ĐANG TRANH TÀI KÉO CO!
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight animate-pulse mb-1">
+                    🪢 BẤM THẬT NHANH ĐỂ KÉO QUA VẠCH!
+                  </h3>
+                  <p className="text-xs font-mono font-bold text-slate-300 mb-4 bg-black/40 px-3 py-1 rounded-full border border-white/10">
+                    MỐC CHIẾN THẮNG: <span className="text-amber-300 font-extrabold">{tugThreshold} LẦN BẤM</span>
+                  </p>
+
+                  {/* Tug-of-war teams live pulling progress bars */}
+                  <div className="w-full space-y-3">
+                    {teams.map((t) => {
+                      const pulls = tugPulls[t.id] || 0;
+                      const pct = Math.min(100, Math.round((pulls / tugThreshold) * 100));
+                      const isLocked = lockedTeamIds.includes(t.id);
+                      const isLeading = pulls > 0 && pulls === Math.max(...Object.values(tugPulls), 1);
+
+                      return (
+                        <div
+                          key={t.id}
+                          className={`p-3 rounded-xl border transition-all ${
+                            isLocked 
+                              ? 'opacity-40 border-white/[0.05] bg-white/[0.01]' 
+                              : 'bg-white/[0.03] border-white/[0.1] hover:border-white/20'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between text-xs font-bold mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <span 
+                                className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black text-white shadow-xs"
+                                style={{ backgroundColor: t.color }}
+                              >
+                                {t.icon}
+                              </span>
+                              <span className="text-white font-extrabold">{t.name}</span>
+                              {isLeading && !isLocked && (
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+                                  🔥 DẪN ĐẦU
+                                </span>
+                              )}
+                            </div>
+                            <span className="font-mono text-amber-300 text-sm font-black">
+                              {pulls} / {tugThreshold} ({pct}%)
+                            </span>
+                          </div>
+
+                          {/* Progress Track */}
+                          <div className="w-full h-3 rounded-full bg-black/50 p-0.5 overflow-hidden border border-white/10 relative">
+                            <motion.div
+                              className="h-full rounded-full transition-all duration-150"
+                              style={{
+                                width: `${pct}%`,
+                                backgroundColor: t.color,
+                                boxShadow: `0 0 12px ${t.color}`,
+                              }}
+                            />
+                            {/* Win Threshold Line indicator at 100% */}
+                            <div className="absolute right-0 top-0 bottom-0 w-1 bg-amber-400 shadow-[0_0_8px_#f59e0b]" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 3B. STATE: OPEN (Speed Tap) */}
               {buzzerState === 'OPEN' && (
                 <div className="flex flex-col items-center justify-center w-full">
                   <motion.div
@@ -358,7 +488,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                       {activeBuzzTeam.icon}
                     </div>
                     <span className="text-[10px] font-bold text-amber-300 uppercase tracking-widest">
-                      GIÀNH QUYỀN TRẢ LỜI ĐẦU TIÊN!
+                      {buzzerMode === 'TUG_OF_WAR' ? '🏆 ĐÃ KÉO QUA VẠCH VÀ GIÀNH QUYỀN TRẢ LỜI!' : 'GIÀNH QUYỀN TRẢ LỜI ĐẦU TIÊN!'}
                     </span>
                     <h3 
                       className="text-xl sm:text-2xl font-black mt-0.5 tracking-tight"
@@ -370,7 +500,11 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                     {buzzReactionMs !== null && (
                       <div className="flex items-center gap-1.5 mt-2 px-3 py-0.5 rounded-full bg-black/40 border border-white/10 text-xs font-mono font-bold text-amber-300">
                         <Clock className="w-3.5 h-3.5 text-amber-400" />
-                        <span>⚡ Phản xạ: {(buzzReactionMs / 1000).toFixed(3)}s</span>
+                        <span>
+                          {buzzerMode === 'TUG_OF_WAR' 
+                            ? `🪢 Đạt ${tugThreshold} lần bấm thần tốc!` 
+                            : `⚡ Phản xạ: ${(buzzReactionMs / 1000).toFixed(3)}s`}
+                        </span>
                       </div>
                     )}
 
@@ -429,11 +563,15 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
               {/* 5. STATE: EXPLAINING */}
               {buzzerState === 'EXPLAINING' && (
                 <div className="flex flex-col items-center justify-center w-full">
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.1] flex items-center justify-center text-amber-300 mb-3 shadow-sm">
-                    <BookOpen className="w-8 h-8" />
+                  <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center text-3xl mb-3 shadow-sm ${
+                    isCorrectAnswer ? 'bg-emerald-500/15 border-emerald-400 text-emerald-400' : 'bg-rose-500/15 border-rose-400 text-rose-400'
+                  }`}>
+                    {isCorrectAnswer ? '✓' : '✕'}
                   </div>
-                  <h3 className="text-xl font-bold text-white tracking-tight">
-                    KẾT QUẢ CÂU HỎI
+                  <h3 className={`text-xl font-black tracking-tight ${
+                    isCorrectAnswer ? 'text-emerald-300' : 'text-rose-300'
+                  }`}>
+                    {isCorrectAnswer ? 'ĐÁP ÁN CHÍNH XÁC!' : 'ĐÁP ÁN CHƯA ĐÚNG!'}
                   </h3>
                   <p className="text-xs text-slate-400 mt-1 max-w-xs">
                     Kiểm tra đáp án đúng và phần giải thích của câu hỏi ở khung bên trái.

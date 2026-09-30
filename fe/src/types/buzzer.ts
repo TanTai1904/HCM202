@@ -15,10 +15,13 @@ export interface BuzzerTeam {
   connectedDevices: number;
 }
 
+export type BuzzerMode = 'SPEED_TAP' | 'TUG_OF_WAR';
+
 export type BuzzerState = 
   | 'IDLE'        // Chưa mở chuông
   | 'COUNTDOWN'   // Đang đếm ngược 3, 2, 1
   | 'OPEN'        // Chuông đang mở, các đội bấm nhanh
+  | 'TUG_OF_WAR'  // Đang thi kéo co bấm liên tục
   | 'BUZZED'      // Đã có đội bấm giành quyền
   | 'ANSWERING'   // Đội đang suy nghĩ / trả lời
   | 'EXPLAINING'; // Đang hiển thị kết quả & giải thích
@@ -51,6 +54,9 @@ export interface BuzzerRoomState {
   hostName: string;
   currentStep: 'LOBBY' | 'PLAYING' | 'PODIUM';
   buzzerState: BuzzerState;
+  buzzerMode: BuzzerMode;
+  tugThreshold: number; // Mức kéo co để giành quyền trả lời (ví dụ 15 bấm)
+  tugPulls: Record<string, number>; // teamId -> số lần bấm hiện tại
   activeQuestionIndex: number;
   totalQuestions: number;
   currentQuestion: Question | null;
@@ -61,6 +67,8 @@ export interface BuzzerRoomState {
   lockedTeamIds: string[]; // Các đội bị khóa ở câu hỏi hiện tại do trả lời sai
   teams: BuzzerTeam[];
   selectedCategory: string;
+  selectedOptionByPhone: number | null;
+  isCorrectAnswer: boolean | null;
 }
 
 export interface NetworkMessage {
@@ -70,6 +78,7 @@ export interface NetworkMessage {
     | 'PLAYER_JOIN'
     | 'PLAYER_LEAVE'
     | 'PLAYER_BUZZ'
+    | 'PLAYER_TUG_PULL'
     | 'PLAYER_SUBMIT_ANSWER'
     | 'HOST_OPEN_BUZZER'
     | 'HOST_RESET_BUZZER'
