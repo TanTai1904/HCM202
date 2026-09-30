@@ -1,0 +1,371 @@
+[
+  {
+    "id": "HUM_001",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh quan niệm con người trong tính chỉnh thể như thế nào?",
+    "options": [
+      "Con người chỉ đơn thuần là sinh vật tự nhiên tìm kiếm thức ăn",
+      "Con người là một thể thống nhất hữu cơ giữa mặt sinh học và mặt xã hội",
+      "Con người là sản phẩm của các thế lực siêu nhiên thần thánh",
+      "Con người chỉ tồn tại như một công cụ lao động cơ bắp"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Hồ Chí Minh nhìn nhận con người cụ thể, lịch sử, là sự thống nhất hài hòa giữa thể xác và tinh thần, giữa phương diện sinh học và các quan hệ xã hội phong phú.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 137"
+  },
+  {
+    "id": "HUM_002",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Theo tư tưởng Hồ Chí Minh, con người giữ vị trí như thế nào trong sự nghiệp cách mạng?",
+    "options": [
+      "Chỉ là phương tiện tạm thời phục vụ chiến tranh",
+      "Vừa là mục tiêu cao nhất, vừa là động lực quyết định của cách mạng",
+      "Chỉ là đối tượng thụ động chịu sự quản lý",
+      "Là nhân tố thứ yếu sau vũ khí và trang thiết bị kỹ thuật"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Hồ Chí Minh khẳng định: Con người là mục tiêu của giải phóng dân tộc, giải phóng xã hội; đồng thời nhân dân là người làm nên lịch sử, là động lực to lớn nhất của mọi thắng lợi.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  },
+  {
+    "id": "HUM_003",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Câu nói nổi tiếng của Bác mượn ý người xưa về tầm quan trọng của chiến lược phát triển con người là:",
+    "options": [
+      "Vì lợi ích mười năm thì phải trồng cây, vì lợi ích trăm năm thì phải trồng người",
+      "Nuôi quân ba năm, dùng một giờ",
+      "Đi một ngày đàng, học một sàng khôn",
+      "Có công mài sắt, có ngày nên kim"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Phát biểu tại lớp học chính trị giáo viên cấp II, III toàn miền Bắc (1958), Bác nhấn mạnh: 'Vì lợi ích mười năm thì phải trồng cây, vì lợi ích trăm năm thì phải trồng người.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 139"
+  },
+  {
+    "id": "HUM_004",
+    "category": "HUMAN",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Theo Hồ Chí Minh, muốn xây dựng chủ nghĩa xã hội thì trước hết cần có những con người xã hội chủ nghĩa.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Người khẳng định: 'Muốn xây dựng chủ nghĩa xã hội, trước hết cần có những con người xã hội chủ nghĩa.' Con người là nhân tố quyết định thành bại của công cuộc đổi mới và phát triển.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 139"
+  },
+  {
+    "id": "HUM_005",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Mô hình con người toàn diện theo tư tưởng Hồ Chí Minh phải kết hợp hài hòa hai yếu tố nào?",
+    "options": [
+      "Vừa giàu có vừa nổi tiếng",
+      "Vừa 'hồng' vừa 'chuyên' (đạo đức cách mạng vững vàng và trình độ chuyên môn nghiệp vụ giỏi)",
+      "Chỉ cần trung thành, không cần giỏi chuyên môn",
+      "Chỉ cần bằng cấp quốc tế, không cần lập trường chính trị"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Hồ Chí Minh yêu cầu đào tạo con người phải 'vừa hồng vừa chuyên'. 'Hồng' là đạo đức, lý tưởng cách mạng; 'chuyên' là năng lực tri thức, tay nghề giỏi.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 140"
+  },
+  {
+    "id": "HUM_006",
+    "category": "HUMAN",
+    "type": "GUESS_THE_IDEA",
+    "difficulty": "MEDIUM",
+    "question": "Giải mã chiến lược cốt lõi trong tư tưởng Hồ Chí Minh qua 3 manh mối:",
+    "clues": [
+      "Clue 1: Đây là công việc bền bỉ, lâu dài của toàn Đảng, toàn dân và cả hệ thống giáo dục.",
+      "Clue 2: Chiến lược này được Người đặt ở tầm nhìn 'trăm năm'.",
+      "Clue 3: Mục tiêu là đào tạo thế hệ tương lai kế tục sự nghiệp cách mạng trung kiên và tài giỏi."
+    ],
+    "options": [
+      "Chiến lược công nghiệp hóa",
+      "Chiến lược 'Trồng người'",
+      "Chính sách ngoại giao cây tre",
+      "Chiến lược quốc phòng toàn dân"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Đó chính là chiến lược 'Trồng người' - một cống hiến lý luận vô cùng đặc sắc của Hồ Chí Minh về phát triển nhân lực con người Việt Nam.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 139"
+  },
+  {
+    "id": "HUM_007",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Khi xem xét con người, phương pháp luận của Hồ Chí Minh có đặc điểm nổi bật nào?",
+    "options": [
+      "Nhìn nhận con người trừu tượng, chung chung phi giai cấp",
+      "Xem xét con người trong các mối quan hệ xã hội cụ thể, gắn với hoàn cảnh lịch sử và vị trí công tác cụ thể",
+      "Chỉ đánh giá con người qua nguồn gốc xuất thân gia đình",
+      "Đánh giá con người cố định, không tin vào khả năng biến đổi tiến bộ của con người"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Hồ Chí Minh luôn nhìn nhận con người biện chứng, cụ thể trong từng mối quan hệ: với gia đình, bạn bè, đồng chí, nhân dân và quốc tế; tin vào thiện căn và khả năng vươn lên của mỗi cá nhân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 137"
+  },
+  {
+    "id": "HUM_008",
+    "category": "HUMAN",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Bác Hồ dạy rằng: Trong mỗi con người đều có cái thiện và cái ác, cái hay và cái dở cùng tồn tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Bác nói: 'Trong quả tim mỗi người đều có cái thiện và cái ác... Ta phải làm cho phần thiện trong mỗi con người nảy nở như hoa mùa xuân và phần ác mất dần đi.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  },
+  {
+    "id": "HUM_009",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Để phát huy vai trò động lực của con người, Hồ Chí Minh yêu cầu điều gì quan trọng nhất?",
+    "options": [
+      "Sử dụng mệnh lệnh hành chính cưỡng chế",
+      "Chăm lo đời sống vật chất và tinh thần của nhân dân, tôn trọng quyền làm chủ của nhân dân",
+      "Áp đặt kỷ luật sắt mà không giải thích lý do",
+      "Chỉ đãi ngộ vật chất cho cấp lãnh đạo"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Động lực con người chỉ được giải phóng mạnh mẽ nhất khi quyền lợi của họ được chăm lo, quyền làm chủ được bảo đảm và tinh thần tự giác yêu nước được khơi dậy.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  },
+  {
+    "id": "HUM_010",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Quan điểm của Hồ Chí Minh về việc giải phóng con người bao gồm những nội dung căn bản nào?",
+    "options": [
+      "Chỉ giải phóng về mặt cá nhân khỏi sự ràng buộc gia đình",
+      "Giải phóng dân tộc, giải phóng giai cấp, giải phóng xã hội và giải phóng triệt để từng con người khỏi áp bức, bóc lột và ngu dốt",
+      "Chỉ giải phóng cho người lao động cơ bắp, bỏ qua trí thức",
+      "Cho phép cá nhân tự do vi phạm pháp luật tập thể"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Giải phóng con người theo Hồ Chí Minh là một sự nghiệp toàn diện: giành độc lập cho Tổ quốc, đánh đổ chế độ bóc lột, xóa bỏ dốt nát nghèo đói để con người làm chủ vận mệnh chính mình.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 137"
+  },
+  {
+    "id": "HUM_011",
+    "category": "HUMAN",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Theo Bác Hồ, cán bộ lãnh đạo không cần tôn trọng tài năng cá nhân của cấp dưới, chỉ cần họ biết tuân lệnh.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Sai. Hồ Chí Minh yêu cầu phải biết quý trọng nhân tài, biết 'dụng nhân như dụng mộc', tùy tài mà dùng người đúng lúc, đúng việc để mỗi người phát huy tối đa sở trường.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 141"
+  },
+  {
+    "id": "HUM_012",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Mục tiêu tột bậc trong cả cuộc đời hoạt động của Hồ Chí Minh là gì?",
+    "options": [
+      "Có được chức vụ quyền lực cao nhất",
+      "Nước ta được hoàn toàn độc lập, dân ta được hoàn toàn tự do, đồng bào ai cũng có cơm ăn, áo mặc, ai cũng được học hành",
+      "Trở thành một học giả lý luận nổi tiếng thế giới",
+      "Xây dựng quân đội tinh nhuệ nhất khu vực"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Trả lời các nhà báo nước ngoài đầu năm 1946, Bác nói: 'Tôi chỉ có một sự ham muốn, ham muốn tột bậc, là làm sao cho nước ta được hoàn toàn độc lập, dân ta được hoàn toàn tự do, đồng bào ai cũng có cơm ăn áo mặc, ai cũng được học hành.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  },
+  {
+    "id": "HUM_013",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Theo Bác, yếu tố nào là điều kiện tiên quyết để xây dựng con người mới xã hội chủ nghĩa?",
+    "options": [
+      "Sự tự rèn luyện, tự tu dưỡng của mỗi cá nhân kết hợp với giáo dục của nhà trường, gia đình và xã hội",
+      "Chỉ phụ thuộc vào cơ chế khen thưởng bằng tiền bạc",
+      "Chờ đợi khi xã hội hoàn toàn giàu có thì con người tự khắc tốt lên",
+      "Chỉ áp dụng kỷ luật trừng phạt nghiêm khắc"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Bác dạy việc rèn luyện con người cần kết hợp 'tam giác giáo dục': Gia đình - Nhà trường - Xã hội, nhưng nhân tố quyết định trực tiếp là ý thức tự tu dưỡng của chính bản thân người đó.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 140"
+  },
+  {
+    "id": "HUM_014",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Biểu hiện cụ thể của con người có phẩm chất 'Hồng' trong học tập và công tác hiện nay là gì?",
+    "options": [
+      "Luôn hô vang các khẩu hiệu lý luận mà không chịu học bài",
+      "Có bản lĩnh chính trị vững vàng, trung thực, trách nhiệm, sống có đạo đức và gắn bó với tập thể, đất nước",
+      "Thụ động chấp nhận mọi ý kiến của người khác",
+      "Tự cho mình quyền coi thường những người có chuyên môn giỏi"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "'Hồng' thể hiện ở tinh thần trách nhiệm, lòng yêu nước chân chính, lối sống trung thực, không tham nhũng tiêu cực, luôn hướng tới lợi ích cộng đồng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 140"
+  },
+  {
+    "id": "HUM_015",
+    "category": "HUMAN",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh khẳng định: Muốn lãnh đạo quần chúng thì người cán bộ trước hết phải làm gương mẫu trước quần chúng.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Nêu gương là phương pháp thuyết phục quần chúng có sức mạnh nhất trong tư tưởng Hồ Chí Minh.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 141"
+  },
+  {
+    "id": "HUM_016",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Khi bàn về thanh niên - rường cột nước nhà, Bác ví thế hệ trẻ như mùa nào trong năm?",
+    "options": [
+      "Mùa xuân của xã hội",
+      "Mùa hè sôi động",
+      "Mùa thu thanh bình",
+      "Mùa đông kiên cường"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Bác viết thư gửi thanh niên: 'Một năm khởi đầu từ mùa xuân. Một đời khởi đầu từ tuổi trẻ. Tuổi trẻ là mùa xuân của xã hội.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 142"
+  },
+  {
+    "id": "HUM_017",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Theo Hồ Chí Minh, con người với tư cách là 'mục tiêu của cách mạng' đòi hỏi Đảng và Nhà nước phải làm gì?",
+    "options": [
+      "Không ngừng nâng cao đời sống ấm no, bảo vệ quyền con người, quyền công dân và tạo mọi điều kiện để mỗi người phát triển tự do, toàn diện",
+      "Yêu cầu nhân dân hy sinh tuyệt đối không được đòi hỏi quyền lợi gì",
+      "Tập trung ngân sách cho các dự án xa hoa",
+      "Giao phó toàn bộ trách nhiệm xã hội cho các tổ chức quốc tế"
+    ],
+    "correctAnswer": 0,
+    "points": 300,
+    "explanation": "Mục tiêu của cách mạng là vì hạnh phúc của nhân dân: 'Nếu nước độc lập mà dân không hưởng hạnh phúc tự do, thì độc lập cũng chẳng có nghĩa lý gì.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  },
+  {
+    "id": "HUM_018",
+    "category": "HUMAN",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Bác dạy phải có thái độ phê phán nhưng nhân ái, rộng lượng đối với những người lầm đường lạc lối nếu họ biết hối cải.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Đúng. Tinh thần khoan dung, độ lượng là nét đặc sắc trong văn hóa ứng xử và quan điểm nhân văn Hồ Chí Minh.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  },
+  {
+    "id": "HUM_019",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Quan điểm xây dựng con người mới về mặt thể chất được Hồ Chí Minh phát động qua phong trào nào?",
+    "options": [
+      "Phong trào rèn luyện thân thể, nâng cao sức khỏe toàn dân ('Khỏe để phụng sự Tổ quốc')",
+      "Chỉ tuyển chọn vận động viên chuyên nghiệp đi thi đấu",
+      "Tập trung uống thuốc bổ đắt tiền",
+      "Nghỉ ngơi không cần vận động thể thao"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Tháng 3/1946, Bác viết Lời kêu gọi toàn dân tập thể dục: 'Giữ gìn dân chủ, xây dựng nước nhà... tất cả đều nhờ sức khỏe mới làm thành công. Dân cường thì nước thịnh.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 140"
+  },
+  {
+    "id": "HUM_020",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Tính nhân văn sâu sắc nhất trong tư tưởng Hồ Chí Minh về con người là gì?",
+    "options": [
+      "Xem con người là phương tiện để hoàn thành các mục tiêu kinh tế lớn",
+      "Lòng tin vô hạn vào sức mạnh, trí tuệ và phẩm giá của quần chúng nhân dân",
+      "Tập trung quyền lực vào số ít tinh hoa",
+      "Cho rằng chỉ có lãnh tụ mới làm nên lịch sử"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "Điểm cốt lõi trong tư tưởng Hồ Chí Minh là đức tin kiên định vào nhân dân: 'Dễ trăm lần không dân cũng chịu, khó vạn lần dân liệu cũng xong.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 137"
+  },
+  {
+    "id": "HUM_021",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Để bồi dưỡng thế hệ cách mạng cho đời sau, Bác căn dặn đó là một việc như thế nào trong Di chúc?",
+    "options": [
+      "Việc phụ, khi nào rảnh rỗi mới làm",
+      "Một việc rất quan trọng và rất cần thiết",
+      "Việc của riêng ngành công an",
+      "Việc chỉ áp dụng cho con em cán bộ cấp cao"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Trong Di chúc, Bác viết: 'Bồi dưỡng thế hệ cách mạng cho đời sau là một việc rất quan trọng và rất cần thiết.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 142"
+  },
+  {
+    "id": "HUM_022",
+    "category": "HUMAN",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Mối quan hệ biện chứng giữa con người là mục tiêu và con người là động lực được thể hiện ra sao?",
+    "options": [
+      "Mục tiêu và động lực triệt tiêu lẫn nhau trong thực tế",
+      "Càng phát huy tốt động lực con người thì càng nhanh đạt tới mục tiêu; ngược lại, hiện thực hóa mục tiêu chăm lo con người lại càng nhân lên động lực",
+      "Chỉ cần chú trọng mục tiêu, động lực sẽ tự nhiên xuất hiện mà không cần tác động",
+      "Động lực chỉ tồn tại trong thời chiến, mục tiêu chỉ tồn tại trong thời bình"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "Đây là mối quan hệ tương hỗ: chăm lo hạnh phúc của nhân dân (mục tiêu) sẽ kích hoạt sức sáng tạo và lòng cống hiến quên mình của nhân dân (động lực).",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  }
+]

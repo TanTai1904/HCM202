@@ -1,0 +1,376 @@
+[
+  {
+    "id": "CULT_001",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Theo định nghĩa của Hồ Chí Minh vào tháng 8/1943, văn hóa được hiểu là gì?",
+    "options": [
+      "Chỉ là các tác phẩm văn học nghệ thuật đỉnh cao của dân tộc",
+      "Toàn bộ những sáng tạo và phát minh vì lẽ sinh tồn cũng như mục đích của cuộc sống",
+      "Các phong tục tập quán truyền thống được lưu truyền từ ngàn xưa",
+      "Hệ thống các quy phạm pháp luật và thiết chế nhà nước"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Tháng 8/1943, trong Nhật ký trong tù, Hồ Chí Minh viết: 'Vì lẽ sinh tồn cũng như mục đích của cuộc sống, loài người mới sáng tạo và phát minh ra ngôn ngữ, chữ viết, đạo đức, pháp luật, khoa học, tôn giáo, văn học, nghệ thuật, những công cụ cho sinh hoạt hằng ngày về mặc, ăn, ở và các phương thức sử dụng. Toàn bộ những sáng tạo và phát minh đó tức là văn hóa.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 119"
+  },
+  {
+    "id": "CULT_002",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Theo tư tưởng Hồ Chí Minh, trong mối quan hệ với sự phát triển xã hội, văn hóa giữ vai trò gì?",
+    "options": [
+      "Chỉ là kết quả thụ động sau khi kinh tế đã hoàn thiện",
+      "Chỉ là phương tiện giải trí nhằm thư giãn tinh thần",
+      "Vừa là mục tiêu, vừa là động lực của sự nghiệp cách mạng",
+      "Một lĩnh vực độc lập không liên hệ gì với chính trị và kinh tế"
+    ],
+    "correctAnswer": 2,
+    "points": 100,
+    "explanation": "Hồ Chí Minh khẳng định văn hóa vừa là mục tiêu (xây dựng một xã hội văn minh, tự do, hạnh phúc), vừa là động lực (khơi dậy lòng yêu nước, ý chí tự lực tự cường và trí tuệ dân tộc).",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 122"
+  },
+  {
+    "id": "CULT_003",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Luận điểm nổi tiếng nào của Hồ Chí Minh tại Hội nghị Văn hóa toàn quốc lần thứ nhất (1946) khẳng định tính định hướng của văn hóa?",
+    "options": [
+      "Văn hóa soi đường cho quốc dân đi",
+      "Văn hóa phải đứng ngoài chính trị",
+      "Kinh tế đi trước, văn hóa theo sau",
+      "Văn hóa là sản phẩm thuần túy của nghệ thuật"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Tại Hội nghị Văn hóa toàn quốc lần thứ nhất (24/11/1946), Người khẳng định: 'Văn hóa soi đường cho quốc dân đi', chỉ rõ văn hóa có sứ mệnh định hướng nhận thức, tư tưởng và hành động của cả dân tộc.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 122"
+  },
+  {
+    "id": "CULT_004",
+    "category": "CULTURE",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Theo tư tưởng Hồ Chí Minh, văn hóa là một mặt trận, và người làm công tác văn hóa là chiến sĩ trên mặt trận ấy.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Trong Thư gửi các họa sĩ nhân dịp Triển lãm hội họa (1951), Người viết: 'Văn hóa nghệ thuật cũng là một mặt trận. Anh chị em là chiến sĩ trên mặt trận ấy.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 123"
+  },
+  {
+    "id": "CULT_005",
+    "category": "CULTURE",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Theo Hồ Chí Minh, phải phát triển kinh tế xong hoàn toàn rồi mới tiến hành xây dựng và phát triển văn hóa.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Sai. Hồ Chí Minh nhấn mạnh văn hóa, chính trị, kinh tế, xã hội phải được coi trọng ngang nhau. Văn hóa không thể đứng ngoài mà phải ở trong kinh tế và chính trị, thúc đẩy kinh tế phát triển.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 120"
+  },
+  {
+    "id": "CULT_006",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Trong thời kỳ kháng chiến chống thực dân Pháp, nền văn hóa mới được Hồ Chí Minh xác định gồm ba tính chất nào?",
+    "options": [
+      "Hiện đại, khoa học, quần chúng",
+      "Dân tộc, khoa học, đại chúng",
+      "Truyền thống, tiến bộ, nhân văn",
+      "Dân tộc, giai cấp, tiên tiến"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Hồ Chí Minh cùng Đảng ta xác định nền văn hóa kháng chiến có tính chất: Dân tộc, Khoa học và Đại chúng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "CULT_007",
+    "category": "CULTURE",
+    "type": "GUESS_THE_IDEA",
+    "difficulty": "HARD",
+    "question": "Giải mã khái niệm văn hóa qua các manh mối sau:",
+    "clues": [
+      "Clue 1: Đây là chủ trương của Bác nhằm quét sạch những tàn tích hủ tục, thói hư tật xấu của chế độ cũ.",
+      "Clue 2: Khái niệm này bao gồm ba nội dung cốt lõi: Đạo đức mới, Lối sống mới và Nếp sống mới.",
+      "Clue 3: Tác phẩm của Bác ký bút danh Tân Sinh năm 1947 mang chính tên gọi của cuộc vận động này."
+    ],
+    "options": [
+      "Phong trào Bình dân học vụ",
+      "Xây dựng Đời sống mới",
+      "Mặt trận Việt Minh",
+      "Cải cách ruộng đất"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Đó chính là 'Đời sống mới'. Tháng 3/1947, Bác viết tác phẩm 'Đời sống mới' với nội dung xây dựng đạo đức mới, lối sống mới và nếp sống mới.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 126"
+  },
+  {
+    "id": "CULT_008",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Chức năng nào sau đây KHÔNG PHẢI là chức năng chủ yếu của văn hóa theo tư tưởng Hồ Chí Minh?",
+    "options": [
+      "Bồi dưỡng tư tưởng đúng đắn và tình cảm cao đẹp",
+      "Mở rộng hiểu biết, nâng cao dân trí",
+      "Thương mại hóa mọi di sản để tối đa hóa lợi nhuận kinh tế",
+      "Bồi dưỡng những phẩm chất, phong cách và lối sống lành mạnh"
+    ],
+    "correctAnswer": 2,
+    "points": 200,
+    "explanation": "Ba chức năng lớn của văn hóa theo Hồ Chí Minh là: 1) Bồi dưỡng tư tưởng đúng đắn, tình cảm cao đẹp; 2) Mở rộng hiểu biết, nâng cao dân trí; 3) Bồi dưỡng phẩm chất, lối sống tốt đẹp hướng con người đến Chân - Thiện - Mỹ. Thương mại hóa tiêu cực hoàn toàn xa lạ với văn hóa cách mạng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 123"
+  },
+  {
+    "id": "CULT_009",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Quan điểm 'Văn hóa phải ở trong kinh tế và chính trị' của Hồ Chí Minh có hàm ý cốt lõi gì?",
+    "options": [
+      "Văn hóa phải phụ thuộc hoàn toàn vào các chỉ tiêu kinh tế",
+      "Văn hóa phải tham gia vào việc thúc đẩy sản xuất, củng cố chính quyền và phát triển đời sống",
+      "Cán bộ kinh tế có quyền chỉ đạo trực tiếp nội dung sáng tạo nghệ thuật",
+      "Văn hóa chỉ có giá trị khi sinh ra lợi nhuận tài chính"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Văn hóa ở trong kinh tế và chính trị nghĩa là văn hóa phải soi đường, cổ vũ, thúc đẩy các nhiệm vụ kinh tế và chính trị, tạo động lực tinh thần và trí tuệ để thực hiện thắng lợi mục tiêu kháng chiến và kiến quốc.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 121"
+  },
+  {
+    "id": "CULT_010",
+    "category": "CULTURE",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Theo Hồ Chí Minh, tiếp thu tinh hoa văn hóa nhân loại là tiếp thu một cách có chọn lọc, kết hợp với phát huy bản sắc văn hóa dân tộc.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Người căn dặn phải giữ gìn cốt cách dân tộc, đồng thời mở rộng tầm nhìn học hỏi những điều hay, tiến bộ của văn hóa thế giới cả Đông lẫn Tây.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "CULT_011",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh xác định đối tượng phục vụ hàng đầu của văn hóa là ai?",
+    "options": [
+      "Tầng lớp trí thức và quý tộc",
+      "Các nhà tài trợ nghệ thuật",
+      "Quần chúng nhân dân lao động (Công - Nông - Binh)",
+      "Chỉ riêng cán bộ làm công tác đối ngoại"
+    ],
+    "correctAnswer": 2,
+    "points": 100,
+    "explanation": "Văn hóa cách mạng là văn hóa vì nhân dân, phục vụ quần chúng công nông binh rộng lớn, đem lại đời sống văn hóa tinh thần phong phú cho nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "CULT_012",
+    "category": "CULTURE",
+    "type": "GUESS_THE_IDEA",
+    "difficulty": "MEDIUM",
+    "question": "Giải mã luận điểm văn hóa kinh điển của Hồ Chí Minh:",
+    "clues": [
+      "Clue 1: Luận điểm này được Bác nhấn mạnh ngay sau khi Cách mạng Tháng Tám thành công.",
+      "Clue 2: Luận điểm nêu rõ chức năng dẫn dắt tinh thần của văn hóa đối với toàn thể đồng bào cả nước.",
+      "Clue 3: Gồm 8 chữ: 'Văn hóa ... cho ... đi'."
+    ],
+    "options": [
+      "Văn hóa là chìa khóa mở mang trí tuệ",
+      "Văn hóa soi đường cho quốc dân đi",
+      "Văn hóa phục vụ cho mọi tầng lớp",
+      "Văn hóa phát triển cùng kinh tế mới"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Chính là câu nói bất hủ: 'Văn hóa soi đường cho quốc dân đi'.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 122"
+  },
+  {
+    "id": "CULT_013",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Theo Hồ Chí Minh, mối quan hệ giữa văn hóa với chính trị được biểu hiện như thế nào?",
+    "options": [
+      "Văn hóa đứng trên chính trị và điều hành chính trị",
+      "Giải phóng chính trị mở đường cho văn hóa phát triển; văn hóa giải phóng lãnh đạo quốc dân thực hiện chính trị",
+      "Chính trị và văn hóa độc lập tuyệt đối không tác động qua lại",
+      "Văn hóa chỉ là công cụ hình thức của tuyên truyền hành chính"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Hồ Chí Minh chỉ rõ: chế độ chính trị giải phóng thì văn hóa mới được giải phóng. Ngược lại, văn hóa phải tham gia vào nhiệm vụ chính trị, thức tỉnh quần chúng để củng cố độc lập dân tộc và xây dựng chủ nghĩa xã hội.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 120"
+  },
+  {
+    "id": "CULT_014",
+    "category": "CULTURE",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh cho rằng bảo tồn văn hóa truyền thống đồng nghĩa với việc giữ nguyên mọi tập tục cổ hủ không được thay đổi.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Sai. Hồ Chí Minh chủ trương kế thừa tinh hoa văn hóa truyền thống tốt đẹp, đồng thời kiên quyết bài trừ mê tín dị đoan, hủ tục lạc hậu.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "CULT_015",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Khi bàn về ngôn ngữ và chữ viết dân tộc, Hồ Chí Minh đã nhắc nhở điều gì?",
+    "options": [
+      "Nên dùng càng nhiều từ ngữ ngoại lai càng thể hiện tính hiện đại",
+      "Tiếng nói của ta rất giàu và đẹp, phải giữ gìn sự trong sáng của tiếng Việt, không lạm dụng chữ ngoại",
+      "Chỉ cần viết sao cho nhanh, không cần quan tâm đến chính tả và ngữ nghĩa",
+      "Ngôn ngữ dân tộc không có khả năng diễn đạt các khái niệm khoa học hiện đại"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác luôn căn dặn phải yêu quý và giữ gìn sự trong sáng của tiếng Việt, tránh sính dùng chữ nước ngoài khi tiếng Việt đã có từ ngữ tương ứng diễn đạt rõ nghĩa.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 126"
+  },
+  {
+    "id": "CULT_016",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Văn hóa nghệ thuật trong tư tưởng Hồ Chí Minh phải miêu tả điều gì chân thực nhất?",
+    "options": [
+      "Chỉ ca ngợi những cảnh thần tiên thoát ly hiện thực",
+      "Hiện thực đời sống đấu tranh, lao động sản xuất và phẩm chất anh hùng của nhân dân",
+      "Những nỗi buồn ủy mị, bế tắc của cá nhân",
+      "Những hình ảnh hư cấu kỳ ảo không liên quan tới cuộc sống"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Người yêu cầu văn nghệ sĩ phải bám sát hiện thực đời sống, phản ánh chân thực cuộc chiến đấu anh dũng và lao động quên mình của nhân dân lao động.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 123"
+  },
+  {
+    "id": "CULT_017",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Khái niệm 'Văn hóa tạo sức mạnh cộng đồng' trong tư tưởng Hồ Chí Minh thể hiện rõ nhất ở điểm nào?",
+    "options": [
+      "Văn hóa tập hợp, kết nối triệu con tim cùng chung lý tưởng độc lập dân tộc và tình yêu tổ quốc",
+      "Văn hóa chỉ có tác dụng tạo ra các lễ hội vui chơi đông người",
+      "Văn hóa phân chia cộng đồng thành các đẳng cấp khác nhau",
+      "Văn hóa bắt buộc mọi cá nhân phải có sở thích giống hệt nhau"
+    ],
+    "correctAnswer": 0,
+    "points": 300,
+    "explanation": "Văn hóa bồi đắp lòng yêu nước, tinh thần đoàn kết, ý thức cộng đồng, tạo nên khối đại đoàn kết toàn dân tộc vững chắc, chuyển hóa thành sức mạnh vật chất to lớn trong kháng chiến và kiến quốc.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 122"
+  },
+  {
+    "id": "CULT_018",
+    "category": "CULTURE",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Theo Bác, tính chất 'Khoa học' của nền văn hóa mới đòi hỏi văn hóa phải chống lại những gì phản khoa học, mê tín, dị đoan.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Đúng. Tính khoa học đòi hỏi nền văn hóa phải dựa trên thế giới quan duy vật biện chứng, tôn trọng quy luật khách quan, bài trừ mê tín dị đoan và tư tưởng lạc hậu.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "CULT_019",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Tính chất 'Đại chúng' của nền văn hóa theo Hồ Chí Minh được hiểu là gì?",
+    "options": [
+      "Nền văn hóa phục vụ quảng đại quần chúng nhân dân và do chính nhân dân tham gia xây dựng",
+      "Văn hóa chỉ phổ biến ở các thành phố lớn",
+      "Văn hóa chỉ gồm những hình thức diễn xướng dân gian truyền thống",
+      "Văn hóa hạ thấp trình độ chuyên môn để ai cũng làm được ngay"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Tính đại chúng biểu hiện ở chỗ văn hóa xuất phát từ nhân dân, phục vụ đại đa số nhân dân lao động, vì nhân dân và do nhân dân sáng tạo, hưởng thụ.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "CULT_020",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Để văn hóa thực sự là động lực phát triển, Hồ Chí Minh yêu cầu người làm văn hóa phải rèn luyện phẩm chất gì?",
+    "options": [
+      "Tìm cách làm hài lòng số ít giới phê bình hàn lâm",
+      "Hòa mình vào đời sống công - nông - binh, sâu sát thực tiễn kháng chiến và sản xuất",
+      "Tập trung sưu tầm đồ cổ quý hiếm",
+      "Sống tách biệt với xã hội để tìm nguồn cảm hứng nghệ thuật"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Bác luôn khuyên các chiến sĩ văn hóa: 'Muốn tiến bộ, muốn viết hay thì phải đi vào thực tế, sâu sát quần chúng công nông binh để cảm nhận hơi thở thời đại.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 123"
+  },
+  {
+    "id": "CULT_021",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Theo Hồ Chí Minh, luận điểm 'Văn hóa định hướng nhận thức' có ý nghĩa sâu xa nhất là gì?",
+    "options": [
+      "Văn hóa áp đặt suy nghĩ của người khác bằng mệnh lệnh hành chính",
+      "Văn hóa giúp con người nhận thức đúng đắn về lẽ sống, phân biệt Chân - Thiện - Mỹ với cái xấu, cái ác, từ đó hành động có lý tưởng",
+      "Văn hóa chỉ định hướng thói quen mua sắm tiêu dùng",
+      "Văn hóa giới hạn tự do tư tưởng của công dân"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "Văn hóa định hướng nhận thức là ngọn đèn soi rọi lý tưởng, giúp mỗi người tự ý thức về trách nhiệm công dân, phân biệt lẽ phải - trái, hướng tới những giá trị chân chính của đời sống.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 122"
+  },
+  {
+    "id": "CULT_022",
+    "category": "CULTURE",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Hồ Chí Minh chỉ ra nguyên tắc căn bản khi tiếp biến văn hóa thế giới: 'Tây phương hay Đông phương có cái gì tốt, ta học lấy để tạo ra một nền văn hóa...'",
+    "options": [
+      "...rập khuôn hoàn toàn theo nước ngoài",
+      "...Việt Nam, mang bản sắc riêng, phục vụ cho độc lập tự do của dân tộc",
+      "...chỉ dành riêng cho giới thượng lưu",
+      "...không liên quan gì đến cội nguồn tổ tiên"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "Hồ Chí Minh chủ trương: 'Học lấy cái tốt của cả Đông lẫn Tây để tạo ra một nền văn hóa Việt Nam', kết hợp nhuần nhuyễn giữa tinh hoa quốc tế và cội rễ dân tộc.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  }
+]

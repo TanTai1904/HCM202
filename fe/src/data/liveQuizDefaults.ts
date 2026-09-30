@@ -1,0 +1,97 @@
+import type { LiveQuizTeam, TeamId, RoundInfo, RoundId } from '@/types/liveQuiz';
+
+export const DEFAULT_TEAMS: Record<TeamId, LiveQuizTeam> = {
+  RED: {
+    id: 'RED',
+    name: 'ĐỘI ĐỎ',
+    label: 'ĐỘI ĐỎ',
+    color: '#9E1B32',
+    bgColor: '#FFF5F6',
+    badgeBg: '#FCE7EB',
+    borderColor: '#9E1B32',
+    icon: '🔴',
+    score: 0,
+    playerCount: 0,
+  },
+  BLUE: {
+    id: 'BLUE',
+    name: 'ĐỘI XANH',
+    label: 'ĐỘI XANH',
+    color: '#1D4ED8',
+    bgColor: '#EFF6FF',
+    badgeBg: '#DBEAFE',
+    borderColor: '#1D4ED8',
+    icon: '🔵',
+    score: 0,
+    playerCount: 0,
+  },
+  YELLOW: {
+    id: 'YELLOW',
+    name: 'ĐỘI VÀNG',
+    label: 'ĐỘI VÀNG',
+    color: '#D9A441',
+    bgColor: '#FEFCE8',
+    badgeBg: '#FEF9C3',
+    borderColor: '#D9A441',
+    icon: '🟡',
+    score: 0,
+    playerCount: 0,
+  },
+  GREEN: {
+    id: 'GREEN',
+    name: 'ĐỘI CAM',
+    label: 'ĐỘI CAM',
+    color: '#EA580C',
+    bgColor: '#FFF7ED',
+    badgeBg: '#FFEDD5',
+    borderColor: '#EA580C',
+    icon: '🟠',
+    score: 0,
+    playerCount: 0,
+  },
+};
+
+export const ROUND_DEFINITIONS: Record<RoundId, RoundInfo> = {
+  ROUND_1_QUIZ: {
+    number: 1,
+    id: 'ROUND_1_QUIZ',
+    title: 'TRẮC NGHIỆM TỐC ĐỘ',
+    subtitle: 'Khởi động & Phản xạ nhanh',
+    description: 'Bấm nhanh đáp án chính xác nhất để ghi điểm cho đội của bạn!',
+    badge: 'VÒNG 1',
+  },
+  ROUND_2_TRUTH: {
+    number: 2,
+    id: 'ROUND_2_TRUTH',
+    title: 'ĐÚNG HAY SAI?',
+    subtitle: 'Thẩm định luận điểm',
+    description: 'Phân tích các luận điểm kinh điển và phán đoán tính chính xác.',
+    badge: 'VÒNG 2',
+  },
+  ROUND_3_DECODE: {
+    number: 3,
+    id: 'ROUND_3_DECODE',
+    title: 'GIẢI MÃ Ý NIỆM',
+    subtitle: 'Tư duy & Đúc kết',
+    description: 'Liên kết các dữ kiện để tìm ra khái niệm hoặc luận điểm cốt lõi.',
+    badge: 'VÒNG 3',
+  },
+  ROUND_4_SCENARIO: {
+    number: 4,
+    id: 'ROUND_4_SCENARIO',
+    title: 'TÌNH HUỐNG THỰC TẾ',
+    subtitle: 'Vận dụng đời sống',
+    description: 'Vận dụng tư tưởng Hồ Chí Minh vào đời sống và học tập của sinh viên.',
+    badge: 'VÒNG 4',
+  },
+  FINAL_BATTLE: {
+    number: 5,
+    id: 'FINAL_BATTLE',
+    title: 'THỬ THÁCH CHUNG KẾT',
+    subtitle: 'Đấu trí quyết định thứ hạng',
+    description: 'Câu hỏi điểm số cao quyết định ngôi vị vô địch chung cuộc!',
+    badge: 'CHUNG KẾT',
+  },
+};
+
+export const AVATAR_OPTIONS = ['👨‍🎓', '👩‍🎓', '🧑‍💻', '⚡', '🌟', '🎯', '🔥', '💡', '🎓', '🚀'];

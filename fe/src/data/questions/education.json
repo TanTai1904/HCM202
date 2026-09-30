@@ -1,0 +1,305 @@
+[
+  {
+    "id": "EDU_001",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh đã chỉ rõ mục đích cốt lõi của việc học là:",
+    "options": [
+      "Học để lấy bằng cấp cao để khoe mẽ",
+      "Học để làm việc, làm người, làm cán bộ",
+      "Học để kiếm được nhiều tiền bằng mọi giá",
+      "Học để thăng quan tiến chức dễ dàng"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Bác ghi trong sổ vàng Trường Nguyễn Ái Quốc (1949): 'Học để làm việc, làm người, làm cán bộ. Học để phụng sự Đoàn thể, phụng sự giai cấp và nhân dân, phụng sự Tổ quốc và nhân loại.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "EDU_002",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Ngay sau ngày Tuyên ngôn Độc lập (1945), Bác đã chỉ ra ba thứ giặc cần phải đánh gục, trong đó có giặc nào về giáo dục?",
+    "options": [
+      "Giặc nội xâm",
+      "Giặc dốt",
+      "Giặc lười",
+      "Giặc kiêu"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Trong phiên họp đầu tiên của Chính phủ lâm thời (3/9/1945), Người xếp 'Giặc dốt' là một trong ba thứ giặc khẩn cấp (Giặc đói, Giặc dốt, Giặc ngoại xâm).",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "EDU_003",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Phong trào xóa mù chữ quy mô toàn quốc được Bác phát động năm 1945 có tên gọi là gì?",
+    "options": [
+      "Phong trào Ánh sáng văn hóa",
+      "Phong trào Bình dân học vụ",
+      "Phong trào Thi đua ái quốc",
+      "Phong trào Ba sẵn sàng"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Phong trào 'Bình dân học vụ' với khẩu hiệu 'Người biết chữ dạy người chưa biết chữ' đã giúp hàng triệu người dân Việt Nam thoát nạn mù chữ thần kỳ.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "EDU_004",
+    "category": "EDUCATION",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh khẳng định: Một dân tộc dốt là một dân tộc yếu.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Người nhấn mạnh dốt nát khiến nhân dân không hiểu được quyền lợi và nghĩa vụ của mình, dễ bị kẻ địch lừa gạt, làm đất nước suy yếu.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "EDU_005",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Nguyên lý giáo dục căn bản nào luôn được Hồ Chí Minh nhắc nhở thầy trò?",
+    "options": [
+      "Học thuộc lòng sách giáo khoa là đủ",
+      "Học đi đôi với hành, lý luận gắn liền với thực tiễn",
+      "Học lý thuyết thật cao siêu, không cần làm việc thực tế",
+      "Học chỉ để đi thi cử lấy điểm số"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Hồ Chí Minh chỉ rõ: 'Học mà không hành thì vô ích. Hành mà không học thì không minh.' Giáo dục phải gắn chặt với thực tiễn lao động và chiến đấu.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_006",
+    "category": "EDUCATION",
+    "type": "GUESS_THE_IDEA",
+    "difficulty": "HARD",
+    "question": "Giải mã phương châm tự học của Bác qua 3 manh mối:",
+    "clues": [
+      "Clue 1: Bác áp dụng phương châm này từ khi bôn ba nước ngoài cho đến tận những năm tháng cuối đời.",
+      "Clue 2: Phương châm đề cao tính kiên trì, không bao giờ tự mãn với vốn hiểu biết sẵn có.",
+      "Clue 3: Lời dạy: 'Còn sống thì còn phải ...'"
+    ],
+    "options": [
+      "Làm việc không ngừng",
+      "Học suốt đời (Học, học nữa, học mãi)",
+      "Tiết kiệm chi tiêu",
+      "Rèn luyện thể thao"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Đó là tinh thần 'Học suốt đời'. Bác từng nói: 'Đường đời là một cái thang không có nấc chót; việc học là một quyển sách không có trang cuối cùng. Còn sống là còn phải học.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_007",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Nội dung giáo dục toàn diện theo tư tưởng Hồ Chí Minh bao gồm những mặt nào?",
+    "options": [
+      "Chỉ tập trung học ngoại ngữ",
+      "Đức, Trí, Thể, Mỹ (Giáo dục đạo đức, tri thức, thể chất và thẩm mỹ)",
+      "Chỉ học các môn khoa học tự nhiên",
+      "Chỉ tập trung rèn luyện võ thuật"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Giáo dục toàn diện theo Bác phải phát triển hài hòa cả thể lực, trí lực, phẩm chất đạo đức và năng lực cảm thụ cái đẹp Chân - Thiện - Mỹ.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_008",
+    "category": "EDUCATION",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Theo Hồ Chí Minh, thầy giáo và cô giáo giữ vai trò quyết định đối với chất lượng giáo dục trong nhà trường.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Bác căn dặn: 'Không có thầy giáo thì không có giáo dục... Thầy giáo, cô giáo là những người chiến sĩ vẻ vang trên mặt trận văn hóa giáo dục.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_009",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Phương pháp giáo dục mà Hồ Chí Minh phê phán gay gắt nhất là gì?",
+    "options": [
+      "Dạy học nêu vấn đề gợi mở",
+      "Nhồi sọ, học vẹt, dạy lý thuyết suông tách rời đời sống",
+      "Cho học sinh thực hành ngoài công trường",
+      "Khuyến khích học sinh thảo luận tranh luận khoa học"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Bác kịch liệt phản đối lối dạy 'nhồi sọ', bắt học thuộc lòng như vẹt mà không hiểu bản chất, không biết vận dụng vào thực tế giải quyết vấn đề.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_010",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Bác căn dặn học sinh, sinh viên khi tiếp nhận kiến thức từ sách vở phải có thái độ như thế nào?",
+    "options": [
+      "Tin tưởng tuyệt đối 100% không bao giờ suy ngẫm",
+      "Phải độc lập suy nghĩ, không học vẹt, phải biết đào sâu suy nghĩ và liên hệ với thực tiễn",
+      "Chỉ học những gì thi, không cần đọc thêm sách",
+      "Chỉ tin vào ý kiến cá nhân trên mạng xã hội"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác luôn khuyên học sinh phải có tinh thần tự chủ, độc lập suy nghĩ, biết đào sâu nghiên cứu chứ không thụ động ghi chép.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_011",
+    "category": "EDUCATION",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Hồ Chí Minh cho rằng người có bằng cấp cao đương nhiên là người có đạo đức và văn hóa tốt.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Sai. Bác phân biệt rất rõ giữa bằng cấp học vấn với đạo đức nhân cách. Bằng cấp cao mà ích kỷ, tham nhũng, coi thường nhân dân thì càng gây hại cho xã hội.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 127"
+  },
+  {
+    "id": "EDU_012",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Trong bức thư gửi các em học sinh nhân ngày khai trường đầu tiên của nước Việt Nam Dân chủ Cộng hòa (9/1945), Bác đã gửi gắm niềm tin vào thế hệ trẻ bằng câu nói nào?",
+    "options": [
+      "Non sông Việt Nam có trở nên tươi đẹp hay không, dân tộc Việt Nam có bước tới đài vinh quang để sánh vai với các cường quốc năm châu được hay không, chính là nhờ một phần lớn ở công học tập của các em",
+      "Thanh niên phải lo làm giàu cho bản thân trước tiên",
+      "Học tập là việc nhẹ nhàng nhất trong các nghề",
+      "Chỉ cần bảo vệ biên giới, học hành tính sau"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đó là bức thư lịch sử gửi học sinh cả nước tháng 9/1945, thể hiện niềm kỳ vọng lớn lao vào sứ mệnh học tập của thế hệ mầm non tương lai.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "EDU_013",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Mối quan hệ giữa giáo dục trong nhà trường với giáo dục gia đình và xã hội theo quan điểm Hồ Chí Minh là gì?",
+    "options": [
+      "Nhà trường chịu trách nhiệm 100%, gia đình không cần quan tâm",
+      "Sự phối hợp chặt chẽ, thống nhất giữa Gia đình - Nhà trường - Xã hội để tạo môi trường giáo dục đồng bộ",
+      "Xã hội chỉ có trách nhiệm tài trợ kinh phí",
+      "Mỗi bên hoạt động độc lập và phủ nhận phương pháp của nhau"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Bác dạy: 'Giáo dục trong nhà trường chỉ là một phần, còn cần có sự giáo dục ngoài xã hội và trong gia đình để giúp cho việc giáo dục trong nhà trường được tốt hơn.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 140"
+  },
+  {
+    "id": "EDU_014",
+    "category": "EDUCATION",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh tự học ngoại ngữ bằng cách mỗi ngày học và ghi nhớ một số từ vựng, viết lên cánh tay và thực hành ngay trong giao tiếp hàng ngày.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Đó là tấm gương tự học phi thường của Bác: kiên trì, biến mỗi hoàn cảnh lao động khó khăn trên tàu buôn thành lớp học thực tiễn.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_015",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Đối với phong trào thi đua trong ngành giáo dục, Bác đã căn dặn khẩu hiệu cốt lõi nào?",
+    "options": [
+      "Dạy thật nhanh, học thật gấp",
+      "Dù khó khăn đến đâu cũng phải tiếp tục thi đua Dạy tốt và Học tốt",
+      "Chỉ thi đua lấy thành tích hình thức",
+      "Dành mọi thời gian làm kinh tế phụ"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Trong bức thư cuối cùng gửi ngành giáo dục (15/10/1968), Bác căn dặn: 'Dù khó khăn đến đâu cũng phải tiếp tục thi đua dạy tốt và học tốt.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 125"
+  },
+  {
+    "id": "EDU_016",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Khái niệm 'Học để làm người' trong tư tưởng Hồ Chí Minh đặt nền móng cốt lõi vào điều gì?",
+    "options": [
+      "Học cách luồn lách để mưu lợi cho bản thân",
+      "Học đạo đức, nhân cách, biết yêu thương đồng bào, có trách nhiệm với cộng đồng và giữ lòng trung thực, liêm khiết",
+      "Học cách phô trương bằng cấp danh vị",
+      "Chỉ học các kỹ năng ứng xử xã giao bề ngoài"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "'Làm người' theo Bác là cái gốc đầu tiên trước khi 'làm cán bộ'. Làm người là sống nhân nghĩa, có lý tưởng, có đạo đức, phụng sự nhân dân và Tổ quốc.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "EDU_017",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Tại sao Hồ Chí Minh coi giáo dục là động lực phát triển then chốt của quốc gia?",
+    "options": [
+      "Vì giáo dục trực tiếp nâng cao dân trí, đào tạo nhân lực, bồi dưỡng nhân tài - nguồn lực nội sinh vô tận của đất nước",
+      "Vì giáo dục giúp in ấn được nhiều tài liệu quảng bá",
+      "Vì trường học là nơi tập trung đông dân cư nhất",
+      "Vì giáo dục chỉ là tiêu chí để vay vốn quốc tế"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Giáo dục giải phóng tiềm năng trí tuệ con người, biến một dân tộc nghèo nàn lạc hậu thành một dân tộc có tri thức, làm chủ khoa học công nghệ để bảo vệ và dựng xây đất nước.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "EDU_018",
+    "category": "EDUCATION",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Thông điệp 'Học để phụng sự' của Hồ Chí Minh mang ý nghĩa xã hội gì sâu sắc đối với sinh viên thời đại số?",
+    "options": [
+      "Tri thức học được không phải để trục lợi ích kỷ mà phải chuyển hóa thành giá trị phụng sự cộng đồng và phát triển quốc gia",
+      "Chỉ học những gì phục vụ nhu cầu giải trí cá nhân",
+      "Học chỉ để đi làm thuê kiếm tiền lương cao mà không cần quan tâm đến đạo đức nghề nghiệp",
+      "Học xong thì quên hết trách nhiệm với quê hương"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Mục đích chân chính của học vấn là phụng sự: đem tài năng, công nghệ và trí tuệ giải quyết những bài toán của đất nước, nâng cao đời sống nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  }
+]

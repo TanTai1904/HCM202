@@ -1,0 +1,420 @@
+import React, { useState, useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
+import type { BuzzerTeam } from '@/types/buzzer';
+import { audio } from '@/utils/audio';
+import { 
+  Users, 
+  Copy, 
+  Check, 
+  ExternalLink, 
+  Play, 
+  Sliders, 
+  Smartphone, 
+  Flame, 
+  Gift, 
+  RefreshCw,
+  ArrowRight,
+  Shield,
+  Sparkles
+} from 'lucide-react';
+import { motion } from 'motion/react';
+
+interface BuzzerLobbyProps {
+  roomId: string;
+  onRegenerateRoom?: () => void;
+  teams: BuzzerTeam[];
+  teamCount: number;
+  onUpdateTeamCount: (count: number) => void;
+  onUpdateTeamName: (index: number, name: string) => void;
+  selectedCategory: string;
+  onSelectCategory: (cat: string) => void;
+  questionCount: number;
+  onSelectQuestionCount: (count: number) => void;
+  enableMultipliers: boolean;
+  onToggleMultipliers: () => void;
+  enableMysteryGifts: boolean;
+  onToggleMysteryGifts: () => void;
+  onStartGame: () => void;
+}
+
+const CATEGORY_OPTIONS = [
+  { id: 'ALL', name: '🎯 Toàn bộ 146 câu hỏi (Tổng hợp toàn diện)' },
+  { id: 'HUMAN', name: '🌱 Chương 1: Tư tưởng Hồ Chí Minh về Con người' },
+  { id: 'CULTURE', name: '🏛️ Chương 2: Tư tưởng Hồ Chí Minh về Văn hóa' },
+  { id: 'ETHICS', name: '❤️ Chương 3: Tư tưởng về Đạo đức Cách mạng' },
+  { id: 'EDUCATION', name: '📚 Chương 4: Tư tưởng về Giáo dục & Đào tạo' },
+  { id: 'PRACTICE', name: '🇻🇳 Chương 5: Thực tiễn Cách mạng & Vận dụng' },
+  { id: 'REAL_LIFE', name: '💡 Tình huống thực tiễn & Đời sống sinh viên' },
+  { id: 'FINAL', name: '👑 Vòng Chung Kết: Tổng hợp kiến thức & Vận dụng' },
+];
+
+export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
+  roomId,
+  onRegenerateRoom,
+  teams,
+  teamCount,
+  onUpdateTeamCount,
+  onUpdateTeamName,
+  selectedCategory,
+  onSelectCategory,
+  questionCount,
+  onSelectQuestionCount,
+  enableMultipliers,
+  onToggleMultipliers,
+  enableMysteryGifts,
+  onToggleMysteryGifts,
+  onStartGame,
+}) => {
+  const [copied, setCopied] = useState(false);
+  const [copiedPin, setCopiedPin] = useState(false);
+  const [hostUrl, setHostUrl] = useState('');
+  const [editingUrl, setEditingUrl] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const origin = window.location.origin;
+      setHostUrl(`${origin}/join?room=${roomId}`);
+    }
+  }, [roomId]);
+
+  const handleCopyLink = () => {
+    audio.playClick();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(hostUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleCopyPin = () => {
+    audio.playClick();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(roomId);
+      setCopiedPin(true);
+      setTimeout(() => setCopiedPin(false), 2000);
+    }
+  };
+
+  const handleOpenSimulator = () => {
+    audio.playClick();
+    window.open(`/join?room=${roomId}`, '_blank');
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 select-none relative z-10 font-sans">
+      {/* Top Header */}
+      <div className="text-center mb-6 sm:mb-8 relative">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-rose-300 text-xs font-semibold tracking-wider uppercase mb-3 shadow-sm"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+          <span>HỆ THỐNG ĐẤU CHUÔNG TRỰC TIẾP • HCM202</span>
+        </motion.div>
+
+        <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+          HCM202 • <span className="crimson-gradient-text">ĐẤU CHUÔNG TRANH TÀI</span>
+        </h1>
+        <p className="text-slate-400 text-xs sm:text-sm mt-2 max-w-xl mx-auto leading-relaxed">
+          Nền tảng thi đấu củng cố kiến thức môn Tư tưởng Hồ Chí Minh.
+          Quét mã QR trên điện thoại để tham gia giật chuông trực tiếp cùng lớp học.
+        </p>
+      </div>
+
+      {/* 2-Column Balanced Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start relative z-10">
+        {/* Left Column: QR Code & Connection (5 cols) */}
+        <div className="lg:col-span-5 studio-card">
+          <div className="studio-card-inner p-5 sm:p-6 flex flex-col items-center text-center relative overflow-hidden">
+            {/* Room Code Badge */}
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                MÃ PHÒNG:
+              </span>
+              <button
+                onClick={handleCopyPin}
+                title="Bấm để sao chép mã PIN"
+                className="px-4 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] border border-white/20 text-white font-mono font-black text-xl tracking-widest cursor-pointer flex items-center gap-2 transition-all active:scale-95 shadow-sm"
+              >
+                <span className="text-amber-300">{roomId}</span>
+                {copiedPin ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+              </button>
+
+              {onRegenerateRoom && (
+                <button
+                  onClick={onRegenerateRoom}
+                  title="Tạo mã phòng mới"
+                  className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-slate-300 hover:text-white cursor-pointer transition-colors active:scale-95"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* QR Code Container */}
+            <div className="relative p-3.5 rounded-2xl bg-white/[0.04] border border-white/[0.12] shadow-2xl my-1 group hover:scale-[1.01] transition-transform">
+              <div className="p-2.5 bg-white rounded-xl shadow-inner">
+                <QRCodeSVG
+                  value={hostUrl}
+                  size={190}
+                  level="H"
+                  includeMargin={false}
+                />
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 font-medium mt-3 flex items-center gap-1.5">
+              <Smartphone className="w-3.5 h-3.5 text-rose-400" />
+              Mở Camera điện thoại quét mã QR để tham gia
+            </p>
+
+            {/* Direct Join Link Bar */}
+            <div className="w-full mt-3.5">
+              <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1 px-1">
+                <span>Đường dẫn truy cập:</span>
+                <button
+                  onClick={() => setEditingUrl(!editingUrl)}
+                  className="text-rose-400 hover:text-rose-300 cursor-pointer font-medium underline text-[10px]"
+                >
+                  {editingUrl ? 'Hoàn tất' : 'Đổi IP / URL'}
+                </button>
+              </div>
+
+              {editingUrl && (
+                <input
+                  type="text"
+                  value={hostUrl}
+                  onChange={(e) => setHostUrl(e.target.value)}
+                  className="w-full px-3 py-1.5 text-xs bg-black/40 rounded-xl border border-rose-500/50 text-slate-200 font-mono focus:outline-none focus:border-rose-400 mb-2 shadow-inner"
+                  placeholder="http://192.168.1.x:5173/join?room=..."
+                />
+              )}
+
+              <div className="flex items-center gap-2 p-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs">
+                <span className="font-mono text-slate-300 truncate flex-1 text-left px-2 text-[11px]">
+                  {hostUrl}
+                </span>
+                <button
+                  onClick={handleCopyLink}
+                  className="px-3 py-1 rounded-lg bg-white/[0.1] hover:bg-white/[0.15] text-white font-bold text-xs flex items-center gap-1 transition-all cursor-pointer shrink-0"
+                >
+                  {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  <span>{copied ? 'Đã chép' : 'Sao chép'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Laptop Simulator Link */}
+            <button
+              onClick={handleOpenSimulator}
+              className="mt-2.5 w-full py-2 px-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 hover:text-white border border-white/[0.06] text-xs font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+              <span>Mở tab nút bấm chuông trên máy tính</span>
+            </button>
+
+            {/* HERO START BATTLE BUTTON */}
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                try {
+                  audio.playTada();
+                } catch (e) {
+                  console.warn('Audio play error:', e);
+                }
+                onStartGame();
+              }}
+              className="w-full mt-4 py-3.5 px-6 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-extrabold text-base tracking-wide uppercase shadow-[0_0_25px_rgba(225,29,72,0.4)] flex items-center justify-center gap-3 cursor-pointer transition-all border border-white/20 group"
+            >
+              <span>KHỞI TRANH TRẬN ĐẤU</span>
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                <ArrowRight className="w-4 h-4 text-white" />
+              </div>
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Right Column: Battle Settings & Teams Setup (7 cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          {/* Box 1: Configuration Options */}
+          <div className="studio-card">
+            <div className="studio-card-inner p-4 sm:p-5">
+              <div className="flex items-center gap-2 mb-3 text-slate-200">
+                <Sliders className="w-4 h-4 text-rose-400" />
+                <h2 className="text-sm sm:text-base font-bold text-white">
+                  THIẾT LẬP CHỦ ĐỀ & TRẬN ĐẤU
+                </h2>
+              </div>
+
+              <div className="space-y-3">
+                {/* Category Selection */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase tracking-wide">
+                    Chủ đề củng cố kiến thức:
+                  </label>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => {
+                      audio.playClick();
+                      onSelectCategory(e.target.value);
+                    }}
+                    className="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/[0.1] text-slate-100 text-xs sm:text-sm font-medium focus:outline-none focus:border-rose-500 cursor-pointer"
+                  >
+                    {CATEGORY_OPTIONS.map((cat) => (
+                      <option key={cat.id} value={cat.id} className="bg-[#0E111B] text-slate-200 py-1.5">
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Question Count & Special Mechanics Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {/* Number of Questions */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase tracking-wide">
+                      Số lượng câu hỏi:
+                    </label>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {[5, 10, 15, 20, 25].map((cnt) => (
+                        <button
+                          key={cnt}
+                          onClick={() => {
+                            audio.playClick();
+                            onSelectQuestionCount(cnt);
+                          }}
+                          className={`py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                            questionCount === cnt
+                              ? 'bg-rose-600 text-white border-rose-400 shadow-[0_0_12px_rgba(225,29,72,0.4)]'
+                              : 'bg-white/[0.03] text-slate-400 border-white/[0.08] hover:text-white hover:border-white/20'
+                          }`}
+                        >
+                          {cnt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mechanics Toggles */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase tracking-wide">
+                      Cơ chế thi đấu:
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          audio.playClick();
+                          onToggleMultipliers();
+                        }}
+                        className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          enableMultipliers
+                            ? 'bg-amber-500/15 text-amber-300 border-amber-500/40 shadow-sm'
+                            : 'bg-white/[0.02] text-slate-500 border-white/[0.06]'
+                        }`}
+                        title="Ngẫu nhiên nhân đôi (x2) hoặc nhân ba (x3) điểm"
+                      >
+                        <Flame className={`w-3.5 h-3.5 ${enableMultipliers ? 'text-amber-400' : 'text-slate-600'}`} />
+                        <span>Điểm x2/x3</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          audio.playClick();
+                          onToggleMysteryGifts();
+                        }}
+                        className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          enableMysteryGifts
+                            ? 'bg-rose-500/15 text-rose-300 border-rose-500/40 shadow-sm'
+                            : 'bg-white/[0.02] text-slate-500 border-white/[0.06]'
+                        }`}
+                        title="Hộp quà may mắn & Điểm thưởng sau câu hỏi đặc biệt"
+                      >
+                        <Gift className={`w-3.5 h-3.5 ${enableMysteryGifts ? 'text-rose-400' : 'text-slate-600'}`} />
+                        <span>Quà May Mắn</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Box 2: Teams Configuration (2 to 8 teams) */}
+          <div className="studio-card">
+            <div className="studio-card-inner p-4 sm:p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2 text-slate-200">
+                  <Users className="w-4 h-4 text-rose-400" />
+                  <h2 className="text-sm sm:text-base font-bold text-white">
+                    DANH SÁCH ĐỘI TRANH TÀI ({teamCount} ĐỘI)
+                  </h2>
+                </div>
+
+                {/* Team Count Selector Buttons */}
+                <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/[0.08]">
+                  {[2, 3, 4, 5, 6, 8].map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => {
+                        audio.playClick();
+                        onUpdateTeamCount(num);
+                      }}
+                      className={`w-7 h-7 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        teamCount === num
+                          ? 'bg-rose-600 text-white font-bold shadow-sm'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Teams Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-60 overflow-y-auto pr-1">
+                {teams.slice(0, teamCount).map((team, idx) => (
+                  <div
+                    key={team.id}
+                    className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center gap-2.5 transition-all hover:border-white/20 hover:bg-white/[0.05]"
+                  >
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-bold text-white shrink-0 shadow-sm"
+                      style={{ backgroundColor: team.color }}
+                    >
+                      {team.icon}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <input
+                        type="text"
+                        value={team.name}
+                        onChange={(e) => onUpdateTeamName(idx, e.target.value)}
+                        className="w-full bg-transparent text-xs font-bold text-slate-200 focus:outline-none focus:border-b border-rose-400 pb-0.5"
+                        placeholder="Tên đội..."
+                      />
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] text-amber-400 font-mono font-medium">
+                          {team.score} điểm
+                        </span>
+                        {team.connectedDevices > 0 && (
+                          <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
+                            {team.connectedDevices} thiết bị
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BuzzerLobby;

@@ -1,0 +1,371 @@
+[
+  {
+    "id": "PRAC_001",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Theo Hồ Chí Minh, thước đo cao nhất để kiểm nghiệm chân lý và hiệu quả của mọi đường lối, chính sách là gì?",
+    "options": [
+      "Những bài diễn văn hùng hồn trên giấy",
+      "Thực tiễn đời sống và sự ấm no, hài lòng của nhân dân",
+      "Số lượng con dấu phê duyệt hành chính",
+      "Ý kiến chủ quan của cán bộ cấp cao"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Hồ Chí Minh chỉ rõ: Thực tiễn là thước đo chân lý. Một chính sách hay lý luận dù viết hay đến đâu mà không mang lại kết quả thực tế cho dân thì cũng chỉ là sáo rỗng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 143"
+  },
+  {
+    "id": "PRAC_002",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Căn bệnh nào bị Bác Hồ phê bình nghiêm khắc nhất khi cán bộ chỉ nói lý thuyết hay mà không biết làm việc thực tế?",
+    "options": [
+      "Bệnh lý luận suông, xa rời thực tế",
+      "Bệnh tự ti mặc cảm",
+      "Bệnh quá khiêm tốn",
+      "Bệnh làm việc quá nhiều"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Trong tác phẩm Sửa đổi lối làm việc, Bác chỉ rõ 'bệnh lý luận suông' - học thuộc vẹt từng câu của Mác - Lênin nhưng khi gặp công việc cụ thể thì lúng túng, không biết giải quyết.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 143"
+  },
+  {
+    "id": "PRAC_003",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Hồ Chí Minh dạy phương châm kết hợp giữa lý luận và thực tiễn như thế nào?",
+    "options": [
+      "Lý luận đi một đường, thực tế làm một nẻo",
+      "Lý luận phải đem ra áp dụng vào thực tế; lý luận mà không liên hệ với thực tế là lý luận suông; thực tiễn mà không có lý luận hướng dẫn là thực tiễn mù quáng",
+      "Chỉ cần thực tiễn làm mò mẫm, không cần lý luận",
+      "Chỉ cần đọc sách lý luận, không cần đi thực tế cơ sở"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Hồ Chí Minh nhấn mạnh sự thống nhất biện chứng giữa lý luận và thực tiễn. Lý luận chỉ dẫn cho hành động, thực tiễn kiểm nghiệm và làm phong phú thêm lý luận.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 143"
+  },
+  {
+    "id": "PRAC_004",
+    "category": "PRACTICE",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh yêu cầu người cán bộ khi xuống cơ sở phải 'ba cùng' với nhân dân: Cùng ăn, cùng ở, cùng làm.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Đó là phương pháp bám sát thực tiễn để thấu hiểu tâm tư, nguyện vọng chính đáng của đồng bào.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_005",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Để chủ trương, nghị quyết đi vào cuộc sống thực tế, Bác dạy khâu nào giữ vai trò then chốt?",
+    "options": [
+      "Chỉ cần tổ chức lễ phát động thật hoành tráng",
+      "Khâu tổ chức thực hiện, đôn đốc kiểm tra và tổng kết kinh nghiệm",
+      "In thật nhiều biểu ngữ treo khắp các phố",
+      "Chờ đợi các địa phương khác làm trước rồi copy"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác dạy: 'Chủ trương một, biện pháp mười, quyết tâm phải hai mươi.' Nếu không có biện pháp tổ chức và kiểm tra sâu sát thì chủ trương đúng cũng nằm trên giấy.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_006",
+    "category": "PRACTICE",
+    "type": "GUESS_THE_IDEA",
+    "difficulty": "MEDIUM",
+    "question": "Giải mã nguyên tắc thực tiễn tối cao của Hồ Chí Minh qua 3 manh mối:",
+    "clues": [
+      "Clue 1: Nguyên tắc này đòi hỏi sự trung thực tuyệt đối giữa phát ngôn và hành vi.",
+      "Clue 2: Đối lập hoàn toàn với thói 'nói một đằng làm một nẻo' hay 'hứa hão'.",
+      "Clue 3: Gồm 5 chữ: 'Nói ... đôi với ...'"
+    ],
+    "options": [
+      "Nói nhiều hơn làm",
+      "Nói đi đôi với làm",
+      "Làm theo người khác",
+      "Nói lời hay ý đẹp"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Đó là nguyên tắc 'Nói đi đôi với làm' - phẩm chất danh dự hàng đầu của người hành động cách mạng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 133"
+  },
+  {
+    "id": "PRAC_007",
+    "category": "PRACTICE",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Theo Bác, kiểm tra thực tế là việc vạch lá tìm sâu để trừng phạt cán bộ cấp dưới.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Sai. Bác dạy: Kiểm tra là để thấy rõ ưu điểm mà khen ngợi, phát huy; thấy khuyết điểm mà uốn nắn, giúp đỡ kịp thời trước khi sai lầm trở nên trầm trọng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_008",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Khi nghiên cứu kinh nghiệm cách mạng của các nước bạn, phương châm thực tiễn của Bác là gì?",
+    "options": [
+      "Rập khuôn máy móc từng câu chữ và mô hình của nước ngoài về áp dụng",
+      "Học tập kinh nghiệm quý báu của bạn nhưng phải căn cứ vào hoàn cảnh thực tế đặc thù của Việt Nam để sáng tạo",
+      "Tuyệt đối không học hỏi bất cứ điều gì từ bên ngoài",
+      "Chỉ làm theo chỉ dẫn của các chuyên gia nước ngoài"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Bác luôn phản đối giáo điều, sao chép máy móc: 'Mỗi nước có hoàn cảnh riêng, ta phải xuất phát từ thực tiễn Việt Nam để tìm ra con đường đi đúng đắn.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 143"
+  },
+  {
+    "id": "PRAC_009",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Thực hiện 'Dân biết, dân bàn, dân làm, dân kiểm tra' phản ánh quan điểm thực tiễn nào của Hồ Chí Minh?",
+    "options": [
+      "Cách mạng là sự nghiệp của quần chúng nhân dân",
+      "Dân chỉ việc đóng thuế, còn mọi việc để chính quyền lo",
+      "Cán bộ không cần giải trình với nhân dân",
+      "Chỉ cho dân biết những việc đã hoàn thành"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đưa nhân dân vào thực tiễn quản lý, giám sát là bảo đảm cao nhất cho quyền làm chủ thực tế của nhân dân theo tư tưởng Hồ Chí Minh.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương IV & VI"
+  },
+  {
+    "id": "PRAC_010",
+    "category": "PRACTICE",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Bác dạy: Việc gì có lợi cho dân, ta phải hết sức làm. Việc gì hại đến dân, ta phải hết sức tránh.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Đây là bức thư Bác gửi Ủy ban nhân dân các kỳ, tỉnh, huyện và làng vào tháng 10/1945, xác lập tiêu chuẩn thực tiễn cho mọi công vụ.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 128"
+  },
+  {
+    "id": "PRAC_011",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Hồ Chí Minh phê phán tác phong làm việc nào dẫn đến xa rời thực tế đời sống nhân dân?",
+    "options": [
+      "Tác phong sâu sát cơ sở",
+      "Tác phong quan liêu, hách dịch, ngồi bàn giấy chỉ đạo qua báo cáo",
+      "Tác phong giản dị, gần gũi",
+      "Tác phong dân chủ, lắng nghe"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bệnh quan liêu là gốc rễ của việc xa rời thực tế: cán bộ chỉ ngồi phòng lạnh chỉ tay năm ngón, không biết dân đang thiếu đói hay bức xúc điều gì.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 135"
+  },
+  {
+    "id": "PRAC_012",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Để rèn luyện phong cách công tác thực tế, Bác dạy người cán bộ phải có 'óc nghĩ, mắt trông, tai nghe, chân đi, miệng nói, tay làm'. Nội dung này nhấn mạnh điều gì?",
+    "options": [
+      "Sự vận động thể lực để biểu diễn sức khỏe",
+      "Sự dấn thân hành động toàn diện, sâu sát thực tế đời sống chứ không làm việc nửa vời",
+      "Phải làm mọi việc thay cho cấp dưới",
+      "Chỉ nói những điều người nghe thích nghe"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Trong bài báo 'Dân vận' (1949), Bác yêu cầu phong cách công tác thực tế: phải tự mình suy nghĩ, quan sát, lắng nghe và trực tiếp hành động cùng dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_013",
+    "category": "PRACTICE",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Theo Hồ Chí Minh, thực tiễn luôn biến đổi không ngừng, do đó chủ trương chính sách cũng phải linh hoạt điều chỉnh cho phù hợp thực tiễn.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Đúng. Đó là phương châm 'Dĩ bất biến, ứng vạn biến' - giữ vững mục tiêu độc lập dân tộc và CNXH, nhưng sách lược phải thiên biến vạn hóa theo thực tiễn.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 143"
+  },
+  {
+    "id": "PRAC_014",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Khi lập kế hoạch công việc, Bác căn dặn cần tránh căn bệnh nào sau đây?",
+    "options": [
+      "Lập kế hoạch quá chi tiết, có dự phòng rủi ro",
+      "Lập kế hoạch viển vông, vẽ hươu vẽ vượn không dựa trên nguồn lực thực tế",
+      "Bàn bạc dân chủ với các thành viên",
+      "Xác định rõ người chịu trách nhiệm"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Kế hoạch phải sát thực tế, tính toán kỹ lưỡng điều kiện con người và vật chất, không được 'đao to búa lớn' rồi bỏ dở giữa chừng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_015",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Hồ Chí Minh chỉ rõ tác hại của bệnh hình thức trong thực tiễn là gì?",
+    "options": [
+      "Tạo ra vẻ hào nhoáng bề ngoài nhưng bên trong rỗng tuếch, gây tốn kém tiền bạc và làm mất niềm tin của nhân dân",
+      "Giúp công việc hoàn thành nhanh hơn",
+      "Nâng cao tinh thần trách nhiệm của cán bộ",
+      "Tiết kiệm ngân sách nhà nước"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Bệnh hình thức là thứ độc hại: báo cáo láo, phô trương giả tạo, làm sai lệch hiện thực khiến việc hoạch định chính sách bị chệch hướng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_016",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Quan điểm thực tiễn của Hồ Chí Minh về việc sửa đổi lề lối làm việc nhằm mục đích gì cao nhất?",
+    "options": [
+      "Làm cho bộ máy phục vụ nhân dân nhanh chóng, hiệu quả, tận tụy và tiết kiệm nhất",
+      "Tạo thêm nhiều thủ tục giấy tờ hành chính",
+      "Tăng quyền lực cho cán bộ trung gian",
+      "Cắt giảm mọi sự tương tác giữa chính quyền với công dân"
+    ],
+    "correctAnswer": 0,
+    "points": 300,
+    "explanation": "Sửa đổi lối làm việc là để cán bộ gần dân hơn, loại bỏ tệ cửa quyền phiền hà, biến bộ máy thành công bộc thực sự của nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_017",
+    "category": "PRACTICE",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Trong lao động và sản xuất, Bác Hồ luôn động viên các sáng kiến cải tiến kỹ thuật xuất phát từ chính công nhân và nông dân.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Bác khẳng định sáng kiến từ thực tiễn sản xuất của người lao động là nguồn tài nguyên sáng tạo vô giá.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 143"
+  },
+  {
+    "id": "PRAC_018",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Bác giải thích câu ngạn ngữ 'Có thực mới vực được đạo' theo góc nhìn thực tiễn như thế nào?",
+    "options": [
+      "Con người phải được ăn no, mặc ấm, đời sống vật chất được bảo đảm thì mới có thể bàn đến việc tu dưỡng đạo đức và lý tưởng",
+      "Chỉ cần ăn uống xa xỉ, đạo đức tự khắc có",
+      "Phủ nhận hoàn toàn vai trò của đời sống tinh thần",
+      "Khuyên mọi người chỉ tích lũy của cải vật chất"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Bác luôn xuất phát từ thực tiễn nhu cầu sinh tồn cơ bản của con người: trước hết phải giải quyết cái ăn, cái mặc, nhà ở cho dân rồi mới phát huy đạo đức và văn hóa.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 120"
+  },
+  {
+    "id": "PRAC_019",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Khi phát hiện một chủ trương không còn phù hợp với thực tiễn, thái độ đúng đắn theo tư tưởng Hồ Chí Minh là:",
+    "options": [
+      "Cố chấp giữ nguyên để bảo vệ uy tín cơ quan ban hành",
+      "Dũng cảm thừa nhận, nhanh chóng nghiên cứu thực tế để sửa đổi và bổ sung kịp thời",
+      "Đổ lỗi cho người dân không chịu thực hiện",
+      "Giấu nhẹm đi và ban hành tiếp chính sách sai khác"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Thước đo của người lãnh đạo chân chính là lòng dũng cảm nhìn thẳng vào sự thật, tôn trọng thực tiễn khách quan để sửa sai kịp thời.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 143"
+  },
+  {
+    "id": "PRAC_020",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Phương pháp công tác 'Từ quần chúng mà ra, trở lại nơi quần chúng' của Bác có bản chất là gì?",
+    "options": [
+      "Thu thập ý kiến phân tán của quần chúng, dùng lý luận đúc kết thành chính sách đúng, rồi đem tuyên truyền giải thích cho quần chúng hiểu và tự giác thực hiện",
+      "Bắt buộc quần chúng phải đồng ý với mọi quyết định có sẵn",
+      "Chỉ đi dạo một vòng cơ sở để lấy ảnh tư liệu",
+      "Đẩy toàn bộ quyết định khó khăn cho dân tự chịu trách nhiệm"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Đây là phương pháp lãnh đạo quần chúng kinh điển của Hồ Chí Minh, bảo đảm mọi đường lối chính sách đều bắt nguồn từ đời sống và quay trở lại phục vụ đời sống.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  },
+  {
+    "id": "PRAC_021",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Bài học lớn nhất từ phong cách thực tiễn Hồ Chí Minh đối với việc xây dựng Nhà nước pháp quyền hiện nay là gì?",
+    "options": [
+      "Luật pháp ban hành phải xuất phát từ thực tiễn xã hội, lấy sự phục vụ nhân dân làm mục tiêu cao nhất và được thực thi nghiêm minh",
+      "Chỉ cần dịch các đạo luật nước ngoài về ban hành",
+      "Tăng số lượng luật càng nhiều càng tốt dù không ai áp dụng được",
+      "Coi trọng thủ tục hành chính hơn quyền lợi của công dân"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Pháp luật thực chất là bảo đảm công lý và quyền làm chủ của nhân dân, xuất phát từ hơi thở thực tiễn cuộc sống chứ không phải ý chí chủ quan áp đặt.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương IV & VI"
+  },
+  {
+    "id": "PRAC_022",
+    "category": "PRACTICE",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Theo Bác Hồ, một nghị quyết dù đúng đến mấy nhưng không có sự đồng thuận và chung tay của quần chúng trong thực tế thì sẽ như thế nào?",
+    "options": [
+      "Vẫn tự động thành công",
+      "Sẽ chỉ là một mẩu giấy vô dụng không có sức sống",
+      "Trở thành di sản vĩ đại",
+      "Được quốc tế khen ngợi"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác từng ví: Nghị quyết mà không biến thành hành động thực tế của hàng triệu người dân thì chẳng khác gì 'nước đổ lá khoai'.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 144"
+  }
+]

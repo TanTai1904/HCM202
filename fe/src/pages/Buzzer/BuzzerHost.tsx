@@ -1,0 +1,471 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ALL_QUESTIONS } from '@/data/questions';
+import { getInitialTeams } from '@/data/buzzerTeams';
+import { getRandomMysteryReward } from '@/data/mysteryRewards';
+import { buzzerNetwork } from '@/services/buzzerNetwork';
+import { audio } from '@/utils/audio';
+import type { Question } from '@/types/game';
+import type { BuzzerTeam, BuzzerState, MysteryReward, NetworkMessage } from '@/types/buzzer';
+
+import { BuzzerLobby } from '@/components/buzzer/BuzzerLobby';
+import { BuzzerPlayArena } from '@/components/buzzer/BuzzerPlayArena';
+import { BuzzerMysteryModal } from '@/components/buzzer/BuzzerMysteryModal';
+import { BuzzerPodium } from '@/components/buzzer/BuzzerPodium';
+import { Navbar } from '@/components/layout/Navbar';
+
+export const BuzzerHost: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Generate random room code on initialization, e.g. HCM882
+  const [roomId, setRoomId] = useState(() => {
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    return `HCM${randomNum}`;
+  });
+
+  const handleRegenerateRoom = () => {
+    audio.playClick();
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    setRoomId(`HCM${randomNum}`);
+  };
+
+  const [step, setStep] = useState<'LOBBY' | 'PLAYING' | 'PODIUM'>('LOBBY');
+  const [teamCount, setTeamCount] = useState<number>(4);
+  const [teams, setTeams] = useState<BuzzerTeam[]>(() => getInitialTeams(4));
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [questionCount, setQuestionCount] = useState<number>(10);
+  const [enableMultipliers, setEnableMultipliers] = useState<boolean>(true);
+  const [enableMysteryGifts, setEnableMysteryGifts] = useState<boolean>(true);
+
+  // In-game round state
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [multiplier, setMultiplier] = useState<1 | 2 | 3>(1);
+  const [hasMysteryGift, setHasMysteryGift] = useState<boolean>(false);
+  const [buzzerState, setBuzzerState] = useState<BuzzerState>('IDLE');
+  const [activeBuzzTeamId, setActiveBuzzTeamId] = useState<string | null>(null);
+  const [buzzReactionMs, setBuzzReactionMs] = useState<number | null>(null);
+  const [buzzerOpenTimestamp, setBuzzerOpenTimestamp] = useState<number>(0);
+  const [lockedTeamIds, setLockedTeamIds] = useState<string[]>([]);
+  const [selectedOptionByPhone, setSelectedOptionByPhone] = useState<number | null>(null);
+  const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
+
+  // Mystery Gift Modal
+  const [mysteryReward, setMysteryReward] = useState<MysteryReward | null>(null);
+  const [isMysteryModalOpen, setIsMysteryModalOpen] = useState<boolean>(false);
+
+  // Keep references to state for socket message handlers
+  const stateRef = useRef({
+    buzzerState,
+    activeBuzzTeamId,
+    buzzerOpenTimestamp,
+    lockedTeamIds,
+    teams,
+    currentQuestionIndex,
+    questions,
+  });
+
+  useEffect(() => {
+    stateRef.current = {
+      buzzerState,
+      activeBuzzTeamId,
+      buzzerOpenTimestamp,
+      lockedTeamIds,
+      teams,
+      currentQuestionIndex,
+      questions,
+    };
+  }, [buzzerState, activeBuzzTeamId, buzzerOpenTimestamp, lockedTeamIds, teams, currentQuestionIndex, questions]);
+
+  // Broadcast current state to all players
+  const broadcastSyncState = useCallback(() => {
+    const currentQ = questions[currentQuestionIndex] || null;
+    buzzerNetwork.publish('SYNC_STATE', {
+      roomId,
+      step,
+      buzzerState,
+      activeQuestionIndex: currentQuestionIndex,
+      totalQuestions: questions.length,
+      currentQuestion: currentQ,
+      multiplier,
+      hasMysteryGift,
+      activeBuzzTeamId,
+      buzzReactionMs,
+      lockedTeamIds,
+      teams: teams.map(t => ({
+        id: t.id,
+        name: t.name,
+        color: t.color,
+        accentColor: t.accentColor,
+        icon: t.icon,
+        score: t.score,
+        shieldActive: t.shieldActive,
+      })),
+    });
+  }, [roomId, step, buzzerState, currentQuestionIndex, questions, multiplier, hasMysteryGift, activeBuzzTeamId, buzzReactionMs, lockedTeamIds, teams]);
+
+  // Connect to Buzzer Network on mount
+  useEffect(() => {
+    buzzerNetwork.connect(roomId, true);
+
+    const unsubscribeMsg = buzzerNetwork.subscribeMessage((msg: NetworkMessage) => {
+      const current = stateRef.current;
+
+      if (msg.type === 'REQUEST_SYNC') {
+        broadcastSyncState();
+      }
+
+      if (msg.type === 'PLAYER_JOIN') {
+        const { teamId } = msg.payload;
+        setTeams(prev => prev.map(t => {
+          if (t.id === teamId) {
+            return { ...t, connectedDevices: (t.connectedDevices || 0) + 1 };
+          }
+          return t;
+        }));
+        // Broadcast current state to newcomer
+        setTimeout(() => broadcastSyncState(), 100);
+      }
+
+      if (msg.type === 'PLAYER_BUZZ') {
+        const { teamId, clientTimestamp } = msg.payload;
+
+        // Valid buzz only if buzzer is OPEN and team is not locked
+        if (current.buzzerState === 'OPEN' && !current.lockedTeamIds.includes(teamId)) {
+          const reaction = Math.max(50, (clientTimestamp || Date.now()) - current.buzzerOpenTimestamp);
+          
+          audio.playBuzzerDing();
+          setBuzzerState('BUZZED');
+          setActiveBuzzTeamId(teamId);
+          setBuzzReactionMs(reaction);
+
+          setTeams(prev => prev.map(t => {
+            if (t.id === teamId) {
+              const fastest = t.fastestReactionMs === null ? reaction : Math.min(t.fastestReactionMs, reaction);
+              return { ...t, buzzCount: t.buzzCount + 1, fastestReactionMs: fastest };
+            }
+            return t;
+          }));
+        }
+      }
+
+      if (msg.type === 'PLAYER_SUBMIT_ANSWER') {
+        const { teamId, optionIndex } = msg.payload;
+        if (current.activeBuzzTeamId === teamId) {
+          setSelectedOptionByPhone(optionIndex);
+          audio.playClick();
+        }
+      }
+    });
+
+    return () => {
+      unsubscribeMsg();
+      buzzerNetwork.disconnect();
+    };
+  }, [roomId, broadcastSyncState]);
+
+  // Sync state whenever key parameters change
+  useEffect(() => {
+    broadcastSyncState();
+  }, [step, buzzerState, currentQuestionIndex, activeBuzzTeamId, lockedTeamIds, broadcastSyncState]);
+
+  // Handle Team count change
+  const handleUpdateTeamCount = (count: number) => {
+    setTeamCount(count);
+    setTeams(getInitialTeams(count));
+  };
+
+  // Handle Team name edit
+  const handleUpdateTeamName = (index: number, name: string) => {
+    setTeams(prev => {
+      const updated = [...prev];
+      if (updated[index]) {
+        updated[index] = { ...updated[index], name };
+      }
+      return updated;
+    });
+  };
+
+  // Start the Game
+  const handleStartGame = () => {
+    let pool = ALL_QUESTIONS;
+    if (selectedCategory !== 'ALL') {
+      pool = pool.filter(q => q.category === selectedCategory);
+      if (pool.length === 0) pool = ALL_QUESTIONS;
+    }
+
+    // Shuffle and pick questionCount
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, Math.min(questionCount, shuffled.length));
+
+    setQuestions(selected);
+    setCurrentQuestionIndex(0);
+    setStep('PLAYING');
+    initQuestionState(0, selected);
+  };
+
+  // Setup state for a new question
+  const initQuestionState = (index: number, qList: Question[] = questions) => {
+    const q = qList[index];
+    if (!q) return;
+
+    // Randomize multipliers: 20% x2, 10% x3
+    let nextMult: 1 | 2 | 3 = 1;
+    if (enableMultipliers) {
+      const rand = Math.random();
+      if (rand < 0.12) {
+        nextMult = 3;
+      } else if (rand < 0.35) {
+        nextMult = 2;
+      }
+    }
+
+    // Randomize mystery gift: 25% chance
+    const nextGift = enableMysteryGifts && Math.random() < 0.28;
+
+    setMultiplier(nextMult);
+    setHasMysteryGift(nextGift);
+    setBuzzerState('IDLE');
+    setActiveBuzzTeamId(null);
+    setBuzzReactionMs(null);
+    setLockedTeamIds([]);
+    setSelectedOptionByPhone(null);
+    setIsCorrectAnswer(null);
+  };
+
+  // Open the buzzer for all players
+  const handleOpenBuzzer = () => {
+    audio.playBuzzerOpen();
+    const now = Date.now();
+    setBuzzerOpenTimestamp(now);
+    setBuzzerState('OPEN');
+    setActiveBuzzTeamId(null);
+    setSelectedOptionByPhone(null);
+  };
+
+  // 3s Countdown before auto opening
+  const handleStartCountdown = () => {
+    setBuzzerState('COUNTDOWN');
+    audio.playCountdown();
+
+    setTimeout(() => {
+      audio.playCountdown();
+    }, 1000);
+
+    setTimeout(() => {
+      audio.playCountdown();
+    }, 2000);
+
+    setTimeout(() => {
+      handleOpenBuzzer();
+    }, 3000);
+  };
+
+  // Manual buzz (Host taps on screen or keyboard 1..8)
+  const handleManualBuzz = (teamId: string) => {
+    if (buzzerState === 'OPEN' || buzzerState === 'IDLE') {
+      audio.playBuzzerDing();
+      setBuzzerState('BUZZED');
+      setActiveBuzzTeamId(teamId);
+      setBuzzReactionMs(350);
+      setTeams(prev => prev.map(t => {
+        if (t.id === teamId) {
+          return { ...t, buzzCount: t.buzzCount + 1 };
+        }
+        return t;
+      }));
+    }
+  };
+
+  // Steal Buzzer: Re-open buzzer for remaining teams after a wrong answer
+  const handleResetBuzzerForSteal = () => {
+    if (activeBuzzTeamId && !lockedTeamIds.includes(activeBuzzTeamId)) {
+      setLockedTeamIds(prev => [...prev, activeBuzzTeamId]);
+    }
+    setActiveBuzzTeamId(null);
+    setSelectedOptionByPhone(null);
+    handleOpenBuzzer();
+  };
+
+  // Host evaluates answer: Correct or Wrong
+  const handleResolveAnswer = (isCorrect: boolean) => {
+    if (!activeBuzzTeamId) return;
+
+    const currentQ = questions[currentQuestionIndex];
+    if (!currentQ) return;
+
+    const activeTeam = teams.find(t => t.id === activeBuzzTeamId);
+
+    if (isCorrect) {
+      audio.playCorrect();
+      setIsCorrectAnswer(true);
+
+      // Base points (default 100) * question multiplier
+      let pointsToAdd = (currentQ.points || 100) * multiplier;
+      if (activeTeam?.nextQuestionDouble) {
+        pointsToAdd *= 2;
+      }
+
+      setTeams(prev => prev.map(t => {
+        if (t.id === activeBuzzTeamId) {
+          return {
+            ...t,
+            score: t.score + pointsToAdd,
+            correctCount: t.correctCount + 1,
+            nextQuestionDouble: false,
+          };
+        }
+        return t;
+      }));
+
+      // Check if question has Mystery Gift
+      if (hasMysteryGift) {
+        const gift = getRandomMysteryReward();
+        setMysteryReward(gift);
+        setIsMysteryModalOpen(true);
+      }
+
+      setBuzzerState('EXPLAINING');
+    } else {
+      audio.playWrong();
+      setIsCorrectAnswer(false);
+
+      // Lock out this team for the current question
+      setLockedTeamIds(prev => [...prev, activeBuzzTeamId]);
+
+      setTeams(prev => prev.map(t => {
+        if (t.id === activeBuzzTeamId) {
+          if (t.shieldActive) {
+            // Shield protects team from losing points
+            return { ...t, shieldActive: false };
+          }
+          // Slight penalty of 30 pts or keep score unchanged
+          return { ...t, score: Math.max(0, t.score - 30) };
+        }
+        return t;
+      }));
+    }
+  };
+
+  // Claim Mystery Reward
+  const handleClaimMysteryReward = () => {
+    if (!mysteryReward || !activeBuzzTeamId) {
+      setIsMysteryModalOpen(false);
+      return;
+    }
+
+    setTeams(prev => {
+      const highestScoreTeam = [...prev].sort((a, b) => b.score - a.score)[0];
+
+      return prev.map(t => {
+        if (t.id === activeBuzzTeamId) {
+          if (mysteryReward.type === 'BONUS_POINTS_100') {
+            return { ...t, score: t.score + 100 };
+          }
+          if (mysteryReward.type === 'BONUS_POINTS_200') {
+            return { ...t, score: t.score + 200 };
+          }
+          if (mysteryReward.type === 'SHIELD') {
+            return { ...t, shieldActive: true };
+          }
+          if (mysteryReward.type === 'DOUBLE_NEXT') {
+            return { ...t, nextQuestionDouble: true };
+          }
+          if (mysteryReward.type === 'STEAL_POINTS') {
+            return { ...t, score: t.score + 50 };
+          }
+        } else if (mysteryReward.type === 'STEAL_POINTS' && highestScoreTeam && t.id === highestScoreTeam.id && t.id !== activeBuzzTeamId) {
+          return { ...t, score: Math.max(0, t.score - 50) };
+        }
+        return t;
+      });
+    });
+
+    setIsMysteryModalOpen(false);
+  };
+
+  // Next Question or proceed to Podium
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex + 1 < questions.length) {
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      initQuestionState(nextIndex);
+    } else {
+      setStep('PODIUM');
+    }
+  };
+
+  const activeBuzzTeam = teams.find(t => t.id === activeBuzzTeamId) || null;
+
+  return (
+    <div className="min-h-screen bg-studio-dark text-slate-100 flex flex-col font-sans antialiased relative overflow-x-hidden">
+      <Navbar />
+
+      <main className="flex-1 flex flex-col">
+        {step === 'LOBBY' && (
+          <BuzzerLobby
+            roomId={roomId}
+            onRegenerateRoom={handleRegenerateRoom}
+            teams={teams}
+            teamCount={teamCount}
+            onUpdateTeamCount={handleUpdateTeamCount}
+            onUpdateTeamName={handleUpdateTeamName}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+            questionCount={questionCount}
+            onSelectQuestionCount={setQuestionCount}
+            enableMultipliers={enableMultipliers}
+            onToggleMultipliers={() => setEnableMultipliers(!enableMultipliers)}
+            enableMysteryGifts={enableMysteryGifts}
+            onToggleMysteryGifts={() => setEnableMysteryGifts(!enableMysteryGifts)}
+            onStartGame={handleStartGame}
+          />
+        )}
+
+        {step === 'PLAYING' && (
+          <BuzzerPlayArena
+            currentQuestionIndex={currentQuestionIndex}
+            totalQuestions={questions.length}
+            currentQuestion={questions[currentQuestionIndex] || null}
+            multiplier={multiplier}
+            hasMysteryGift={hasMysteryGift}
+            buzzerState={buzzerState}
+            activeBuzzTeam={activeBuzzTeam}
+            buzzReactionMs={buzzReactionMs}
+            selectedOptionByPhone={selectedOptionByPhone}
+            teams={teams}
+            lockedTeamIds={lockedTeamIds}
+            isCorrectAnswer={isCorrectAnswer}
+            onOpenBuzzer={handleOpenBuzzer}
+            onStartCountdown={handleStartCountdown}
+            onResetBuzzerForSteal={handleResetBuzzerForSteal}
+            onResolveAnswer={handleResolveAnswer}
+            onNextQuestion={handleNextQuestion}
+            onManualBuzz={handleManualBuzz}
+          />
+        )}
+
+        {step === 'PODIUM' && (
+          <BuzzerPodium
+            teams={teams}
+            onPlayAgain={() => {
+              setStep('LOBBY');
+              setTeams(getInitialTeams(teamCount));
+            }}
+            onGoHome={() => navigate('/')}
+          />
+        )}
+      </main>
+
+      {/* Mystery Gift Reveal Modal */}
+      <BuzzerMysteryModal
+        isOpen={isMysteryModalOpen}
+        reward={mysteryReward}
+        team={activeBuzzTeam}
+        onClaim={handleClaimMysteryReward}
+      />
+    </div>
+  );
+};
+
+export default BuzzerHost;

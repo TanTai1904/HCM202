@@ -1,0 +1,206 @@
+[
+  {
+    "id": "FINAL_001",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Luận điểm 'Văn hóa soi đường cho quốc dân đi' của Hồ Chí Minh (1946) có thể được hiểu toàn diện theo những tầng ý nghĩa triết học và thực tiễn nào?",
+    "options": [
+      "Chỉ là lời kêu gọi mở rộng các rạp hát và triển lãm tranh sau chiến tranh",
+      "Văn hóa định hướng lý tưởng độc lập dân tộc gắn liền CNXH, thức tỉnh ý thức làm chủ, bồi đắp trí tuệ dân tộc và tạo động lực tinh thần vô địch đưa cách mạng đến thắng lợi",
+      "Văn hóa chỉ đóng vai trò thứ yếu sau khi các mục tiêu kinh tế kỹ thuật đã hoàn thành",
+      "Văn hóa là khuôn mẫu cứng nhắc bắt buộc mọi công dân phải tuân thủ tuyệt đối"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "'Soi đường cho quốc dân đi' thể hiện chức năng dẫn dắt tối cao của văn hóa: soi sáng con đường giải phóng dân tộc, chỉ rõ mục tiêu giải phóng con người, hướng toàn dân tới Chân - Thiện - Mỹ và tạo nên sức mạnh bất diệt của khối đại đoàn kết toàn dân tộc.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 122"
+  },
+  {
+    "id": "FINAL_002",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Tại sao Hồ Chí Minh khẳng định: 'Chủ nghĩa cá nhân là kẻ địch hung ác của chủ nghĩa xã hội. Người cách mạng phải tiêu diệt nó'?",
+    "options": [
+      "Vì chủ nghĩa cá nhân đặt lợi ích ích kỷ hẹp hòi của bản thân lên trên lợi ích của Tổ quốc và nhân dân, đẻ ra tham ô, lãng phí, chia rẽ khối đoàn kết và làm xói mòn bản chất cách mạng",
+      "Vì chủ nghĩa xã hội muốn xóa bỏ hoàn toàn mọi sở thích và quyền lợi chính đáng của cá nhân",
+      "Vì chủ nghĩa cá nhân giúp con người làm giàu nhanh hơn tập thể",
+      "Vì đó chỉ là một khẩu hiệu mang tính hình thức trong giai đoạn chiến tranh"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Chủ nghĩa cá nhân theo Bác là 'bệnh mẹ', sinh ra trăm thứ bệnh con nguy hiểm như tham ô, lộng quyền, kèn cựa địa vị. Tiêu diệt chủ nghĩa cá nhân không phải thủ tiêu cá tính hay lợi ích chính đáng, mà là ngăn chặn sự tha hóa quyền lực và phản bội nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 135"
+  },
+  {
+    "id": "FINAL_003",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Mối quan hệ bản chất giữa 'Học để làm người' và 'Học để làm cán bộ' trong tư tưởng Hồ Chí Minh phản ánh chân lý sư phạm nào?",
+    "options": [
+      "Có thể làm cán bộ tốt mà không cần học làm người tử tế",
+      "Đạo đức làm người là cái gốc nền tảng; nếu không biết làm người chân chính thì khi nắm quyền lực chỉ trở thành kẻ tha hóa, làm hại nhân dân và đất nước",
+      "Chỉ cần học làm cán bộ là đương nhiên tự khắc thành người tốt",
+      "Hai mục tiêu này hoàn toàn tách rời nhau trong các cấp học"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "Bác luôn dạy: Trước khi làm cán bộ phải học làm người. Làm người là có lòng nhân nghĩa, trung thực, liêm khiết và thương yêu đồng bào. Cái gốc 'làm người' vững thì cái tài 'làm cán bộ' mới phục vụ đắc lực cho nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124"
+  },
+  {
+    "id": "FINAL_004",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Trong chiến lược 'Trồng người', Hồ Chí Minh chỉ ra sự kết hợp hữu cơ giữa 'Đức' và 'Tài' như thế nào?",
+    "options": [
+      "Đức là gốc nhưng phải có Tài để biến lý tưởng thành hiện thực; có Đức mà không có Tài thì vô dụng, có Tài mà không có Đức thì làm hại xã hội",
+      "Chỉ cần chú trọng Tài năng, Đức sẽ tự hình thành sau khi giàu có",
+      "Chỉ cần có Đức hiền lành, không cần học tập tri thức chuyên môn phức tạp",
+      "Tài và Đức loại trừ nhau, người giỏi giang thường không cần đạo đức"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Luận điểm bất hủ của Bác: 'Có tài mà không có đức là người vô dụng. Có đức mà không có tài thì làm việc gì cũng khó.' Đức là gốc định hướng cho Tài phát triển đúng đắn vì lợi ích của nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 127"
+  },
+  {
+    "id": "FINAL_005",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Tính chất 'Dân tộc, Khoa học, Đại chúng' của nền văn hóa mới theo tư tưởng Hồ Chí Minh có sự kế thừa và phát triển sáng tạo như thế nào trong bối cảnh toàn cầu hóa hiện nay?",
+    "options": [
+      "Xây dựng nền văn hóa Việt Nam tiên tiến, đậm đà bản sắc dân tộc; tiếp thu tinh hoa nhân loại nhưng kiên quyết bảo vệ độc lập tự chủ và cốt cách văn hóa Việt",
+      "Đóng cửa hoàn toàn để bảo vệ các hủ tục cổ truyền nguyên vẹn",
+      "Bắt chước mọi trào lưu văn hóa ngoại lai không chọn lọc",
+      "Xem văn hóa chỉ là sản phẩm tiêu dùng kinh tế thuần túy"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Đảng ta kế thừa trọn vẹn tư tưởng Bác để xác định: Xây dựng nền văn hóa Việt Nam tiên tiến, đậm đà bản sắc dân tộc, thống nhất trong đa dạng của cộng đồng các dân tộc Việt Nam.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 124-126"
+  },
+  {
+    "id": "FINAL_006",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Luận điểm 'Cần, Kiệm, Liêm, Chính' của Hồ Chí Minh được so sánh với quy luật tự nhiên vĩ đại nào?",
+    "options": [
+      "Trời có bốn mùa: Xuân, Hạ, Thu, Đông / Đất có bốn phương: Đông, Tây, Nam, Bắc / Người có bốn đức: Cần, Kiệm, Liêm, Chính (Thiếu một mùa thì không thành trời, thiếu một phương thì không thành đất, thiếu một đức thì không thành người)",
+      "Như bốn chân của một chiếc bàn",
+      "Như bốn bánh xe của cỗ xe kéo",
+      "Như bốn bức tường của ngôi nhà gạch"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Trong tác phẩm Cần kiệm liêm chính (1949), Bác nâng tứ đức thành quy luật tất yếu của nhân cách con người, đối sánh với bốn mùa của vũ trụ và bốn phương của đất trời.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 129"
+  },
+  {
+    "id": "FINAL_007",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Tại sao trong xây dựng đạo đức mới, Bác Hồ đặc biệt nhấn mạnh nguyên tắc 'Tu dưỡng đạo đức suốt đời'?",
+    "options": [
+      "Vì con người hôm nay tốt chưa chắc ngày mai không tha hóa nếu không thường xuyên cảnh giác, tự rèn luyện trước cám dỗ tiền tài, danh vọng và quyền lực",
+      "Vì đạo đức là thứ bẩm sinh sinh ra đã có sẵn không thay đổi",
+      "Vì chỉ người già mới cần rèn luyện đạo đức",
+      "Vì việc tu dưỡng chỉ để chuẩn bị cho việc xét kết nạp Đảng"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Bác dạy: 'Một dân tộc, một đảng và mỗi con người, ngày hôm qua là vĩ đại... không nhất định hôm nay và ngày mai vẫn được mọi người yêu chuộng và ca tụng, nếu lòng dạ không trong sáng nữa, nếu sa vào chủ nghĩa cá nhân.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 136"
+  },
+  {
+    "id": "FINAL_008",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Khẳng định 'Dân chủ là của quý báu nhất của nhân dân' của Bác Hồ có mối liên hệ cốt lõi gì với việc xây dựng văn hóa chính trị hiện nay?",
+    "options": [
+      "Quyền lực thuộc về nhân dân; Nhà nước là công bộc phục vụ nhân dân, bảo đảm dân biết, dân bàn, dân làm, dân kiểm tra, dân giám sát, dân thụ hưởng",
+      "Dân chủ chỉ là khẩu hiệu tuyên truyền đối ngoại",
+      "Nhân dân phó thác toàn bộ quyền quyết định cho quan chức mà không cần tham gia giám sát",
+      "Dân chủ đồng nghĩa với việc tự do vô chính phủ không cần pháp luật"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Văn hóa chính trị Hồ Chí Minh lấy gốc rễ từ quyền làm chủ thực sự của nhân dân: cán bộ là đày tớ trung thành của dân, tôn trọng và bảo vệ quyền con người.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương IV & VI"
+  },
+  {
+    "id": "FINAL_009",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Hồ Chí Minh vận dụng sáng tạo chủ nghĩa Mác - Lênin vào thực tiễn Việt Nam như thế nào để khẳng định con người vừa là mục tiêu, vừa là động lực?",
+    "options": [
+      "Không coi con người là lực lượng sản xuất cơ bắp thuần túy, mà coi nhân dân lao động là chủ thể sáng tạo ra lịch sử, có lòng yêu nước nồng nàn và ý chí quật cường",
+      "Tuyệt đối hóa yếu tố vũ khí trang bị kỹ thuật",
+      "Chỉ coi giai cấp tư sản mới có vai trò động lực",
+      "Cho rằng chỉ có viện trợ nước ngoài mới quyết định vận mệnh dân tộc"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Hồ Chí Minh nhận thức sâu sắc rằng sức mạnh to lớn nhất của cách mạng Việt Nam nằm ở lòng yêu nước, ý chí độc lập tự do và sự giác ngộ chính trị của hàng chục triệu người dân lao động.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 138"
+  },
+  {
+    "id": "FINAL_010",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Ý nghĩa lịch sử sâu sắc nhất trong tư tưởng Hồ Chí Minh để lại cho thế hệ trẻ Việt Nam thế kỷ XXI là gì?",
+    "options": [
+      "Con đường độc lập dân tộc gắn liền với CNXH; ngọn cờ nhân văn lấy dân làm gốc, khát vọng phát triển đất nước phồn vinh, hạnh phúc và tinh thần không ngừng tự vươn lên",
+      "Những bài học chỉ phù hợp với thời kỳ phong kiến và chiến tranh trước đây",
+      "Chỉ là các kỹ năng đối thoại ngoại giao đơn thuần",
+      "Lời nhắc nhở chỉ cần chăm lo đời sống cá nhân riêng lẻ"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Di sản tư tưởng Hồ Chí Minh là ngọn đuốc soi đường: giữ vững bản lĩnh độc lập tự chủ, khơi dậy khát vọng phát triển đất nước phồn vinh, hạnh phúc, sánh vai với các cường quốc năm châu.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 145"
+  },
+  {
+    "id": "FINAL_011",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Phương châm 'Dĩ bất biến, ứng vạn biến' của Hồ Chí Minh có thể vận dụng vào việc học tập và rèn luyện của sinh viên như thế nào?",
+    "options": [
+      "Cái 'bất biến' là lý tưởng, đạo đức, mục tiêu sống chân chính; cái 'vạn biến' là linh hoạt, sáng tạo trong phương pháp học tập, nắm bắt công nghệ mới để thích ứng với thời đại",
+      "Bất biến là không bao giờ thay đổi thói quen dù sai lầm",
+      "Vạn biến là thay đổi mục tiêu sống liên tục theo lợi ích trước mắt",
+      "Không cần có bất kỳ nguyên tắc sống nào"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Cái bất biến là lương tâm, lòng yêu nước, khát vọng cống hiến; cái vạn biến là sự nhạy bén, làm chủ chuyển đổi số, thích ứng với thị trường lao động toàn cầu.",
+    "sourceTag": "Vận dụng Phương pháp luận Hồ Chí Minh"
+  },
+  {
+    "id": "FINAL_012",
+    "category": "FINAL",
+    "type": "BET_QUESTION",
+    "difficulty": "BOSS",
+    "question": "Để trở thành 'Công dân tốt' (A Good Citizen) theo trọn vẹn tinh thần HCM202, mỗi sinh viên cần hội tụ đầy đủ những năng lực cốt lõi nào?",
+    "options": [
+      "Bản lĩnh tư tưởng vững vàng, đạo đức liêm chính, tri thức chuyên môn sâu rộng, năng lực sáng tạo thực tiễn và tinh thần phụng sự Tổ quốc, nhân dân",
+      "Chỉ cần điểm tổng kết học tập GPA cao trên 3.6",
+      "Chỉ cần tích cực bình luận các vấn đề thời sự trên mạng",
+      "Chỉ cần chấp hành mệnh lệnh một cách thụ động"
+    ],
+    "correctAnswer": 0,
+    "points": 500,
+    "explanation": "Hành trình trở thành người công dân tốt là hành trình: Học để hiểu (Learn) -> Tư duy độc lập (Think) -> Dấn thân hành động (Practice) -> Trưởng thành toàn diện (Grow) vì một Việt Nam hùng cường.",
+    "sourceTag": "Tổng kết môn học HCM202: The Journey of a Good Citizen"
+  }
+]

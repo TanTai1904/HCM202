@@ -1,0 +1,82 @@
+import type { Question } from './game';
+
+export interface BuzzerTeam {
+  id: string;
+  name: string;
+  color: string;
+  accentColor: string;
+  icon: string;
+  score: number;
+  correctCount: number;
+  buzzCount: number;
+  fastestReactionMs: number | null;
+  shieldActive: boolean;
+  nextQuestionDouble: boolean;
+  connectedDevices: number;
+}
+
+export type BuzzerState = 
+  | 'IDLE'        // Chưa mở chuông
+  | 'COUNTDOWN'   // Đang đếm ngược 3, 2, 1
+  | 'OPEN'        // Chuông đang mở, các đội bấm nhanh
+  | 'BUZZED'      // Đã có đội bấm giành quyền
+  | 'ANSWERING'   // Đội đang suy nghĩ / trả lời
+  | 'EXPLAINING'; // Đang hiển thị kết quả & giải thích
+
+export interface BuzzEvent {
+  teamId: string;
+  teamName: string;
+  clientTimestamp: number;
+  serverReactionMs: number;
+}
+
+export type MysteryRewardType = 
+  | 'BONUS_POINTS_100'
+  | 'BONUS_POINTS_200'
+  | 'SHIELD'
+  | 'DOUBLE_NEXT'
+  | 'STEAL_POINTS'
+  | 'PHYSICAL_GIFT';
+
+export interface MysteryReward {
+  type: MysteryRewardType;
+  title: string;
+  description: string;
+  icon: string;
+  value?: number;
+}
+
+export interface BuzzerRoomState {
+  roomId: string;
+  hostName: string;
+  currentStep: 'LOBBY' | 'PLAYING' | 'PODIUM';
+  buzzerState: BuzzerState;
+  activeQuestionIndex: number;
+  totalQuestions: number;
+  currentQuestion: Question | null;
+  pointMultiplier: 1 | 2 | 3;
+  hasMysteryGift: boolean;
+  activeBuzzTeamId: string | null;
+  buzzReactionMs: number | null;
+  lockedTeamIds: string[]; // Các đội bị khóa ở câu hỏi hiện tại do trả lời sai
+  teams: BuzzerTeam[];
+  selectedCategory: string;
+}
+
+export interface NetworkMessage {
+  type: 
+    | 'SYNC_STATE'
+    | 'REQUEST_SYNC'
+    | 'PLAYER_JOIN'
+    | 'PLAYER_LEAVE'
+    | 'PLAYER_BUZZ'
+    | 'PLAYER_SUBMIT_ANSWER'
+    | 'HOST_OPEN_BUZZER'
+    | 'HOST_RESET_BUZZER'
+    | 'HOST_RESOLVE_ANSWER'
+    | 'HOST_NEXT_QUESTION';
+  senderId: string;
+  roomId: string;
+  payload: any;
+  timestamp: number;
+}

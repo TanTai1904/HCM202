@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* color-scheme: light dark; */
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #172033;
+  background-color: #F7F3EA;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,57 +14,192 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.inter-tight {
-  font-family: "Inter Tight", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+/* Color Tokens */
+:root {
+  --color-crimson: #9E1B32;
+  --color-gold: #D9A441;
+  --color-ivory: #F7F3EA;
+  --color-navy: #172033;
+  --color-green: #3F7D5A;
+  --color-red: #B84A4A;
+
+  --team-red: #9E1B32;
+  --team-blue: #1D4ED8;
+  --team-green: #3F7D5A;
+  --team-yellow: #D9A441;
 }
 
-.space-grotesk {
-  font-family: "Space Grotesk", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+/* Modern Vietnamese Game Show Classroom Ambience */
+.bg-ivory-stage {
+  background-color: #F7F3EA;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(158, 27, 50, 0.04) 0%, transparent 60%),
+    radial-gradient(circle at 10% 90%, rgba(217, 164, 65, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(29, 78, 216, 0.04) 0%, transparent 50%),
+    radial-gradient(rgba(23, 32, 51, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
 }
 
+/* Fonts */
+.font-display {
+  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+}
+
+.font-body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* High-contrast Classroom Game Show Cards */
+.quiz-card {
+  background-color: #FFFFFF;
+  border: 2px solid rgba(23, 32, 51, 0.08);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px -5px rgba(23, 32, 51, 0.06), 0 0 0 1px rgba(23, 32, 51, 0.02);
+}
+
+.quiz-card-lg {
+  background-color: #FFFFFF;
+  border: 2.5px solid rgba(23, 32, 51, 0.09);
+  border-radius: 1.75rem;
+  box-shadow: 0 14px 40px -8px rgba(23, 32, 51, 0.08);
+}
+
+/* Projector Question Hero */
+.quiz-hero-card {
+  background-color: #FFFFFF;
+  border: 3px solid #172033;
+  border-radius: 1.75rem;
+  box-shadow: 0 16px 48px -12px rgba(23, 32, 51, 0.12);
+}
+
+/* Large Answer Option Cards */
+.quiz-option-card {
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quiz-option-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -4px rgba(23, 32, 51, 0.1);
+}
+
+.quiz-option-card:active {
+  transform: scale(0.98);
+}
+
+/* Large Mobile Touch Option */
+.player-option-btn {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.12s ease, background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.player-option-btn:active {
+  transform: scale(0.96);
+}
+
+/* Pulse animation for timer */
+@keyframes urgent-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(184, 74, 74, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 14px rgba(184, 74, 74, 0);
+  }
+}
+
+.animate-urgent {
+  animation: urgent-pulse 0.75s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Subtle Shimmer Light Ray Sweep */
+@keyframes shimmer-sweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.quiz-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-sweep 2.5s infinite;
+}
+
+/* Float Up Score Delta Animation */
+@keyframes float-score {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.1);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9);
+  }
+}
+
+.animate-float-score {
+  animation: float-score 1.5s ease-out forwards;
+}
+
+/* Glowing Border for Correct Answer */
+.quiz-correct-glow {
+  box-shadow: 0 0 0 4px #3F7D5A, 0 16px 40px -10px rgba(63, 125, 90, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Radar pulse for live connections / QR */
+@keyframes radar-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+.animate-radar {
+  animation: radar-ring 2s infinite ease-in-out;
+}
+
+/* Custom Clean Scrollbar */
 ::-webkit-scrollbar {
-  display: none; 
+  width: 6px;
+  height: 6px;
 }
 
-html {
-  cursor: url("/cursor/default.svg"), auto;
+::-webkit-scrollbar-track {
+  background: rgba(23, 32, 51, 0.04);
 }
 
-.cursor-pointer {
-  cursor: url("/cursor/pointer.svg"), auto;
+::-webkit-scrollbar-thumb {
+  background: rgba(23, 32, 51, 0.2);
+  border-radius: 9999px;
 }
 
-.letter {
-  display: inline-block;
-}
-
-canvas {
-  width: 100%;
-  height: 100%;
-}
-
-.inter {
-  font-family: "Inter", sans-serif;
-  font-optical-sizing: auto;
-}
-
-.unbounded {
-  font-family: "Unbounded", sans-serif;
-  font-optical-sizing: auto;
-}
-
-.chat-scroll {
-  /* Cho iOS & Chrome mượt hơn */
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain; /* tránh “bật” cuộn lên body */
-  /* Firefox & Edge: ẩn thanh cuộn nhưng vẫn cuộn */
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* IE/Edge cũ */
-}
-.chat-scroll::-webkit-scrollbar {
-  display: none; /* WebKit: ẩn thanh cuộn */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(23, 32, 51, 0.35);
 }

@@ -1,0 +1,373 @@
+[
+  {
+    "id": "ETH_001",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh so sánh vai trò của đạo đức đối với người cách mạng như thế nào?",
+    "options": [
+      "Như sông có nguồn, như cây có gốc",
+      "Như chiếc áo đẹp mặc khi dự hội",
+      "Như ngọn cỏ lướt theo chiều gió",
+      "Như bức tranh trang trí cho đẹp phòng"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Trong tác phẩm Sửa đổi lối làm việc (1947), Người viết: 'Cũng như sông thì có nguồn mới có nước, không có nguồn thì sông cạn. Cây phải có gốc, không có gốc thì cây héo. Người cách mạng phải có đạo đức, không có đạo đức thì dù tài giỏi mấy cũng không lãnh đạo được nhân dân.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 127"
+  },
+  {
+    "id": "ETH_002",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Nội dung chuẩn mực đạo đức cốt lõi đầu tiên, bao trùm nhất của người cách mạng theo Hồ Chí Minh là gì?",
+    "options": [
+      "Làm giàu nhanh chóng cho bản thân",
+      "Trung với nước, hiếu với dân",
+      "Sống an phận, tránh va chạm",
+      "Chỉ trung thành với bạn bè thân thiết"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Hồ Chí Minh đã kế thừa khái niệm trung, hiếu truyền thống và cách mạng hóa thành: 'Trung với nước, hiếu với dân' - suốt đời phấn đấu hy sinh vì độc lập dân tộc và hạnh phúc của nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 128"
+  },
+  {
+    "id": "ETH_003",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Bốn phẩm chất đạo đức cách mạng gắn liền với nếp sống hằng ngày của cán bộ và công dân được Bác khái quát là gì?",
+    "options": [
+      "Nhân, Nghĩa, Lễ, Trí",
+      "Cần, Kiệm, Liêm, Chính",
+      "Dũng, Tín, Khiêm, Hòa",
+      "Tự do, Bình đẳng, Bác ái, Công bằng"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Cần, Kiệm, Liêm, Chính là tứ đức cách mạng mà Bác thường xuyên nhắc nhở. Thiếu một đức thì không thành người.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 129"
+  },
+  {
+    "id": "ETH_004",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Theo định nghĩa của Hồ Chí Minh, thế nào là 'Cần'?",
+    "options": [
+      "Chỉ làm việc nhiều giờ liên tục không cần nghỉ ngơi",
+      "Siêng năng, chăm chỉ, cố gắng dẻo dai, làm việc có kế hoạch và đạt năng suất cao",
+      "Chỉ làm việc khi có cấp trên giám sát",
+      "Tìm mọi cách tranh việc của người khác"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Theo Bác, Cần không phải là làm việc bừa bãi hay kiệt sức, mà là cần cù, dẻo dai, có tính toán, có kế hoạch, có tổ chức để đạt năng suất, chất lượng cao nhất.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 129"
+  },
+  {
+    "id": "ETH_005",
+    "category": "ETHICS",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Theo Hồ Chí Minh, 'Kiệm' nghĩa là bủn xỉn, keo kiệt, không dám chi tiêu cho những việc cần thiết.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Sai. Hồ Chí Minh nhấn mạnh: Kiệm là tiết kiệm thì giờ, công sức, tiền của của dân, của nước; không hoang phí, nhưng việc đáng chi thì ngàn lượng vàng cũng phải chi, tuyệt đối không phải là bủn xỉn, keo kiệt.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 130"
+  },
+  {
+    "id": "ETH_006",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Thế nào là 'Liêm' theo tư tưởng đạo đức Hồ Chí Minh?",
+    "options": [
+      "Luôn đòi hỏi quà biếu khi giúp đỡ người khác",
+      "Trong sạch, không tham lam địa vị, tiền của, danh vọng; không lấy của chung làm của riêng",
+      "Chỉ nhận hối lộ nếu không ai biết",
+      "Lợi dụng sơ hở chính sách để trục lợi"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Liêm là trong sạch, không tham lam tiền tài, danh vọng; quang minh chính đại, chỉ có một lòng vì nước vì dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 130"
+  },
+  {
+    "id": "ETH_007",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Người giải thích thế nào là 'Chính'?",
+    "options": [
+      "Chính là chức vụ chính thức trong cơ quan nhà nước",
+      "Thẳng thắn, đứng đắn; việc thiện dù nhỏ mấy cũng làm, việc ác dù nhỏ mấy cũng tránh; đối với mình không tự cao, đối với người không nịnh hót",
+      "Luôn áp đặt ý kiến cá nhân lên tập thể",
+      "Chỉ xử lý công việc theo cảm tính cá nhân"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Chính nghĩa là thẳng thắn, đứng đắn. Đối với mình: không tự cao, tự đại; đối với người: không nịnh hót cấp trên, không khinh rẻ cấp dưới; đối với việc: để việc công lên trên việc tư.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 131"
+  },
+  {
+    "id": "ETH_008",
+    "category": "ETHICS",
+    "type": "GUESS_THE_IDEA",
+    "difficulty": "MEDIUM",
+    "question": "Giải mã phẩm chất đạo đức đặc trưng của người cán bộ cách mạng qua các manh mối:",
+    "clues": [
+      "Clue 1: Bác dạy phẩm chất này là đỉnh cao của việc quét sạch chủ nghĩa cá nhân.",
+      "Clue 2: Người giải thích: Đem lòng chí công mà xử sự, đặt lợi ích của Đảng, của nhân dân lên trên hết, trước hết.",
+      "Clue 3: Cụm từ Hán - Việt gồm 4 chữ: '... công vô ...'"
+    ],
+    "options": [
+      "Đại đoàn kết",
+      "Chí công vô tư",
+      "Cần kiệm liêm chính",
+      "Tự lực cánh sinh"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Chính là phẩm chất 'Chí công vô tư'. Hồ Chí Minh giải thích chí công vô tư là hoàn toàn vì việc công, không có lòng tư túi hay thiên vị.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 131"
+  },
+  {
+    "id": "ETH_009",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Nguyên tắc xây dựng đạo đức nào đòi hỏi cán bộ, đảng viên phải 'Nói đi đôi với làm'?",
+    "options": [
+      "Nguyên tắc tu dưỡng bền bỉ suốt đời",
+      "Nguyên tắc nêu gương và thống nhất giữa lời nói với hành động",
+      "Nguyên tắc tự phê bình hình thức",
+      "Nguyên tắc giấu giếm khuyết điểm nội bộ"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Hồ Chí Minh đặc biệt coi trọng sự thống nhất giữa lời nói và việc làm: 'Nói thì phải làm, không được nói một đằng làm một nẻo, không được hứa suông.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 133"
+  },
+  {
+    "id": "ETH_010",
+    "category": "ETHICS",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Hồ Chí Minh cho rằng: Một tấm gương sống còn có giá trị hơn một trăm bài diễn văn tuyên truyền.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Người luôn nhấn mạnh sức mạnh cảm hóa của sự nêu gương thực tế trong đạo đức và lối sống.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 134"
+  },
+  {
+    "id": "ETH_011",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Trong nguyên tắc 'Xây đi đôi với chống', Hồ Chí Minh yêu cầu 'chống' cái gì quyết liệt nhất?",
+    "options": [
+      "Chống chủ nghĩa cá nhân - căn bệnh mẹ đẻ ra mọi thói hư tật xấu",
+      "Chống những người có ý kiến phản biện thẳng thắn",
+      "Chống việc học tập tri thức khoa học tiến bộ",
+      "Chống sự phát triển kinh tế tư nhân hợp pháp"
+    ],
+    "correctAnswer": 0,
+    "points": 200,
+    "explanation": "Trong tác phẩm Nâng cao đạo đức cách mạng, quét sạch chủ nghĩa cá nhân (1969), Người chỉ rõ chủ nghĩa cá nhân là kẻ thù nguy hiểm số một bên trong mỗi con người.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 135"
+  },
+  {
+    "id": "ETH_012",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Bác so sánh việc rèn luyện, tu dưỡng đạo đức với hình ảnh tự nhiên nào?",
+    "options": [
+      "Như hạt mưa rơi xuống đất",
+      "Như ngọc càng mài càng sáng, vàng càng luyện càng trong",
+      "Như hoa nở rồi tàn theo mùa",
+      "Như đám mây trôi trên trời cao"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Bác viết: 'Đạo đức cách mạng không phải trên trời sa xuống. Nó do đấu tranh, rèn luyện bền bỉ hằng ngày mà phát triển và củng cố. Cũng như ngọc càng mài càng sáng, vàng càng luyện càng trong.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 136"
+  },
+  {
+    "id": "ETH_013",
+    "category": "ETHICS",
+    "type": "TRUE_FALSE",
+    "difficulty": "MEDIUM",
+    "question": "Theo Bác Hồ, một người có tài giỏi đến đâu mà không có đạo đức thì vẫn có thể lãnh đạo tốt nhân dân.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Sai hoàn toàn. Bác khẳng định dứt khoát: 'Có tài mà không có đức là người vô dụng; có đức mà không có tài thì làm việc gì cũng khó.' Không có đạo đức thì dù tài giỏi mấy cũng không thể lãnh đạo nhân dân.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 127"
+  },
+  {
+    "id": "ETH_014",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "EASY",
+    "question": "Chuẩn mực 'Yêu thương con người, sống có tình có nghĩa' trong tư tưởng Hồ Chí Minh bắt nguồn từ đâu?",
+    "options": [
+      "Từ truyền thống nhân nghĩa, thương người như thể thương thân của dân tộc Việt Nam kết hợp với chủ nghĩa nhân đạo cộng sản",
+      "Chỉ xuất phát từ lòng thương hại nhất thời",
+      "Từ chính sách ngoại giao vụ lợi",
+      "Từ yêu cầu hình thức của các nghi lễ cổ truyền"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Tình yêu thương con người ở Bác là sự kết tinh giữa chủ nghĩa nhân ái truyền thống Việt Nam và chủ nghĩa nhân văn Mác-Lênin, dành cho những người cùng khổ và quần chúng lao động.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 132"
+  },
+  {
+    "id": "ETH_015",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Khi đối mặt với khuyết điểm của bản thân và đồng chí, phương pháp tốt nhất Bác chỉ ra là gì?",
+    "options": [
+      "Đóng cửa làm ngơ, giữ thể diện bằng mọi giá",
+      "Thành khẩn tự phê bình và phê bình với tinh thần trị bệnh cứu người",
+      "Công kích cá nhân gay gắt để triệt hạ uy tín",
+      "Tìm lý do đổ lỗi cho hoàn cảnh khách quan"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác ví tự phê bình và phê bình như rửa mặt hằng ngày: phải trung thực, thẳng thắn và trên tinh thần đồng chí thương yêu lẫn nhau để cùng tiến bộ.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 134"
+  },
+  {
+    "id": "ETH_016",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Chữ 'Trung' trong tư tưởng Hồ Chí Minh khác căn bản với chữ 'Trung' trong Nho giáo phong kiến ở điểm nào?",
+    "options": [
+      "Nho giáo trung với vua (quân vương); Hồ Chí Minh cách mạng hóa thành trung với nước, trung với sự nghiệp giải phóng dân tộc",
+      "Không có điểm nào khác biệt",
+      "Hồ Chí Minh chỉ yêu cầu trung với gia tộc dòng họ",
+      "Nho giáo trung với nhân dân hơn Hồ Chí Minh"
+    ],
+    "correctAnswer": 0,
+    "points": 300,
+    "explanation": "Trong đạo đức phong kiến, 'trung' là trung quân mù quáng ('quân xử thần tử, thần bất tử bất trung'). Hồ Chí Minh đã vượt qua hạn chế đó: 'Trung với nước, hiếu với dân', đặt lợi ích của Tổ quốc và nhân dân lên tối thượng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 128"
+  },
+  {
+    "id": "ETH_017",
+    "category": "ETHICS",
+    "type": "TRUE_FALSE",
+    "difficulty": "EASY",
+    "question": "Bác dạy: Đạo đức cách mạng không phải là đạo đức khổ hạnh hay thủ tiêu lợi ích chính đáng của cá nhân.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đúng. Đạo đức cách mạng tôn trọng lợi ích cá nhân chính đáng, hòa quyện lợi ích cá nhân trong lợi ích tập thể và quốc gia, chỉ chống chủ nghĩa cá nhân ích kỷ, hẹp hòi.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 132"
+  },
+  {
+    "id": "ETH_018",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Hồ Chí Minh coi ba thứ 'giặc nội xâm' nguy hiểm làm suy thoái đạo đức là gì?",
+    "options": [
+      "Giặc đói, giặc dốt, giặc ngoại xâm",
+      "Tham ô, lãng phí, quan liêu",
+      "Thiếu ăn, thiếu mặc, thiếu học",
+      "Mê tín, lười biếng, cờ bạc"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Người chỉ rõ: Tham ô, lãng phí, quan liêu là thứ giặc ở trong lòng, là giặc nội xâm, phá hoại sự nghiệp cách mạng từ bên trong nguy hiểm không kém giặc ngoại xâm.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 135"
+  },
+  {
+    "id": "ETH_019",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "HARD",
+    "question": "Ý nghĩa của chuẩn mực 'Tinh thần quốc tế trong sáng' trong tư tưởng đạo đức Hồ Chí Minh là gì?",
+    "options": [
+      "Đoàn kết với giai cấp vô sản và các dân tộc bị áp bức, tôn trọng độc lập chủ quyền, vì hòa bình và công lý quốc tế",
+      "Can thiệp vào công việc nội bộ của các quốc gia khác",
+      "Từ bỏ quyền lợi của quốc gia dân tộc mình",
+      "Chỉ liên minh với các nước giàu có để tranh thủ viện trợ"
+    ],
+    "correctAnswer": 0,
+    "points": 300,
+    "explanation": "Tinh thần quốc tế trong sáng thể hiện tinh thần thủy chung, chí nghĩa chí tình với bạn bè năm châu theo nguyên lý 'Bốn phương vô sản đều là anh em'.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 132"
+  },
+  {
+    "id": "ETH_020",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Hồ Chí Minh căn dặn điều gì về nguy cơ thoái hóa đạo đức của cán bộ khi Đảng đã nắm chính quyền?",
+    "options": [
+      "Khi có quyền lực thì tự khắc đạo đức sẽ trong sáng hơn",
+      "Cán bộ dễ biến thành 'quan cách mạng', lộng quyền, đè đầu cưỡi cổ dân nếu không thường xuyên tu dưỡng",
+      "Chỉ cần có bằng cấp cao là kiểm soát được tha hóa quyền lực",
+      "Nắm chính quyền là nhiệm vụ cuối cùng, không cần rèn luyện nữa"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "Bác luôn cảnh báo: Người cán bộ khi nắm chính quyền rất dễ sa vào căn bệnh 'làm quan phát tài', cậy quyền cậy thế, biến vị trí công bộc của dân thành ông quan cai trị.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 135"
+  },
+  {
+    "id": "ETH_021",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "BOSS",
+    "question": "Trong Di chúc (1969), điều đầu tiên Bác căn dặn về Đảng sau khi kháng chiến thắng lợi là gì?",
+    "options": [
+      "Chia thưởng ngay cho các cơ quan trung ương",
+      "Việc cần phải làm trước tiên là chỉnh đốn lại Đảng, mỗi đảng viên và đoàn viên phải thật sự thấm nhuần đạo đức cách mạng",
+      "Tập trung đầu tư xây dựng các công trình kỷ niệm hoành tráng",
+      "Giảm bớt các tiêu chuẩn đạo đức để kết nạp thật nhanh"
+    ],
+    "correctAnswer": 1,
+    "points": 500,
+    "explanation": "Trong Di chúc, Người nhấn mạnh: 'Đoàn kết là một truyền thống cực kỳ quý báu của Đảng và của dân ta... Đảng ta là một Đảng cầm quyền. Mỗi đảng viên và cán bộ phải thật sự thấm nhuần đạo đức cách mạng, thật sự cần kiệm liêm chính, chí công vô tư.'",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 136"
+  },
+  {
+    "id": "ETH_022",
+    "category": "ETHICS",
+    "type": "MCQ",
+    "difficulty": "MEDIUM",
+    "question": "Thước đo cao nhất của đạo đức cách mạng theo quan điểm Hồ Chí Minh là gì?",
+    "options": [
+      "Khả năng hùng biện lý luận trước đám đông",
+      "Mức độ hoàn thành nhiệm vụ và sự hài lòng, hạnh phúc của nhân dân",
+      "Số lượng danh hiệu khen thưởng cá nhân tích lũy được",
+      "Thời gian công tác lâu năm trong bộ máy"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Đạo đức cách mạng không đo bằng lời nói suông mà đo bằng hành động cụ thể: sự tận tụy phụng sự Tổ quốc và được nhân dân tin yêu, kính trọng.",
+    "sourceTag": "Giáo trình Tư tưởng Hồ Chí Minh (2021), Chương VI, tr. 133"
+  }
+]

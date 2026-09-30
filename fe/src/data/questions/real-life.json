@@ -1,0 +1,506 @@
+[
+  {
+    "id": "REAL_001",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Minh có một bài thuyết trình lớn trong 7 ngày tới. Tuy nhiên, Minh thường dành phần lớn thời gian để lướt mạng xã hội và chơi game, tự nhủ 'còn nhiều thời gian'. Đến đêm trước ngày nộp bài, Minh mới vội vàng thức trắng đêm làm qua loa.",
+    "question": "Hành động nào của Minh sau đây sẽ vận dụng đúng chữ 'CẦN' theo tư tưởng Hồ Chí Minh?",
+    "options": [
+      "Chờ đến hạn chót rồi mới làm để có áp lực sáng tạo",
+      "Sao chép nguyên văn bài làm của nhóm khác trên mạng",
+      "Chủ động lập kế hoạch làm việc theo từng ngày, kiên trì nghiên cứu tài liệu từ sớm và kiểm tra kỹ lưỡng",
+      "Nhờ bạn cùng lớp làm hộ và trả tiền thù lao"
+    ],
+    "correctAnswer": 2,
+    "points": 100,
+    "explanation": "Bác Hồ dạy: 'Cần' là siêng năng, dẻo dai, nhưng phải có kế hoạch, có phương pháp để đạt năng suất và chất lượng cao, chứ không phải lười biếng rồi làm gấp gáp qua quýt.",
+    "sourceTag": "Vận dụng Đạo đức: Chữ 'Cần'"
+  },
+  {
+    "id": "REAL_002",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Trong một buổi thảo luận nhóm đại học, Lan được phân công làm phần tổng hợp số liệu. Nhận thấy có công cụ AI tạo văn bản nhanh, Lan đã copy toàn bộ câu lệnh và dán bài nộp mà không hề đọc lại nội dung hay kiểm tra tính chính xác của các số liệu giả do AI sinh ra.",
+    "question": "Vận dụng nguyên lý 'Học đi đôi với hành' và phẩm chất 'Chính trực' của Bác, Lan nên xử lý thế nào?",
+    "options": [
+      "Sử dụng AI như công cụ tham khảo, tự mình kiểm chứng dữ liệu, hiểu bản chất kiến thức và ghi rõ nguồn gốc",
+      "Tuyệt đối cấm không được sử dụng máy tính hay công nghệ mới",
+      "Tiếp tục nộp bài sao chép vì giảng viên không có thời gian phát hiện",
+      "Đổ lỗi cho công cụ AI nếu nhóm bị điểm kém"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Bác dạy học tập phải thực chất, độc lập suy nghĩ. AI là công cụ hỗ trợ hiện đại, nhưng người học phải kiểm chứng, làm chủ tri thức và giữ gìn liêm chính học thuật.",
+    "sourceTag": "Vận dụng Giáo dục & Liêm chính học thuật"
+  },
+  {
+    "id": "REAL_003",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "CLB sinh viên của Tuấn được cấp một khoản kinh phí hoạt động từ trường. Sau khi tổ chức xong sự kiện còn thừa lại 3 triệu đồng. Một số bạn gợi ý chia nhau số tiền này để đi ăn uống riêng vì 'thủ quỹ quyết toán hợp thức hóa hóa đơn rất dễ'.",
+    "question": "Hành động nào sau đây thể hiện đúng chữ 'LIÊM' và 'CHÍ CÔNG VÔ TƯ' của Bác Hồ?",
+    "options": [
+      "Chia đều số tiền cho ban chủ nhiệm CLB coi như tiền công",
+      "Công khai tài chính minh bạch, hoàn trả số tiền thừa vào quỹ chung của CLB hoặc nộp lại nhà trường",
+      "Mua hóa đơn khống để bù vào khoản tiền đã tiêu",
+      "Gửi số tiền vào tài khoản cá nhân để tiêu dùng riêng"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Chữ 'Liêm' trong tư tưởng Bác là trong sạch, không tham một đồng xu cắc bạc của công; 'Chí công vô tư' là đặt sự minh bạch và lợi ích tập thể lên trên sự tư lợi cá nhân.",
+    "sourceTag": "Vận dụng Đạo đức: Chữ 'Liêm'"
+  },
+  {
+    "id": "REAL_004",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Trên không gian mạng xuất hiện một bài viết có thông tin phiến diện, sai sự thật về lịch sử văn hóa dân tộc, kích động phân biệt vùng miền để câu view. Dưới bài viết, hàng trăm bình luận chửi bới lẫn nhau.",
+    "question": "Là một sinh viên có văn hóa và nhận thức theo tư tưởng Hồ Chí Minh, bạn nên ứng xử như thế nào?",
+    "options": [
+      "Hùa theo chửi bới bằng những lời lẽ tục tĩu để giải tỏa cảm xúc",
+      "Bình tĩnh kiểm chứng nguồn tin chính thống, phản biện văn minh bằng luận cứ khoa học hoặc báo cáo vi phạm tiêu chuẩn cộng đồng",
+      "Chia sẻ ngay bài viết về trang cá nhân để bạn bè cùng tranh cãi tiêu cực",
+      "Ủng hộ việc phân biệt vùng miền để chia rẽ đoàn kết"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Văn hóa Hồ Chí Minh là văn hóa đoàn kết, tôn trọng sự thật và hướng tới sự nhân văn. Người trẻ cần tỉnh táo trước 'bẫy tin giả' trên mạng xã hội, giữ gìn sự văn minh và đoàn kết dân tộc.",
+    "sourceTag": "Vận dụng Văn hóa & Môi trường số"
+  },
+  {
+    "id": "REAL_005",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Hoàng nhận thấy ký túc xá có tình trạng nhiều bạn bật đèn, quạt và mở vòi nước chảy tự do rồi bỏ đi ra ngoài hàng giờ, khiến tiền điện nước tăng vọt và gây lãng phí tài nguyên.",
+    "question": "Vận dụng chữ 'KIỆM' theo tư tưởng Hồ Chí Minh vào sinh hoạt hàng ngày, thái độ đúng đắn là gì?",
+    "options": [
+      "Cho rằng tiền chia đều cả phòng nên cứ xài thoải mái",
+      "Chủ động tắt các thiết bị khi không sử dụng, sử dụng nước hợp lý và nhắc nhở các bạn cùng phòng thực hiện nếp sống tiết kiệm",
+      "Bỏ mặc vì đây không phải việc riêng của mình",
+      "Phá hỏng thêm các thiết bị công cộng"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Bác Hồ dạy: 'Kiệm' là tiết kiệm của công từ những việc nhỏ nhất như hạt gạo, ngọn đèn, giọt nước. Tiết kiệm không chỉ bảo vệ túi tiền mà còn thể hiện văn hóa sống văn minh.",
+    "sourceTag": "Vận dụng Đạo đức: Chữ 'Kiệm'"
+  },
+  {
+    "id": "REAL_006",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Trong bài tập nhóm gồm 5 thành viên, có bạn Huy rất ít khi tham gia họp, không chịu làm việc được giao với lý do 'bận việc riêng', nhưng đến khi nộp bài lại xin ghi tên mình với mức đánh giá đóng góp tối đa (100%).",
+    "question": "Vận dụng nguyên tắc 'Xây đi đôi với chống' và tinh thần phê bình chân thành của Bác, nhóm trưởng nên xử lý thế nào?",
+    "options": [
+      "Cả nể đồng ý ghi 100% để giữ hòa khí bề ngoài",
+      "Thẳng thắn trao đổi, góp ý mang tính xây dựng cho Huy; đánh giá đúng tỷ lệ đóng góp thực tế và báo cáo trung thực với giảng viên",
+      "Chửi bới và cô lập Huy trên mạng xã hội",
+      "Bỏ luôn bài tập nhóm không nộp nữa"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác dạy đoàn kết phải gắn với đấu tranh chống thói ỷ lại, tự phê bình và phê bình với tinh thần chân thành giúp nhau tiến bộ, đánh giá công bằng dựa trên thực tiễn cống hiến.",
+    "sourceTag": "Vận dụng Tinh thần làm việc nhóm"
+  },
+  {
+    "id": "REAL_007",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "HARD",
+    "scenarioText": "Một nhóm sinh viên công nghệ thông tin phát hiện một lỗ hổng bảo mật nghiêm trọng trong hệ thống cổng thông tin của trường, cho phép xem trộm điểm số và dữ liệu cá nhân của các sinh viên khác.",
+    "question": "Hành vi nào thể hiện phẩm chất 'Vừa hồng vừa chuyên' và ý thức công dân chuẩn mực?",
+    "options": [
+      "Tự ý khai thác lỗ hổng để sửa điểm cho bản thân và bạn bè",
+      "Rao bán thông tin lỗ hổng trên các diễn đàn 'hắc ám' kiếm tiền",
+      "Báo cáo chi tiết lỗ hổng và đề xuất giải pháp vá lỗi kịp thời cho bộ phận kỹ thuật của trường",
+      "Khoe khoang trên mạng xã hội để thể hiện đẳng cấp hacker"
+    ],
+    "correctAnswer": 2,
+    "points": 300,
+    "explanation": "Người có chuyên môn giỏi ('chuyên') phải đi kèm với đạo đức liêm chính và trách nhiệm xã hội ('hồng'). Dùng tri thức để bảo vệ hệ thống và giúp đỡ cộng đồng là tinh thần của người trí thức xã hội chủ nghĩa.",
+    "sourceTag": "Vận dụng 'Vừa hồng vừa chuyên' trong công nghệ"
+  },
+  {
+    "id": "REAL_008",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Hội đồng đánh giá luận văn phát hiện một đề tài tốt nghiệp có tỷ lệ trùng lặp đạo văn tới 60% từ một luận văn đã công bố năm trước, chỉ đổi tên địa phương nghiên cứu.",
+    "question": "Hành vi đạo văn này vi phạm nghiêm trọng nhất chuẩn mực đạo đức nào của Hồ Chí Minh?",
+    "options": [
+      "Vi phạm chuẩn mực Cần kiệm",
+      "Vi phạm chuẩn mực Liêm, Chính và tinh thần Nói đi đôi với làm trong học thuật",
+      "Chỉ là vi phạm hình thức trình bày văn bản",
+      "Không vi phạm vì tri thức là của nhân loại"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Đạo văn là sự gian lận trí tuệ, vi phạm sự trung thực (Chính) và trong sạch (Liêm). Học tập chân chính phải là sự tự thân sáng tạo và lao động nghiêm túc.",
+    "sourceTag": "Vận dụng Liêm chính học thuật"
+  },
+  {
+    "id": "REAL_009",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Khi giao tiếp và viết bài luận, một số sinh viên có thói quen chêm quá nhiều từ tiếng Anh không cần thiết vào câu tiếng Việt (ví dụ: 'Mình thấy cái idea này rất là make sense cho team work').",
+    "question": "Vận dụng lời dặn của Bác về việc giữ gìn sự trong sáng của tiếng Việt, bạn nên thay đổi thói quen này thế nào?",
+    "options": [
+      "Tiếp tục chêm càng nhiều từ ngoại ngữ càng tốt để chứng tỏ mình hội nhập",
+      "Ý thức sử dụng từ ngữ tiếng Việt chuẩn xác, giàu biểu cảm; chỉ dùng thuật ngữ quốc tế khi tiếng Việt chưa có từ tương đương",
+      "Từ bỏ hoàn toàn việc học tiếng Anh",
+      "Chỉ nói tiếng lóng viết tắt trên mọi văn bản"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Bác luôn căn dặn phải giữ gìn sự trong sáng của tiếng Việt - tiếng nói vô cùng phong phú và đẹp đẽ của tổ tiên, không nên sính ngoại lố lăng.",
+    "sourceTag": "Vận dụng Bản sắc văn hóa & Tiếng Việt"
+  },
+  {
+    "id": "REAL_010",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "HARD",
+    "scenarioText": "Một bạn sinh viên đạt danh hiệu sinh viên xuất sắc toàn khóa, nắm rất vững các định nghĩa lý luận triết học và tư tưởng Hồ Chí Minh, nhưng khi trường phát động chiến dịch 'Mùa hè xanh' giúp đỡ đồng bào vùng lũ thì bạn từ chối tham gia vì 'sợ bẩn và mất thời gian nghỉ dưỡng'.",
+    "question": "Theo tiêu chuẩn 'Học để phụng sự' và mối quan hệ Lý luận - Thực tiễn của Bác, trường hợp này mắc phải hạn chế gì?",
+    "options": [
+      "Là tấm gương hoàn hảo về việc chỉ cần học giỏi lý thuyết",
+      "Mắc bệnh lý luận suông, thiếu gắn bó với thực tiễn đời sống nhân dân, chưa thấu hiểu triết lý học để làm người và cống hiến",
+      "Rất thực tế vì biết tiết kiệm sức lực cá nhân",
+      "Hoàn toàn đúng vì sinh viên giỏi không cần lao động chân tay"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Học lý luận HCM không phải để thi lấy điểm 10 rồi cất tủ, mà phải biến thành tình cảm yêu thương con người và hành động dấn thân giúp đỡ cộng đồng.",
+    "sourceTag": "Vận dụng Lý luận gắn với thực tiễn"
+  },
+  {
+    "id": "REAL_011",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Mai là lớp trưởng. Trong đợt bình xét học bổng khuyến khích, có hai bạn điểm rèn luyện ngang nhau. Một bạn là bạn thân cùng phòng với Mai, bạn kia ít nói và không thân thiết. Nếu Mai chấm điểm thiên vị cho bạn thân, bạn ấy sẽ được học bổng.",
+    "question": "Phẩm chất 'CHÍ CÔNG VÔ TƯ' của Hồ Chí Minh đòi hỏi Mai phải quyết định thế nào?",
+    "options": [
+      "Ưu tiên cộng điểm cho bạn thân vì tình bạn quan trọng hơn quy chế",
+      "Khách quan, công tâm, căn cứ chính xác vào tiêu chuẩn minh bạch của nhà trường, không để tình cảm riêng chi phối việc công",
+      "Tự ý giữ lại học bổng cho bản thân",
+      "Bốc thăm ngẫu nhiên để trốn tránh trách nhiệm"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "'Chí công vô tư' đòi hỏi người làm công tác tập thể phải công bằng, chính trực, đặt công lý và quy chế chung lên trên cảm tình bè phái cá nhân.",
+    "sourceTag": "Vận dụng Chí công vô tư trong lớp học"
+  },
+  {
+    "id": "REAL_012",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Sau một buổi liên hoan âm nhạc tại công viên thành phố, nhiều nhóm bạn trẻ đứng dậy ra về để lại hàng ngàn vỏ chai nhựa, túi ni-lông bừa bãi trên bãi cỏ công cộng.",
+    "question": "Hành động nào của một công dân có nếp sống 'Văn hóa mới' theo Bác Hồ?",
+    "options": [
+      "Cũng vứt rác theo vì 'ai cũng vứt thì mình vứt'",
+      "Chủ động dọn dẹp rác của nhóm mình, bỏ đúng nơi quy định và cùng hỗ trợ gom rác chung giữ gìn cảnh quan sạch đẹp",
+      "Chụp ảnh rác đăng lên mạng chê bai rồi bỏ đi không nhặt",
+      "Đá rác sang khu vực của người khác"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Xây dựng đời sống mới, nếp sống mới bắt đầu từ những hành động văn minh nhỏ nhất: tôn trọng không gian chung, giữ gìn vệ sinh môi trường và có ý thức cộng đồng.",
+    "sourceTag": "Vận dụng Nếp sống văn hóa mới"
+  },
+  {
+    "id": "REAL_013",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Trên trang cá nhân, một người bạn thường xuyên chia sẻ những bài viết bi quan, chán chường, khuyên mọi người không cần cố gắng học tập vì 'thời buổi này chỉ cần quan hệ và tiền bạc'.",
+    "question": "Vận dụng tinh thần 'Văn hóa soi đường' và niềm tin vào ý chí con người của Bác, bạn nên suy nghĩ thế nào?",
+    "options": [
+      "Tin theo tư tưởng tiêu cực đó và ngừng phấn đấu",
+      "Giữ vững bản lĩnh và niềm tin vào giá trị của sự nỗ lực chân chính; văn hóa tích cực giúp con người nuôi dưỡng khát vọng và vượt qua nghịch cảnh",
+      "Rủ rê thêm nhiều người cùng suy nghĩ bi quan",
+      "Bỏ học để đi tìm các mối quan hệ ảo"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Văn hóa có chức năng bồi dưỡng tư tưởng đúng đắn, tình cảm cao đẹp và niềm tin vào tương lai. Thanh niên cần có sức đề kháng trước những tư tưởng độc hại, bi quan yếm thế.",
+    "sourceTag": "Vận dụng Bản lĩnh tư tưởng"
+  },
+  {
+    "id": "REAL_014",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "HARD",
+    "scenarioText": "Khi tham gia giao thông giờ cao điểm, thấy đèn đỏ còn 5 giây và vỉa hè trống, nhiều người xung quanh bấm còi giục giã và lao xe lên vỉa hè để đi trước. Bạn đang đi ở phía trước.",
+    "question": "Hành động nào thể hiện chữ 'CHÍNH' (thẳng thắn, đúng đắn, việc thiện nhỏ mấy cũng làm, việc ác nhỏ mấy cũng tránh)?",
+    "options": [
+      "Cũng phóng lên vỉa hè theo đám đông cho đỡ chậm giờ",
+      "Kiên nhẫn dừng đúng vạch chờ đèn xanh, không lấn làn leo vỉa hè dù xung quanh có người thúc giục",
+      "Quay lại cãi nhau gay gắt với người bấm còi gây ùn tắc thêm",
+      "Tắt máy đứng giữa ngã tư phản đối"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Chữ 'Chính' của Bác dạy người cách mạng không a dua theo cái sai của đám đông; việc tuân thủ pháp luật giao thông dù nhỏ nhưng là biểu hiện của phẩm chất tự trọng và tôn trọng cộng đồng.",
+    "sourceTag": "Vận dụng Đạo đức: Chữ 'Chính'"
+  },
+  {
+    "id": "REAL_015",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Trong giờ thi môn HCM202, bạn ngồi cạnh lén mang điện thoại vào phòng thi và nhờ bạn che mắt giám thị để chụp đề gửi lên nhóm mạng xã hội nhờ giải hộ.",
+    "question": "Theo nguyên tắc 'Trung thực' và đạo đức cách mạng, bạn nên xử sự ra sao?",
+    "options": [
+      "Nhiệt tình che chắn giúp bạn vì 'tinh thần đoàn kết anh em'",
+      "Từ chối tiếp tay cho hành vi gian lận và khuyên bạn tự giác làm bài trung thực",
+      "Xin cùng chép đáp án từ chiếc điện thoại đó",
+      "Đòi bạn trả tiền thì mới chịu che giúp"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác dạy đoàn kết phải trên cơ sở nguyên tắc đúng đắn, không thể bao che dung túng cho cái sai. Liêm chính trong thi cử là thước đo nhân cách đầu tiên của sinh viên.",
+    "sourceTag": "Vận dụng Liêm chính thi cử"
+  },
+  {
+    "id": "REAL_016",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Được nghỉ hè 2 tháng, một bạn sinh viên chỉ ở trong phòng lướt điện thoại ngày đêm, ăn uống thất thường và không tham gia bất kỳ hoạt động thể chất hay giao tiếp xã hội nào.",
+    "question": "Lời khuyên nào sau đây phù hợp nhất với lời dạy của Bác về rèn luyện con người phát triển toàn diện?",
+    "options": [
+      "Tiếp tục ở yên trong phòng để tránh tốn tiền",
+      "Cân đối thời gian rèn luyện thân thể (tập thể dục thể thao), đọc sách nâng cao dân trí và tham gia các hoạt động thiện nguyện xã hội",
+      "Dành toàn bộ 2 tháng chỉ để chơi game kiếm tiền ảo",
+      "Không cần vận động vì tuổi trẻ tự có sức khỏe"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Bác luôn dạy thanh niên phải phát triển hài hòa: 'Khỏe để xây dựng và bảo vệ Tổ quốc', rèn luyện cả thể lực lẫn trí lực và kỹ năng sống.",
+    "sourceTag": "Vận dụng Rèn luyện toàn diện"
+  },
+  {
+    "id": "REAL_017",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "HARD",
+    "scenarioText": "Một doanh nghiệp phần mềm đưa ra lời mời sinh viên thực tập phát triển một ứng dụng đánh bạc trực tuyến ngụy trang trò chơi dân gian với mức thù lao rất cao.",
+    "question": "Vận dụng quan điểm 'Đạo đức là gốc' và mục tiêu phục vụ nhân dân của Bác, sinh viên nên quyết định thế nào?",
+    "options": [
+      "Chấp nhận ngay vì thù lao cao, hậu quả xã hội tính sau",
+      "Kiên quyết từ chối vì công việc đó vi phạm pháp luật và tạo ra tệ nạn gây hại cho các gia đình và xã hội",
+      "Làm một thời gian kiếm đủ tiền rồi mới nghỉ",
+      "Rủ thêm các bạn cùng lớp tham gia để nhận hoa hồng"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Làm kinh tế hay làm kỹ thuật phải có đạo đức nghề nghiệp. Bác dạy 'tài' phải đi đôi với 'đức', không thể vì đồng tiền mà tiếp tay cho những tệ nạn làm băng hoại đạo đức xã hội.",
+    "sourceTag": "Vận dụng Đạo đức nghề nghiệp"
+  },
+  {
+    "id": "REAL_018",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Trong một chuyến du lịch đến di tích lịch sử đền chùa cổ kính, một nhóm bạn trẻ đã dùng bút xóa khắc tên mình lên các cột gỗ di tích để 'lưu niệm tình yêu'.",
+    "question": "Hành vi này thể hiện sự thiếu hụt nghiêm trọng về yếu tố nào trong tư tưởng Hồ Chí Minh?",
+    "options": [
+      "Thiếu hụt kỹ năng viết chữ đẹp",
+      "Ý thức văn hóa bảo tồn di sản dân tộc và sự tôn trọng các giá trị lịch sử văn hóa chung",
+      "Thiếu dụng cụ khắc chuyên nghiệp",
+      "Không vi phạm vì thể hiện tình cảm cá nhân tự nhiên"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Di sản văn hóa là tài sản thiêng liêng của dân tộc được Bác nhắc nhở phải trân trọng gìn giữ cho muôn đời sau. Hành vi bôi bẩn di tích là biểu hiện của sự vô văn hóa.",
+    "sourceTag": "Vận dụng Bảo tồn di sản văn hóa"
+  },
+  {
+    "id": "REAL_019",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Mỗi khi nhận được phản hồi góp ý từ thầy cô giáo về lỗi sai trong bài nghiên cứu khoa học, Nam thường tỏ ra bực bội, khó chịu và cho rằng thầy cô đang 'bắt bẻ' mình.",
+    "question": "Vận dụng bài học 'Tự phê bình và phê bình' của Bác, Nam nên điều chỉnh thái độ như thế nào?",
+    "options": [
+      "Lên mạng xã hội bóng gió nói xấu thầy cô",
+      "Lắng nghe với tinh thần cầu thị, nhận diện khuyết điểm để sửa chữa và hoàn thiện chất lượng công trình nghiên cứu",
+      "Bỏ đề tài nghiên cứu không làm nữa",
+      "Tranh cãi gay gắt bất chấp đúng sai"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Bác ví phê bình như chiếc gương soi khuyết điểm và liều thuốc chữa bệnh. Cầu thị trước lời phê bình là tố chất tiên quyết của người học chân chính muốn tiến bộ.",
+    "sourceTag": "Vận dụng Tự phê bình trong học tập"
+  },
+  {
+    "id": "REAL_020",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "HARD",
+    "scenarioText": "Tại một diễn đàn giao lưu sinh viên quốc tế, một số sinh viên cảm thấy tự ti khi thấy các bạn nước ngoài có điều kiện vật chất và công nghệ tốt hơn, dẫn đến tâm lý rụt rè không dám trình bày nét đẹp văn hóa truyền thống của quê hương mình.",
+    "question": "Học tập tinh thần 'Tự lực tự cường' và hội nhập quốc tế của Bác Hồ khi ra đi tìm đường cứu nước, các bạn nên làm gì?",
+    "options": [
+      "Càng che giấu cội nguồn của mình và cố gắng bắt chước hoàn toàn người nước ngoài",
+      "Tự tin, tự hào về bản sắc văn hóa dân tộc, chủ động cởi mở giao lưu, tiếp thu tinh hoa thế giới trên nền tảng cốt cách Việt Nam",
+      "Rút lui khỏi diễn đàn để tránh so sánh",
+      "Có thái độ thù địch vô căn cứ với bạn bè quốc tế"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Bác bôn ba khắp năm châu với hai bàn tay trắng nhưng luôn ngẩng cao đầu tự hào là người Việt Nam. Tự tin văn hóa và tinh thần tự lực là chìa khóa để hội nhập quốc tế thành công.",
+    "sourceTag": "Vận dụng Hội nhập quốc tế & Tự tôn dân tộc"
+  },
+  {
+    "id": "REAL_021",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Huy được bầu làm lớp phó phụ trách phong trào học tập. Huy muốn các bạn trong lớp nâng cao điểm số nhưng bản thân Huy lại thường xuyên đi học muộn, không làm bài tập về nhà.",
+    "question": "Khuyết điểm của Huy vi phạm nguyên tắc phương pháp luận nào của Bác Hồ?",
+    "options": [
+      "Nguyên tắc tiết kiệm thì giờ",
+      "Nguyên tắc Nêu gương ('Một tấm gương sống có giá trị hơn một trăm bài diễn văn')",
+      "Nguyên tắc đoàn kết quốc tế",
+      "Nguyên tắc học tập suốt đời"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Muốn thuyết phục người khác làm theo điều tốt thì bản thân người lãnh đạo, quản lý phải gương mẫu đi đầu làm trước. Không thể 'nói một đằng làm một nẻo'.",
+    "sourceTag": "Vận dụng Nguyên tắc Nêu gương"
+  },
+  {
+    "id": "REAL_022",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Khi tham gia các diễn đàn thảo luận nhóm trực tuyến, một số tài khoản thường sử dụng tính năng ẩn danh để xúc phạm ngoại hình, tung tin đồn vô căn cứ về các bạn học khác.",
+    "question": "Hành vi bạo lực mạng này phản ánh điều gì theo quan điểm đạo đức Hồ Chí Minh?",
+    "options": [
+      "Sự thiếu vắng tình thương yêu con người và sự hèn nhát, vô trách nhiệm trong nếp sống",
+      "Là biểu hiện của sự sáng tạo hài hước",
+      "Là quyền tự do ngôn luận hợp pháp",
+      "Giúp người khác rèn luyện tâm lý vững vàng"
+    ],
+    "correctAnswer": 0,
+    "points": 100,
+    "explanation": "Đạo đức Hồ Chí Minh luôn đặt lòng nhân ái, sự tôn trọng nhân phẩm con người lên hàng đầu. Ẩn danh để làm tổn thương người khác là hành vi đi ngược lại đạo đức văn minh.",
+    "sourceTag": "Vận dụng Đạo đức trên không gian mạng"
+  },
+  {
+    "id": "REAL_023",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "HARD",
+    "scenarioText": "Một nhóm bạn trẻ phát triển một dự án khởi nghiệp cộng đồng nhằm số hóa và dịch các câu chuyện cổ tích Việt Nam ra các thứ tiếng trên thế giới để quảng bá văn hóa dân tộc. Dự án gặp nhiều khó khăn về tài chính giai đoạn đầu.",
+    "question": "Dự án này thể hiện đúng nhất tinh thần nào trong tư tưởng văn hóa Hồ Chí Minh?",
+    "options": [
+      "Văn hóa là hoạt động kinh doanh kiếm lời nhanh nhất",
+      "Văn hóa là động lực phát triển, lan tỏa giá trị tốt đẹp của dân tộc ra thế giới bằng công nghệ hiện đại và ý chí tự lực tự cường",
+      "Chỉ nên làm việc gì có lãi ngay, không nên làm văn hóa",
+      "Văn hóa cổ tích đã lỗi thời không còn giá trị"
+    ],
+    "correctAnswer": 1,
+    "points": 300,
+    "explanation": "Đây là hành động thiết thực đưa văn hóa Việt Nam ra thế giới, biến văn hóa thành sức mạnh mềm của dân tộc theo đúng định hướng mở rộng giao lưu văn hóa của Bác.",
+    "sourceTag": "Vận dụng Quảng bá văn hóa dân tộc"
+  },
+  {
+    "id": "REAL_024",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Khi tham gia kỳ thi chứng chỉ ngoại ngữ, có người rủ bạn mua thiết bị tai nghe siêu nhỏ để gian lận với giá vài triệu đồng, cam kết 'đỗ 100% không cần học'.",
+    "question": "Theo lời Bác dạy về 'Thực học - Thực nghiệp', bạn nên ứng xử ra sao?",
+    "options": [
+      "Vay tiền mua ngay để có chứng chỉ sớm đi xin việc",
+      "Kiên quyết cự tuyệt hành vi gian lận, báo cáo cơ quan chức năng và tập trung ôn luyện bằng chính thực lực của mình",
+      "Mua rồi cho bạn bè thuê lại kiếm lời",
+      "Học thuộc cách sử dụng thiết bị gian lận"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác luôn dạy: Học để lấy kiến thức thật, năng lực thật để làm việc chứ không phải học giả lấy bằng thật để lừa dối xã hội.",
+    "sourceTag": "Vận dụng Thực học - Thực tài"
+  },
+  {
+    "id": "REAL_025",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "EASY",
+    "scenarioText": "Một bạn sinh viên sống xa nhà, gia đình gửi tiền sinh hoạt phí hàng tháng nhưng bạn thường dùng hết vào mua sắm quần áo hàng hiệu đắt tiền để bằng bạn bằng bè, dẫn đến cuối tháng phải vay nợ lãi cao.",
+    "question": "Bài học về chữ 'KIỆM' của Bác giúp bạn nhận ra sai lầm nào?",
+    "options": [
+      "Cần vay thêm nhiều khoản khác để trả nợ cũ",
+      "Mắc bệnh phô trương hình thức, tiêu xài hoang phí quá khả năng kinh tế, chưa biết quý trọng mồ hôi nước mắt của cha mẹ",
+      "Chỉ cần đổi sang mua đồ hiệu vào các đợt giảm giá",
+      "Yêu cầu cha mẹ bán đất gửi thêm tiền"
+    ],
+    "correctAnswer": 1,
+    "points": 100,
+    "explanation": "Bác dạy 'Kiệm' là biết liệu cơm gắp mắm, không xa hoa hoang phí, sống giản dị trong sạch và biết thương xót công sức lao động của người thân.",
+    "sourceTag": "Vận dụng Lối sống giản dị, tiết kiệm"
+  },
+  {
+    "id": "REAL_026",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Tại công ty nơi bạn đang thực tập, bạn phát hiện có một nhân viên thường xuyên bỏ chất thải độc hại trực tiếp ra cống thoát nước chung của khu dân cư vào ban đêm để tiết kiệm chi phí xử lý.",
+    "question": "Trách nhiệm công dân và đạo đức xã hội theo tư tưởng Hồ Chí Minh đòi hỏi bạn phải làm gì?",
+    "options": [
+      "Làm ngơ coi như không thấy vì mình chỉ là thực tập sinh",
+      "Báo cáo ngay cho ban lãnh đạo công ty và cơ quan môi trường có thẩm quyền để ngăn chặn hành vi hủy hoại môi trường sống của nhân dân",
+      "Đòi nhân viên kia chia tiền tiết kiệm được để giữ im lặng",
+      "Học tập cách làm đó để sau này áp dụng cho doanh nghiệp của mình"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác dạy: 'Việc gì hại đến dân ta phải hết sức tránh.' Bảo vệ môi trường sống chính là bảo vệ sức khỏe và tương lai của nhân dân.",
+    "sourceTag": "Vận dụng Trách nhiệm bảo vệ môi trường"
+  },
+  {
+    "id": "REAL_027",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "HARD",
+    "scenarioText": "Một nhóm bạn trẻ tạo kênh TikTok chia sẻ các video làm từ thiện nhưng thực chất là dàn dựng cảnh người nghèo khóc lóc để kêu gọi quyên góp vào tài khoản cá nhân rồi chiếm đoạt.",
+    "question": "Hành vi này đã chà đạp nghiêm trọng lên giá trị đạo đức truyền thống nào mà Bác Hồ dày công vun đắp?",
+    "options": [
+      "Lòng nhân ái, tình yêu thương con người và sự trung thực trong hoạt động xã hội",
+      "Khả năng sáng tạo nội dung số",
+      "Kỹ năng diễn xuất trước ống kính",
+      "Tự do kinh doanh trên mạng xã hội"
+    ],
+    "correctAnswer": 0,
+    "points": 300,
+    "explanation": "Lợi dụng lòng tốt và nỗi khổ của đồng bào để trục lợi cá nhân là hành vi vô đạo đức, phản bội lại truyền thống 'lá lành đùm lá rách' cao đẹp của dân tộc.",
+    "sourceTag": "Vận dụng Đạo đức từ thiện & Nhân ái"
+  },
+  {
+    "id": "REAL_028",
+    "category": "REAL_LIFE",
+    "type": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "scenarioText": "Trong buổi bầu chọn Ban Chấp hành Đoàn trường, bạn được một ứng viên hứa hẹn sẽ cho đề thi cuối kỳ môn chuyên ngành nếu bạn vận động sinh viên trong khoa bỏ phiếu cho ứng viên đó.",
+    "question": "Phẩm chất 'CHÍNH' và danh dự của người đoàn viên theo lời Bác dạy yêu cầu bạn phản ứng thế nào?",
+    "options": [
+      "Đồng ý ngay vì lợi ích điểm số quá hấp dẫn",
+      "Từ chối thẳng thắn, kiên quyết bỏ phiếu dựa trên năng lực và uy tín thực tế của ứng viên, đồng thời báo cáo với Đoàn cấp trên",
+      "Nhận lời nhưng sau đó không bầu",
+      "Vòi vĩnh thêm tiền mặt"
+    ],
+    "correctAnswer": 1,
+    "points": 200,
+    "explanation": "Bác dạy người cán bộ, đoàn viên phải giữ mình trong sạch, chính trực, không bán rẻ lá phiếu và lương tâm vì bất kỳ món lợi ích bất chính nào.",
+    "sourceTag": "Vận dụng Chính trực trong công tác Đoàn"
+  }
+]
