@@ -9,12 +9,14 @@ interface BuzzerPodiumProps {
   teams: BuzzerTeam[];
   onPlayAgain: () => void;
   onGoHome: () => void;
+  isLight?: boolean;
 }
 
 export const BuzzerPodium: React.FC<BuzzerPodiumProps> = ({
   teams,
   onPlayAgain,
   onGoHome,
+  isLight = true,
 }) => {
   // Sort teams by score descending
   const sortedTeams = [...teams].sort((a, b) => b.score - a.score);
@@ -60,15 +62,19 @@ export const BuzzerPodium: React.FC<BuzzerPodiumProps> = ({
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10"
       >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-amber-300 text-xs font-semibold tracking-wider uppercase mb-3 shadow-sm">
-          <Trophy className="w-3.5 h-3.5 text-amber-400" />
+        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase mb-3 shadow-xs ${
+          isLight
+            ? 'bg-amber-100 text-amber-900 border border-amber-300'
+            : 'bg-white/[0.04] border border-white/[0.08] text-amber-300'
+        }`}>
+          <Trophy className="w-3.5 h-3.5 text-amber-500" />
           <span>KẾT QUẢ CHUNG CUỘC • BẢNG TỔNG SẮP</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-          VINH DANH <span className="gold-gradient-text">ĐỘI CHIẾN THẮNG</span>
+        <h1 className={`text-3xl sm:text-5xl font-black tracking-tight ${isLight ? 'text-[#172033]' : 'text-white'}`}>
+          VINH DANH <span className="crimson-gradient-text">ĐỘI CHIẾN THẮNG</span>
         </h1>
-        <p className="text-slate-400 text-xs sm:text-sm mt-2 max-w-lg mx-auto">
+        <p className={`text-xs sm:text-sm mt-2 max-w-lg mx-auto ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
           Chúc mừng các đội thi đã xuất sắc hoàn thành phần thi đấu và củng cố toàn diện kiến thức Tư tưởng Hồ Chí Minh!
         </p>
       </motion.div>
@@ -89,16 +95,20 @@ export const BuzzerPodium: React.FC<BuzzerPodiumProps> = ({
             >
               {second.icon}
             </div>
-            <p className="font-bold text-xs sm:text-sm text-slate-200 truncate max-w-full">
+            <p className={`font-bold text-xs sm:text-sm truncate max-w-full ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
               {second.name}
             </p>
-            <p className="text-lg sm:text-xl font-black text-slate-300 font-mono mt-0.5">
+            <p className={`text-lg sm:text-xl font-black font-mono mt-0.5 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
               {second.score} điểm
             </p>
 
-            <div className="w-full h-32 sm:h-40 mt-3 rounded-t-2xl bg-gradient-to-b from-slate-400/40 via-slate-600/30 to-slate-900/60 border-t border-slate-300 flex flex-col items-center justify-center text-slate-200">
+            <div className={`w-full h-32 sm:h-40 mt-3 rounded-t-2xl flex flex-col items-center justify-center ${
+              isLight
+                ? 'bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 border-t-2 border-slate-400 text-slate-800 shadow-md'
+                : 'bg-gradient-to-b from-slate-400/40 via-slate-600/30 to-slate-900/60 border-t border-slate-300 text-slate-200'
+            }`}>
               <span className="text-2xl sm:text-3xl font-black">2</span>
-              <span className="text-[10px] font-bold uppercase tracking-wider mt-0.5 text-slate-300">
+              <span className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
                 Á QUÂN (HẠNG 2)
               </span>
             </div>
@@ -125,16 +135,20 @@ export const BuzzerPodium: React.FC<BuzzerPodiumProps> = ({
               </span>
             </div>
 
-            <p className="font-black text-sm sm:text-base text-amber-300 truncate max-w-full">
+            <p className={`font-black text-sm sm:text-base truncate max-w-full ${isLight ? 'text-amber-900' : 'text-amber-300'}`}>
               {first.name}
             </p>
-            <p className="text-2xl sm:text-3xl font-black text-amber-400 font-mono mt-0.5">
+            <p className={`text-2xl sm:text-3xl font-black font-mono mt-0.5 ${isLight ? 'text-amber-800' : 'text-amber-400'}`}>
               {first.score} điểm
             </p>
 
-            <div className="w-full h-44 sm:h-52 mt-3 rounded-t-2xl bg-gradient-to-b from-amber-500/40 via-amber-700/30 to-amber-950/60 border-t-2 border-amber-300 flex flex-col items-center justify-center text-amber-200 shadow-xl">
+            <div className={`w-full h-44 sm:h-52 mt-3 rounded-t-2xl flex flex-col items-center justify-center shadow-lg ${
+              isLight
+                ? 'bg-gradient-to-b from-amber-200 via-amber-300 to-amber-400 border-t-2 border-amber-500 text-amber-950'
+                : 'bg-gradient-to-b from-amber-500/40 via-amber-700/30 to-amber-950/60 border-t-2 border-amber-300 text-amber-200 shadow-xl'
+            }`}>
               <span className="text-3xl sm:text-4xl font-black">1</span>
-              <span className="text-xs font-bold uppercase tracking-wider mt-0.5 text-amber-300">
+              <span className={`text-xs font-bold uppercase tracking-wider mt-0.5 ${isLight ? 'text-amber-900' : 'text-amber-300'}`}>
                 QUÁN QUÂN (HẠNG 1)
               </span>
             </div>
@@ -155,16 +169,20 @@ export const BuzzerPodium: React.FC<BuzzerPodiumProps> = ({
             >
               {third.icon}
             </div>
-            <p className="font-bold text-xs sm:text-sm text-slate-200 truncate max-w-full">
+            <p className={`font-bold text-xs sm:text-sm truncate max-w-full ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
               {third.name}
             </p>
-            <p className="text-lg sm:text-xl font-black text-amber-500 font-mono mt-0.5">
+            <p className={`text-lg sm:text-xl font-black font-mono mt-0.5 ${isLight ? 'text-amber-800' : 'text-amber-500'}`}>
               {third.score} điểm
             </p>
 
-            <div className="w-full h-24 sm:h-32 mt-3 rounded-t-2xl bg-gradient-to-b from-amber-800/40 via-amber-900/30 to-black/60 border-t border-amber-600 flex flex-col items-center justify-center text-amber-400">
+            <div className={`w-full h-24 sm:h-32 mt-3 rounded-t-2xl flex flex-col items-center justify-center ${
+              isLight
+                ? 'bg-gradient-to-b from-amber-100 via-amber-200 to-amber-300 border-t-2 border-amber-400 text-amber-900 shadow-xs'
+                : 'bg-gradient-to-b from-amber-800/40 via-amber-900/30 to-black/60 border-t border-amber-600 text-amber-400'
+            }`}>
               <span className="text-2xl sm:text-3xl font-black">3</span>
-              <span className="text-[10px] font-bold uppercase tracking-wider mt-0.5 text-amber-400">
+              <span className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${isLight ? 'text-amber-900' : 'text-amber-400'}`}>
                 HẠNG BA
               </span>
             </div>
@@ -190,7 +208,11 @@ export const BuzzerPodium: React.FC<BuzzerPodiumProps> = ({
             audio.playClick();
             onGoHome();
           }}
-          className="px-6 py-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white font-semibold text-sm border border-white/[0.08] flex items-center gap-2 active:scale-95 transition-all cursor-pointer shadow-sm"
+          className={`px-6 py-3.5 rounded-xl font-semibold text-sm border flex items-center gap-2 active:scale-95 transition-all cursor-pointer shadow-xs ${
+            isLight
+              ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+              : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border-white/[0.08]'
+          }`}
         >
           <Home className="w-4 h-4" />
           <span>VỀ SẢNH CHỜ PHÒNG</span>

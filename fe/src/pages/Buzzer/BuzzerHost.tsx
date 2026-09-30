@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ALL_QUESTIONS } from '@/data/questions';
+import { ALL_QUESTIONS, shuffleQuestionOptions } from '@/data/questions';
 import { getInitialTeams } from '@/data/buzzerTeams';
 import { getRandomMysteryReward } from '@/data/mysteryRewards';
 import { buzzerNetwork } from '@/services/buzzerNetwork';
 import { audio } from '@/utils/audio';
 import type { Question } from '@/types/game';
-import type { BuzzerTeam, BuzzerState, MysteryReward, NetworkMessage, AnswerResultRecord } from '@/types/buzzer';
+import type { BuzzerTeam, BuzzerMode, BuzzerState, MysteryReward, NetworkMessage, AnswerResultRecord } from '@/types/buzzer';
 
 import { BuzzerLobby } from '@/components/buzzer/BuzzerLobby';
 import { BuzzerPlayArena } from '@/components/buzzer/BuzzerPlayArena';
@@ -22,6 +22,36 @@ export const BuzzerHost: React.FC = () => {
     const randomNum = Math.floor(100 + Math.random() * 900);
     return `HCM${randomNum}`;
   });
+
+  // UI Theme: light by default as requested by user
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('buzzer_theme') as 'light' | 'dark') || 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const stored = localStorage.getItem('buzzer_theme') as 'light' | 'dark';
+      if (stored && (stored === 'light' || stored === 'dark')) {
+        setTheme(stored);
+      }
+    };
+    window.addEventListener('theme_change', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('theme_change', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const handleToggleTheme = () => {
+    audio.playClick();
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('buzzer_theme', nextTheme);
+  };
 
   const handleRegenerateRoom = () => {
     audio.playClick();
@@ -266,9 +296,9 @@ export const BuzzerHost: React.FC = () => {
       if (pool.length === 0) pool = ALL_QUESTIONS;
     }
 
-    // Shuffle and pick questionCount
+    // Shuffle and pick questionCount with randomized answer options
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, Math.min(questionCount, shuffled.length));
+    const selected = shuffled.slice(0, Math.min(questionCount, shuffled.length)).map(shuffleQuestionOptions);
 
     setQuestions(selected);
     setCurrentQuestionIndex(0);
@@ -524,8 +554,8 @@ export const BuzzerHost: React.FC = () => {
   const activeBuzzTeam = teams.find(t => t.id === activeBuzzTeamId) || null;
 
   return (
-    <div className="min-h-screen bg-studio-dark text-slate-100 flex flex-col font-sans antialiased relative overflow-x-hidden">
-      <Navbar />
+    <div className={`min-h-screen ${theme === 'light' ? 'theme-light bg-[#F7F3EA] bg-studio-light text-[#172033]' : 'theme-dark bg-[#0B0E17] bg-studio-dark text-slate-100'} flex flex-col font-sans antialiased relative overflow-x-hidden transition-colors duration-200`}>
+      <Navbar theme={theme} onToggleTheme={handleToggleTheme} />
 
       <main className="flex-1 flex flex-col">
         {step === 'LOBBY' && (
@@ -549,6 +579,7 @@ export const BuzzerHost: React.FC = () => {
             tugThreshold={tugThreshold}
             onUpdateTugThreshold={setTugThreshold}
             onStartGame={handleStartGame}
+            isLight={theme === 'light'}
           />
         )}
 
@@ -580,6 +611,7 @@ export const BuzzerHost: React.FC = () => {
             onAdjustScore={handleAdjustScore}
             lastAnswerResult={lastAnswerResult}
             onFinishQuestion={handleFinishQuestion}
+            isLight={theme === 'light'}
           />
         )}
 
@@ -591,6 +623,7 @@ export const BuzzerHost: React.FC = () => {
               setTeams(getInitialTeams(teamCount));
             }}
             onGoHome={() => navigate('/')}
+            isLight={theme === 'light'}
           />
         )}
       </main>
@@ -601,6 +634,7 @@ export const BuzzerHost: React.FC = () => {
         reward={mysteryReward}
         team={activeBuzzTeam}
         onClaim={handleClaimMysteryReward}
+        isLight={theme === 'light'}
       />
     </div>
   );

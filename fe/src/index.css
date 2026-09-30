@@ -40,6 +40,74 @@
   background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
 }
 
+/* Dark Game Show Studio Theme for Buzzer Host & Player */
+.bg-studio-dark {
+  background-color: #0B0E17 !important;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(225, 29, 72, 0.2) 0%, transparent 60%),
+    radial-gradient(circle at 10% 50%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 90% 60%, rgba(59, 130, 246, 0.1) 0%, transparent 45%),
+    radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px !important;
+  color: #F8FAFC !important;
+}
+
+/* Light Game Show Classroom Stage Theme for Buzzer Host & Player */
+.bg-studio-light {
+  background-color: #F7F3EA !important;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(158, 27, 50, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 10% 90%, rgba(217, 164, 65, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(29, 78, 216, 0.05) 0%, transparent 50%),
+    radial-gradient(rgba(23, 32, 51, 0.04) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px !important;
+  color: #172033 !important;
+}
+
+.studio-card {
+  background: rgba(17, 24, 39, 0.9) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+.theme-light .studio-card,
+.bg-studio-light.studio-card,
+.bg-studio-light .studio-card {
+  background: #FFFFFF !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 2px solid rgba(23, 32, 51, 0.09) !important;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 12px 36px -8px rgba(23, 32, 51, 0.08), 0 0 0 1px rgba(23, 32, 51, 0.03) !important;
+  color: #172033 !important;
+}
+
+.studio-card-inner {
+  border-radius: 1.5rem !important;
+}
+
+.theme-light .studio-card-inner,
+.bg-studio-light .studio-card-inner {
+  border-radius: 1.5rem !important;
+  color: #172033 !important;
+}
+
+.crimson-gradient-text {
+  background: linear-gradient(135deg, #FF4D6D 0%, #E11D48 50%, #F59E0B 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  display: inline-block;
+}
+
+.studio-buzzer-button {
+  background: radial-gradient(circle at 35% 30%, #FF4D6D 0%, #E11D48 50%, #9F1239 100%) !important;
+  box-shadow: 0 0 50px rgba(225, 29, 72, 0.7), inset 0 2px 6px rgba(255, 255, 255, 0.5), inset 0 -6px 14px rgba(0, 0, 0, 0.5) !important;
+  border: 4px solid rgba(255, 255, 255, 0.35) !important;
+}
+
 /* Fonts */
 .font-display {
   font-family: 'Be Vietnam Pro', system-ui, sans-serif;

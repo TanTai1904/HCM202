@@ -76,38 +76,60 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
           </p>
 
           {/* TWO MAIN GAME MODES CARDS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
             {/* Mode 1: KÉO CO & ĐẤU CHUÔNG */}
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="p-6 rounded-3xl bg-gradient-to-br from-[#121624] to-[#1C1F2E] text-white border-2 border-amber-500/40 shadow-2xl flex flex-col justify-between relative overflow-hidden group"
+              whileHover={{ y: -4, scale: 1.01 }}
+              transition={{ duration: 0.2 }}
+              className="p-6 sm:p-7 rounded-[2rem] bg-white border-2 border-amber-500/25 hover:border-amber-500/60 shadow-[0_15px_40px_rgba(245,158,11,0.12)] flex flex-col justify-between relative overflow-hidden group"
             >
-              <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase tracking-wider animate-pulse">
-                Có Kéo Co Tranh Quyền
-              </div>
+              {/* Subtle ambient corner glow */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-500/12 via-orange-500/6 to-transparent rounded-full blur-2xl pointer-events-none group-hover:from-amber-500/20 transition-all" />
 
               <div>
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 flex items-center justify-center text-2xl shadow-lg mb-3">
-                  🪢
+                {/* Header Row: Icon + Badge */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-13 h-13 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-2xl shadow-xs text-amber-600 group-hover:scale-105 transition-transform">
+                    🪢
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-800 border border-amber-500/25 text-[11px] font-black uppercase tracking-wider shadow-xs animate-pulse">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    CÓ KÉO CO TRANH QUYỀN
+                  </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+
+                <h3 className="text-2xl font-black text-[#172033] tracking-tight flex items-center gap-2">
                   <span>ĐẤU CHUÔNG & KÉO CO</span>
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-300 font-body leading-relaxed mt-2">
-                  Cơ chế <strong>KÉO CO</strong>: các đội bấm liên tục trên điện thoại để kéo qua vạch đích, đội kéo nhanh nhất giành quyền trả lời! Có cộng điểm trực tiếp.
+                
+                <p className="text-xs sm:text-sm text-[#172033]/70 font-body leading-relaxed mt-2.5">
+                  Cơ chế <strong className="text-amber-600 font-bold">KÉO CO</strong>: các đội bấm liên tục trên điện thoại để kéo qua vạch đích, đội kéo nhanh nhất giành quyền trả lời! Có cộng điểm trực tiếp.
                 </p>
+
+                {/* Feature Chips */}
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
+                    ⚡ Phản xạ 1 chạm
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
+                    🪢 Kéo co P2P
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] font-bold text-amber-700">
+                    👥 2 - 8 Đội
+                  </span>
+                </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex flex-col gap-2">
+              <div className="mt-6 pt-4 border-t border-[#172033]/10 flex flex-col gap-2">
                 <a
                   href="/buzzer"
                   onClick={() => audio.playClick()}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-rose-600 to-red-600 hover:from-amber-400 hover:to-rose-500 text-white font-black text-sm tracking-wide shadow-lg shadow-rose-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all border border-white/20 text-center uppercase"
+                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-black text-sm tracking-wider shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all border border-white/20 text-center uppercase active:scale-[0.98]"
                 >
                   <span>VÀO ĐẤU CHUÔNG & KÉO CO</span>
-                  <span className="text-base">➔</span>
+                  <span className="text-base font-bold">➔</span>
                 </a>
-                <span className="text-[10px] text-slate-400 text-center font-mono">
+                <span className="text-[10px] text-[#172033]/50 text-center font-mono">
                   URL Host: /buzzer • Điện thoại: /buzzer-play
                 </span>
               </div>
@@ -115,19 +137,44 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
 
             {/* Mode 2: LIVE QUIZ 4 ĐỘI */}
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="p-6 rounded-3xl bg-white border-2 border-[#172033]/15 shadow-xl flex flex-col justify-between relative overflow-hidden"
+              whileHover={{ y: -4, scale: 1.01 }}
+              transition={{ duration: 0.2 }}
+              className="p-6 sm:p-7 rounded-[2rem] bg-white border-2 border-[#172033]/15 hover:border-[#9E1B32]/40 shadow-[0_15px_40px_rgba(23,32,51,0.08)] flex flex-col justify-between relative overflow-hidden group"
             >
+              {/* Subtle ambient corner glow */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#9E1B32]/10 via-[#D9A441]/5 to-transparent rounded-full blur-2xl pointer-events-none group-hover:from-[#9E1B32]/15 transition-all" />
+
               <div>
-                <div className="w-12 h-12 rounded-2xl bg-[#9E1B32]/10 border border-[#9E1B32]/20 flex items-center justify-center text-2xl shadow-sm mb-3">
-                  🏆
+                {/* Header Row: Icon + Badge */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-13 h-13 rounded-2xl bg-[#9E1B32]/10 border border-[#9E1B32]/25 flex items-center justify-center text-2xl shadow-sm text-[#9E1B32] group-hover:scale-105 transition-transform">
+                    🏆
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9E1B32]/10 text-[#9E1B32] border border-[#9E1B32]/20 text-[11px] font-black uppercase tracking-wider shadow-xs">
+                    TRẮC NGHIỆM ĐỒNG LOẠT
+                  </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-[#172033] tracking-tight">
+
+                <h3 className="text-2xl font-black text-[#172033] tracking-tight">
                   LIVE QUIZ 4 ĐỘI
                 </h3>
-                <p className="text-xs sm:text-sm text-[#172033]/70 font-body leading-relaxed mt-2">
+
+                <p className="text-xs sm:text-sm text-[#172033]/70 font-body leading-relaxed mt-2.5">
                   Trắc nghiệm đồng loạt chuẩn lớp học. Cả lớp quét QR, tự động chia 4 đội (Đỏ, Xanh, Vàng, Lục) và cùng chọn A, B, C, D trên điện thoại.
                 </p>
+
+                {/* Feature Chips */}
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
+                    📊 Chia 4 đội tự động
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
+                    📝 Đáp án A, B, C, D
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#9E1B32]">
+                    🎯 Bảng xếp hạng live
+                  </span>
+                </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-[#172033]/10 flex flex-col gap-2">
@@ -136,7 +183,7 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
                     audio.playClick();
                     onStart();
                   }}
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#9E1B32] hover:bg-[#851629] text-white font-black text-sm tracking-wide shadow-lg shadow-[#9E1B32]/20 flex items-center justify-center gap-2 cursor-pointer transition-all border-2 border-white/20 uppercase"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#9E1B32] hover:bg-[#851629] text-white font-black text-sm tracking-wider shadow-lg shadow-[#9E1B32]/20 flex items-center justify-center gap-2 cursor-pointer transition-all border-2 border-white/20 uppercase active:scale-[0.98]"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>BẮT ĐẦU LIVE QUIZ (4 ĐỘI)</span>

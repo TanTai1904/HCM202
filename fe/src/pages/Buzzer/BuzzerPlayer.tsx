@@ -15,7 +15,9 @@ import {
   Award,
   ArrowRight,
   Shield,
-  Star
+  Star,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getInitialTeams } from '@/data/buzzerTeams';
@@ -23,6 +25,38 @@ import { getInitialTeams } from '@/data/buzzerTeams';
 export const BuzzerPlayer: React.FC = () => {
   const [searchParams] = useSearchParams();
   const roomParam = searchParams.get('room') || searchParams.get('pin') || '';
+
+  // Theme support (default 'light')
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('buzzer_theme') as 'light' | 'dark') || 'light';
+  });
+
+  useEffect(() => {
+    const handleThemeChange = (e: any) => {
+      const newTheme = e.detail || localStorage.getItem('buzzer_theme') || 'light';
+      setTheme(newTheme);
+    };
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'buzzer_theme' && (e.newValue === 'light' || e.newValue === 'dark')) {
+        setTheme(e.newValue);
+      }
+    };
+    window.addEventListener('theme_change', handleThemeChange);
+    window.addEventListener('storage', handleStorage);
+    return () => {
+      window.removeEventListener('theme_change', handleThemeChange);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('buzzer_theme', nextTheme);
+    window.dispatchEvent(new CustomEvent('theme_change', { detail: nextTheme }));
+  };
+
+  const isLight = theme === 'light';
 
   const [inputRoom, setInputRoom] = useState(roomParam.toUpperCase());
   const [roomId, setRoomId] = useState(roomParam.toUpperCase());
@@ -192,17 +226,37 @@ export const BuzzerPlayer: React.FC = () => {
   // 1. Enter Room Screen if no room provided
   if (!roomId) {
     return (
-      <div className="min-h-[100dvh] bg-studio-dark text-slate-100 flex flex-col items-center justify-center p-4 select-none font-sans relative overflow-hidden">
+      <div className={`min-h-[100dvh] flex flex-col items-center justify-center p-4 select-none font-sans relative overflow-hidden transition-colors ${
+        isLight ? 'theme-light bg-[#F7F3EA] bg-studio-light text-[#172033]' : 'bg-[#0B0E17] bg-studio-dark text-slate-100'
+      }`}>
+        {/* Quick Theme Toggle */}
+        <div className="absolute top-4 right-4 z-20">
+          <button
+            onClick={toggleTheme}
+            className={`p-2.5 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer ${
+              isLight 
+                ? 'bg-white border-amber-900/15 text-[#172033] hover:bg-amber-50' 
+                : 'bg-white/[0.05] border-white/10 text-slate-300 hover:text-white'
+            }`}
+            title="Đổi giao diện Sáng / Tối"
+          >
+            {isLight ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-sky-400" />}
+            <span>{isLight ? 'SÁNG' : 'TỐI'}</span>
+          </button>
+        </div>
+
         <div className="w-full max-w-sm studio-card relative z-10">
-          <div className="studio-card-inner p-7 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-600 to-amber-600 flex items-center justify-center mx-auto mb-4 text-white shadow-[0_0_20px_rgba(225,29,72,0.4)]">
+          <div className={`studio-card-inner p-7 text-center rounded-2xl ${
+            isLight ? 'bg-white/95 border border-amber-900/15 shadow-xl' : ''
+          }`}>
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-600 to-amber-600 flex items-center justify-center mx-auto mb-4 text-white shadow-[0_0_20px_rgba(225,29,72,0.3)]">
               <Smartphone className="w-7 h-7" />
             </div>
 
-            <h1 className="text-2xl font-black text-white tracking-tight">
+            <h1 className={`text-2xl font-black tracking-tight ${isLight ? 'text-[#172033]' : 'text-white'}`}>
               KẾT NỐI CHUÔNG BẤM
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className={`text-xs mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               Nhập mã phòng hiển thị trên màn hình máy chiếu
             </p>
 
@@ -220,11 +274,15 @@ export const BuzzerPlayer: React.FC = () => {
                 value={inputRoom}
                 onChange={(e) => setInputRoom(e.target.value.toUpperCase())}
                 placeholder="VD: HCM882"
-                className="w-full text-center py-3.5 px-4 rounded-xl bg-white/[0.04] border border-white/[0.1] text-2xl font-black text-amber-300 font-mono tracking-widest uppercase focus:outline-none focus:border-rose-500 shadow-inner"
+                className={`w-full text-center py-3.5 px-4 rounded-xl text-2xl font-black font-mono tracking-widest uppercase focus:outline-none shadow-inner border transition-all ${
+                  isLight 
+                    ? 'bg-amber-50/60 border-amber-900/20 text-[#9E1B32] focus:border-[#9E1B32] focus:ring-2 focus:ring-[#9E1B32]/20' 
+                    : 'bg-white/[0.04] border-white/[0.1] text-amber-300 focus:border-rose-500'
+                }`}
               />
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 text-white font-black text-base shadow-[0_0_20px_rgba(225,29,72,0.4)] cursor-pointer active:scale-95 transition-all"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 text-white font-black text-base shadow-[0_0_20px_rgba(225,29,72,0.3)] cursor-pointer active:scale-95 transition-all"
               >
                 VÀO PHÒNG THI ĐẤU ➔
               </button>
@@ -238,17 +296,37 @@ export const BuzzerPlayer: React.FC = () => {
   // 2. Select Team Screen if not chosen yet
   if (!selectedTeam) {
     return (
-      <div className="min-h-[100dvh] bg-studio-dark text-slate-100 flex flex-col p-4 select-none font-sans relative overflow-hidden">
+      <div className={`min-h-[100dvh] flex flex-col p-4 select-none font-sans relative overflow-hidden transition-colors ${
+        isLight ? 'theme-light bg-[#F7F3EA] bg-studio-light text-[#172033]' : 'bg-[#0B0E17] bg-studio-dark text-slate-100'
+      }`}>
+        {/* Quick Theme Toggle */}
+        <div className="absolute top-4 right-4 z-20">
+          <button
+            onClick={toggleTheme}
+            className={`p-2 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer ${
+              isLight 
+                ? 'bg-white border-amber-900/15 text-[#172033] hover:bg-amber-50' 
+                : 'bg-white/[0.05] border-white/10 text-slate-300 hover:text-white'
+            }`}
+            title="Đổi giao diện Sáng / Tối"
+          >
+            {isLight ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-sky-400" />}
+            <span className="hidden sm:inline">{isLight ? 'SÁNG' : 'TỐI'}</span>
+          </button>
+        </div>
+
         <div className="max-w-md mx-auto w-full my-auto py-6 relative z-10">
           {/* Header */}
           <div className="text-center mb-6">
-            <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-white/[0.05] text-slate-300 border border-white/[0.1] font-mono">
-              PHÒNG: <span className="font-bold text-amber-300">{roomId}</span>
+            <span className={`text-xs font-semibold px-3.5 py-1.5 rounded-full font-mono border shadow-sm ${
+              isLight ? 'bg-white border-amber-900/15 text-slate-700' : 'bg-white/[0.05] text-slate-300 border-white/[0.1]'
+            }`}>
+              PHÒNG: <span className={`font-bold ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>{roomId}</span>
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">
+            <h1 className={`text-2xl sm:text-3xl font-black mt-3 tracking-tight ${isLight ? 'text-[#172033]' : 'text-white'}`}>
               CHỌN ĐỘI TRANH TÀI
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className={`text-xs mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               Chạm vào nhóm của bạn để nhận chuông bấm thi đấu
             </p>
           </div>
@@ -260,7 +338,11 @@ export const BuzzerPlayer: React.FC = () => {
                 <button
                   key={t.id}
                   onClick={() => handleSelectTeam(t)}
-                  className="p-3.5 rounded-2xl border border-white/[0.08] flex items-center gap-3.5 transition-all active:scale-95 text-left cursor-pointer bg-white/[0.03] shadow-md group hover:border-white/20 hover:bg-white/[0.06]"
+                  className={`p-3.5 rounded-2xl border flex items-center gap-3.5 transition-all active:scale-95 text-left cursor-pointer shadow-md group ${
+                    isLight 
+                      ? 'bg-white/95 border-amber-900/15 hover:border-amber-500/60 hover:shadow-lg' 
+                      : 'border-white/[0.08] bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]'
+                  }`}
                 >
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center text-xl font-bold text-white shrink-0 shadow-sm"
@@ -269,20 +351,28 @@ export const BuzzerPlayer: React.FC = () => {
                     {t.icon}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-bold text-sm text-slate-100 truncate group-hover:text-amber-300 transition-colors">
+                    <p className={`font-bold text-sm truncate transition-colors ${
+                      isLight ? 'text-[#172033] group-hover:text-[#9E1B32]' : 'text-slate-100 group-hover:text-amber-300'
+                    }`}>
                       {t.name}
                     </p>
-                    <p className="text-xs text-amber-400 font-semibold font-mono mt-0.5">
+                    <p className={`text-xs font-semibold font-mono mt-0.5 ${
+                      isLight ? 'text-amber-700' : 'text-amber-400'
+                    }`}>
                       {t.score} điểm
                     </p>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className={`w-4 h-4 group-hover:translate-x-1 transition-all ${
+                    isLight ? 'text-slate-500 group-hover:text-[#9E1B32]' : 'text-slate-400 group-hover:text-amber-300'
+                  }`} />
                 </button>
               ))
             ) : (
-              <div className="col-span-full p-8 text-center bg-white/[0.03] rounded-2xl border border-white/[0.08]">
+              <div className={`col-span-full p-8 text-center rounded-2xl border ${
+                isLight ? 'bg-white/90 border-amber-900/15' : 'bg-white/[0.03] border-white/[0.08]'
+              }`}>
                 <div className="w-7 h-7 border-2 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                <p className="text-xs text-slate-400">
+                <p className={`text-xs ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                   Đang đồng bộ danh sách đội từ máy chiếu ({roomId})...
                 </p>
               </div>
@@ -300,11 +390,15 @@ export const BuzzerPlayer: React.FC = () => {
   const activeBuzzTeam = teams.find(t => t.id === activeBuzzTeamId) || null;
 
   return (
-    <div className={`min-h-[100dvh] bg-studio-dark text-slate-100 flex flex-col justify-between p-4 select-none touch-manipulation relative overflow-hidden transition-all font-sans ${
-      buzzerState === 'OPEN' ? 'ring-4 ring-rose-500/40' : ''
-    }`}>
+    <div className={`min-h-[100dvh] flex flex-col justify-between p-4 select-none touch-manipulation relative overflow-hidden transition-all font-sans ${
+      isLight ? 'theme-light bg-[#F7F3EA] bg-studio-light text-[#172033]' : 'bg-[#0B0E17] bg-studio-dark text-slate-100'
+    } ${buzzerState === 'OPEN' ? (isLight ? 'ring-4 ring-rose-500/50' : 'ring-4 ring-rose-500/40') : ''}`}>
       {/* Top Mobile Bar */}
-      <div className="flex items-center justify-between p-3 rounded-2xl bg-[#0E111B]/90 backdrop-blur-xl border border-white/[0.08] shadow-md relative z-10">
+      <div className={`flex items-center justify-between p-3 rounded-2xl backdrop-blur-xl border shadow-md relative z-10 ${
+        isLight 
+          ? 'bg-white/95 border-amber-900/15 text-[#172033]' 
+          : 'bg-[#0E111B]/90 border-white/[0.08] text-slate-100'
+      }`}>
         {/* Team Identity */}
         <div className="flex items-center gap-3 min-w-0">
           <div
@@ -314,16 +408,16 @@ export const BuzzerPlayer: React.FC = () => {
             {selectedTeam.icon}
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-bold text-slate-100 truncate">
+            <p className={`text-xs font-bold truncate ${isLight ? 'text-[#172033]' : 'text-slate-100'}`}>
               {selectedTeam.name}
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-amber-400">
+              <span className={`text-xs font-mono font-bold ${isLight ? 'text-amber-700' : 'text-amber-400'}`}>
                 {selectedTeam.score} điểm
               </span>
               <button
                 onClick={() => setSelectedTeam(null)}
-                className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
+                className={`text-[10px] underline cursor-pointer ${isLight ? 'text-slate-500 hover:text-[#9E1B32]' : 'text-slate-400 hover:text-white'}`}
               >
                 (Đổi đội)
               </button>
@@ -331,12 +425,28 @@ export const BuzzerPlayer: React.FC = () => {
           </div>
         </div>
 
-        {/* Connection status */}
-        <div className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] shadow-sm">
-          <span className={`w-2 h-2 rounded-full ${
-            connectionStatus === 'connected' ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' : 'bg-rose-500 animate-ping'
-          }`} />
-          <span className="font-mono text-slate-300">{roomId}</span>
+        {/* Right side: theme toggle + Connection status */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            className={`p-1.5 rounded-lg border flex items-center gap-1 text-[11px] font-bold transition-all shadow-xs cursor-pointer ${
+              isLight 
+                ? 'bg-amber-50/80 border-amber-900/15 text-slate-700 hover:bg-amber-100/70' 
+                : 'bg-white/[0.05] border-white/10 text-slate-300 hover:text-white'
+            }`}
+            title="Đổi giao diện Sáng / Tối"
+          >
+            {isLight ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-sky-400" />}
+          </button>
+
+          <div className={`flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border shadow-xs ${
+            isLight ? 'bg-amber-50/80 border-amber-900/15 text-slate-700' : 'bg-white/[0.04] border-white/[0.08] text-slate-300'
+          }`}>
+            <span className={`w-2 h-2 rounded-full ${
+              connectionStatus === 'connected' ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-rose-500 animate-ping'
+            }`} />
+            <span className="font-mono">{roomId}</span>
+          </div>
         </div>
       </div>
 
@@ -361,9 +471,13 @@ export const BuzzerPlayer: React.FC = () => {
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="mb-3 w-full max-w-sm px-3.5 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 shadow-md"
+            className={`mb-3 w-full max-w-sm px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 shadow-md ${
+              isLight 
+                ? 'bg-amber-100 border-amber-300 text-amber-950' 
+                : 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+            }`}
           >
-            <Zap className="w-4 h-4 text-amber-400 animate-bounce" />
+            <Zap className="w-4 h-4 text-amber-500 animate-bounce" />
             <span>Đội {lastAnswerResult.teamName} vừa trả lời sai! Nhanh tay cướp chuông!</span>
           </motion.div>
         )}
@@ -375,9 +489,13 @@ export const BuzzerPlayer: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className={`w-full p-5 rounded-2xl border shadow-xl mb-3 ${
-                isCorrectAnswer
-                  ? 'bg-emerald-500/15 border-emerald-400/50 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
-                  : 'bg-rose-500/15 border-rose-400/50 shadow-[0_0_25px_rgba(225,29,72,0.3)]'
+                isLight
+                  ? isCorrectAnswer
+                    ? 'bg-emerald-50 border-emerald-300 shadow-[0_4px_20px_rgba(16,185,129,0.15)] text-emerald-950'
+                    : 'bg-rose-50 border-rose-300 shadow-[0_4px_20px_rgba(225,29,72,0.15)] text-rose-950'
+                  : isCorrectAnswer
+                    ? 'bg-emerald-500/15 border-emerald-400/50 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
+                    : 'bg-rose-500/15 border-rose-400/50 shadow-[0_0_25px_rgba(225,29,72,0.3)]'
               }`}
             >
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl font-black mx-auto mb-2 border shadow-md ${
@@ -389,7 +507,9 @@ export const BuzzerPlayer: React.FC = () => {
               </div>
 
               <h2 className={`text-xl font-black tracking-tight leading-snug ${
-                isCorrectAnswer ? 'text-emerald-300' : 'text-rose-300'
+                isLight 
+                  ? (isCorrectAnswer ? 'text-emerald-800' : 'text-rose-800')
+                  : (isCorrectAnswer ? 'text-emerald-300' : 'text-rose-300')
               }`}>
                 {lastAnswerResult ? (
                   lastAnswerResult.teamId === selectedTeam?.id
@@ -408,7 +528,7 @@ export const BuzzerPlayer: React.FC = () => {
                 )}
               </h2>
 
-              <p className="text-xs text-slate-300 mt-1">
+              <p className={`text-xs mt-1 ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
                 {lastAnswerResult
                   ? (lastAnswerResult.isCorrect 
                       ? `🔥 Xuất sắc ghi điểm cho ${lastAnswerResult.teamId === selectedTeam?.id ? 'đội bạn' : lastAnswerResult.teamName}!` 
@@ -425,11 +545,17 @@ export const BuzzerPlayer: React.FC = () => {
                   const isCorrect = idx === currentQuestion.correctAnswer;
                   const isPicked = selectedOptionByPhone === idx || selectedOption === idx;
 
-                  let optClass = 'bg-white/[0.04] text-slate-300 border-white/[0.08]';
+                  let optClass = isLight 
+                    ? 'bg-white border-amber-900/15 text-slate-800 shadow-xs' 
+                    : 'bg-white/[0.04] text-slate-300 border-white/[0.08]';
                   if (isCorrect) {
-                    optClass = 'bg-emerald-500/20 text-emerald-200 border-emerald-400 ring-2 ring-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)]';
+                    optClass = isLight
+                      ? 'bg-emerald-100/90 text-emerald-950 border-emerald-500 ring-2 ring-emerald-500 font-bold shadow-md'
+                      : 'bg-emerald-500/20 text-emerald-200 border-emerald-400 ring-2 ring-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)]';
                   } else if (isPicked && !isCorrect) {
-                    optClass = 'bg-rose-500/20 text-rose-300 border-rose-400 line-through opacity-80';
+                    optClass = isLight
+                      ? 'bg-rose-100/80 text-rose-950 border-rose-400 line-through opacity-85'
+                      : 'bg-rose-500/20 text-rose-300 border-rose-400 line-through opacity-80';
                   }
 
                   return (
@@ -438,7 +564,13 @@ export const BuzzerPlayer: React.FC = () => {
                       className={`w-full p-3 rounded-xl border flex items-center gap-3 text-left transition-all ${optClass}`}
                     >
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
-                        isCorrect ? 'bg-emerald-500 text-slate-950 font-black' : isPicked ? 'bg-rose-500 text-white' : 'bg-white/[0.08] text-slate-300'
+                        isCorrect 
+                          ? 'bg-emerald-500 text-slate-950 font-black' 
+                          : isPicked 
+                          ? 'bg-rose-500 text-white' 
+                          : isLight 
+                          ? 'bg-amber-100 text-amber-950' 
+                          : 'bg-white/[0.08] text-slate-300'
                       }`}>
                         {letters[idx]}
                       </span>
@@ -447,12 +579,16 @@ export const BuzzerPlayer: React.FC = () => {
                           {opt}
                         </span>
                         {isCorrect && (
-                          <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mt-0.5">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider block mt-0.5 ${
+                            isLight ? 'text-emerald-700' : 'text-emerald-400'
+                          }`}>
                             ✓ Đáp án chính xác
                           </span>
                         )}
                         {isPicked && !isCorrect && (
-                          <span className="text-[10px] text-rose-400 font-bold uppercase tracking-wider block mt-0.5">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider block mt-0.5 ${
+                            isLight ? 'text-rose-700' : 'text-rose-400'
+                          }`}>
                             ✕ Lựa chọn đã bấm
                           </span>
                         )}
@@ -465,8 +601,12 @@ export const BuzzerPlayer: React.FC = () => {
 
             {/* Explanation card */}
             {currentQuestion?.explanation && (
-              <div className="w-full p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-left text-xs text-slate-300 leading-relaxed font-body">
-                <span className="font-bold text-amber-300 block mb-0.5">📖 Giải thích luận điểm:</span>
+              <div className={`w-full p-3 rounded-xl border text-left text-xs leading-relaxed font-body shadow-xs ${
+                isLight 
+                  ? 'bg-white/90 border-amber-900/15 text-slate-700' 
+                  : 'bg-white/[0.03] border-white/[0.08] text-slate-300'
+              }`}>
+                <span className={`font-bold block mb-0.5 ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>📖 Giải thích luận điểm:</span>
                 {currentQuestion.explanation}
               </div>
             )}
@@ -476,17 +616,23 @@ export const BuzzerPlayer: React.FC = () => {
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="flex flex-col items-center text-center p-6 bg-rose-500/10 rounded-2xl border-2 border-rose-500/50 max-w-xs shadow-xl"
+            className={`flex flex-col items-center text-center p-6 rounded-2xl border-2 max-w-xs shadow-xl ${
+              isLight 
+                ? 'bg-rose-50 border-rose-400 text-rose-950' 
+                : 'bg-rose-500/10 border-rose-500/50'
+            }`}
           >
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 mb-3 text-3xl font-black">
+            <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center mb-3 text-3xl font-black ${
+              isLight ? 'bg-rose-200 border-rose-300 text-rose-700' : 'bg-rose-500/20 border-rose-500/40 text-rose-400'
+            }`}>
               ✕
             </div>
-            <h2 className="text-base font-black text-rose-300">
+            <h2 className={`text-base font-black ${isLight ? 'text-rose-800' : 'text-rose-300'}`}>
               {lastAnswerResult?.teamId === selectedTeam?.id && !lastAnswerResult.isCorrect
                 ? 'ĐỘI BẠN VỪA TRẢ LỜI SAI (-30Đ)'
                 : 'ĐỘI BẠN TẠM KHÓA CÂU NÀY'}
             </h2>
-            <p className="text-xs text-rose-200/80 mt-1.5 leading-relaxed font-body">
+            <p className={`text-xs mt-1.5 leading-relaxed font-body ${isLight ? 'text-rose-700' : 'text-rose-200/80'}`}>
               {lastAnswerResult?.teamId === selectedTeam?.id && !lastAnswerResult.isCorrect
                 ? 'Đội bạn bị trừ 30 điểm và tạm thời bị khóa chuông câu này. Hãy quan sát máy chiếu xem các đội khác tranh tài nhé!'
                 : 'Do vừa trả lời chưa chính xác. Sẵn sàng cho câu hỏi tiếp theo nhé!'}
@@ -496,8 +642,12 @@ export const BuzzerPlayer: React.FC = () => {
           /* CASE TUG_OF_WAR: INTERACTIVE TAPPING ARENA */
           <div className="w-full max-w-sm flex flex-col items-center text-center">
             {/* Tug of war target banner */}
-            <div className="mb-3 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold font-mono">
-              MỐC THẮNG: <span className="font-black text-amber-200">{tugThreshold} LẦN BẤM</span>
+            <div className={`mb-3 px-3.5 py-1.5 rounded-full border text-xs font-bold font-mono shadow-xs ${
+              isLight 
+                ? 'bg-amber-100 border-amber-300 text-amber-900' 
+                : 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+            }`}>
+              MỐC THẮNG: <span className="font-black">{tugThreshold} LẦN BẤM</span>
             </div>
 
             {/* My team's pull status */}
@@ -507,15 +657,21 @@ export const BuzzerPlayer: React.FC = () => {
               const remaining = Math.max(0, tugThreshold - myPulls);
 
               return (
-                <div className="w-full mb-4 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.1] shadow-lg">
+                <div className={`w-full mb-4 p-3 rounded-2xl border shadow-lg ${
+                  isLight 
+                    ? 'bg-white/90 border-amber-900/15 text-slate-800' 
+                    : 'bg-white/[0.04] border-white/[0.1]'
+                }`}>
                   <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-                    <span className="text-slate-300">LỰC KÉO CỦA ĐỘI BẠN:</span>
-                    <span className="font-mono text-amber-300 font-black text-sm">
+                    <span className={isLight ? 'text-slate-600' : 'text-slate-300'}>LỰC KÉO CỦA ĐỘI BẠN:</span>
+                    <span className={`font-mono font-black text-sm ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>
                       {myPulls} / {tugThreshold} ({myPct}%)
                     </span>
                   </div>
 
-                  <div className="w-full h-3.5 rounded-full bg-black/60 p-0.5 overflow-hidden border border-white/10 relative">
+                  <div className={`w-full h-3.5 rounded-full p-0.5 overflow-hidden border relative ${
+                    isLight ? 'bg-slate-200 border-slate-300' : 'bg-black/60 border-white/10'
+                  }`}>
                     <motion.div
                       className="h-full rounded-full transition-all duration-100"
                       style={{
@@ -527,7 +683,9 @@ export const BuzzerPlayer: React.FC = () => {
                     <div className="absolute right-0 top-0 bottom-0 w-1 bg-amber-400" />
                   </div>
 
-                  <p className="text-[11px] text-amber-300 font-bold mt-2 animate-pulse">
+                  <p className={`text-[11px] font-bold mt-2 animate-pulse ${
+                    isLight ? 'text-amber-800' : 'text-amber-300'
+                  }`}>
                     {remaining > 0 ? `🔥 CỐ LÊN! CÒN ${remaining} LẦN BẤM NỮA LÀ QUA VẠCH!` : '🎉 ĐÃ QUA VẠCH! CHỜ XÁC NHẬN!'}
                   </p>
                 </div>
@@ -567,7 +725,9 @@ export const BuzzerPlayer: React.FC = () => {
 
             {/* Other teams preview */}
             <div className="w-full mt-4 space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block text-left">
+              <span className={`text-[10px] font-bold uppercase tracking-widest block text-left ${
+                isLight ? 'text-slate-500' : 'text-slate-400'
+              }`}>
                 TIẾN ĐỘ CÁC ĐỘI ĐỐI THỦ:
               </span>
               <div className="grid grid-cols-2 gap-2">
@@ -575,12 +735,14 @@ export const BuzzerPlayer: React.FC = () => {
                   const p = tugPulls[t.id] || 0;
                   const pct = Math.min(100, Math.round((p / tugThreshold) * 100));
                   return (
-                    <div key={t.id} className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] text-left">
+                    <div key={t.id} className={`p-2 rounded-xl border text-left shadow-xs ${
+                      isLight ? 'bg-white/80 border-amber-900/10' : 'bg-white/[0.02] border-white/[0.06]'
+                    }`}>
                       <div className="flex items-center justify-between text-[11px] font-bold">
-                        <span className="text-slate-300 truncate">{t.name}</span>
-                        <span className="text-amber-400 font-mono">{p}/{tugThreshold}</span>
+                        <span className={`truncate ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>{t.name}</span>
+                        <span className={`font-mono ${isLight ? 'text-amber-700' : 'text-amber-400'}`}>{p}/{tugThreshold}</span>
                       </div>
-                      <div className="w-full h-1.5 rounded-full bg-black/40 overflow-hidden mt-1">
+                      <div className={`w-full h-1.5 rounded-full overflow-hidden mt-1 ${isLight ? 'bg-slate-200' : 'bg-black/40'}`}>
                         <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: t.color }} />
                       </div>
                     </div>
@@ -595,18 +757,24 @@ export const BuzzerPlayer: React.FC = () => {
             <motion.div
               initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="w-full p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center shadow-lg mb-3"
+              className={`w-full p-4 rounded-2xl border flex flex-col items-center shadow-lg mb-3 ${
+                isLight 
+                  ? 'bg-amber-50 border-amber-300 text-amber-950' 
+                  : 'bg-amber-500/10 border-amber-500/30'
+              }`}
             >
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 text-2xl font-black mb-1.5 shadow-md animate-bounce">
                 👑
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
+              <span className={`text-xs font-bold uppercase tracking-wider ${isLight ? 'text-amber-900' : 'text-amber-300'}`}>
                 XUẤT SẮC! BẠN ĐÃ GIÀNH ĐƯỢC QUYỀN TRẢ LỜI!
               </span>
-              <p className="text-xs font-mono font-bold text-slate-200 mt-1">
+              <p className={`text-xs font-mono font-bold mt-1 ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
                 {buzzReactionMs ? `⚡ Tốc độ: ${(buzzReactionMs / 1000).toFixed(3)}s` : 'Nhanh như chớp!'}
               </p>
-              <p className="text-[11px] text-slate-300 mt-2 bg-black/40 px-3 py-1 rounded-lg">
+              <p className={`text-[11px] mt-2 px-3 py-1 rounded-lg ${
+                isLight ? 'bg-white border border-amber-900/15 text-slate-700' : 'bg-black/40 text-slate-300'
+              }`}>
                 Trả lời miệng cho Giảng viên hoặc bấm chọn đáp án dưới đây:
               </p>
             </motion.div>
@@ -624,12 +792,18 @@ export const BuzzerPlayer: React.FC = () => {
                       onClick={() => handleSelectAnswerOption(idx)}
                       className={`w-full p-3 rounded-xl border flex items-center gap-3 text-left transition-all cursor-pointer shadow-sm ${
                         isPicked
-                          ? 'bg-amber-500 text-slate-950 font-bold border-amber-300 ring-2 ring-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)] scale-[1.01]'
+                          ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 ring-2 ring-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)] scale-[1.01]'
+                          : isLight
+                          ? 'bg-white border-amber-900/15 text-slate-800 hover:bg-amber-50/70 hover:border-amber-400'
                           : 'bg-white/[0.04] text-slate-200 border-white/[0.08] hover:border-white/20'
                       }`}
                     >
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
-                        isPicked ? 'bg-slate-950 text-amber-300 font-black' : 'bg-white/[0.08] text-slate-300'
+                        isPicked 
+                          ? 'bg-slate-950 text-amber-300 font-black' 
+                          : isLight 
+                          ? 'bg-amber-100 text-amber-950' 
+                          : 'bg-white/[0.08] text-slate-300'
                       }`}>
                         {letters[idx]}
                       </span>
@@ -647,15 +821,21 @@ export const BuzzerPlayer: React.FC = () => {
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="flex flex-col items-center text-center p-6 bg-white/[0.04] rounded-2xl border border-white/[0.1] max-w-xs shadow-xl"
+            className={`flex flex-col items-center text-center p-6 rounded-2xl border max-w-xs shadow-xl ${
+              isLight 
+                ? 'bg-white/90 border-amber-900/15 text-slate-800' 
+                : 'bg-white/[0.04] border-white/[0.1]'
+            }`}
           >
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3 animate-pulse">
+            <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center mb-3 animate-pulse ${
+              isLight ? 'bg-amber-100 border-amber-300 text-amber-700' : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+            }`}>
               <Clock className="w-8 h-8" />
             </div>
-            <h2 className="text-base font-bold text-white">
+            <h2 className={`text-base font-bold ${isLight ? 'text-[#172033]' : 'text-white'}`}>
               ĐỘI BẠN ĐÃ NHANH HƠN MỘT TÍCH TẮC!
             </h2>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+            <p className={`text-xs mt-1.5 leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               Chú ý lắng nghe câu trả lời. Nếu đội bạn sai, hãy sẵn sàng bấm cướp chuông!
             </p>
           </motion.div>
@@ -663,13 +843,19 @@ export const BuzzerPlayer: React.FC = () => {
           /* CASE D: TACTILE LUXURY STUDIO BUZZER BUTTON (SPEED TAP) */
           <div className="flex flex-col items-center">
             {/* Outer Hardware Collar */}
-            <div className="p-3 sm:p-4 rounded-full bg-[#141724] border border-white/[0.12] shadow-[0_25px_60px_rgba(0,0,0,0.8)]">
+            <div className={`p-3 sm:p-4 rounded-full border shadow-2xl transition-colors ${
+              isLight 
+                ? 'bg-white border-amber-900/15 shadow-[0_20px_50px_rgba(0,0,0,0.1)]' 
+                : 'bg-[#141724] border-white/[0.12] shadow-[0_25px_60px_rgba(0,0,0,0.8)]'
+            }`}>
               {/* Inner Glowing Bezel */}
               <div className={`p-2 rounded-full transition-all duration-300 ${
                 buzzerState === 'OPEN'
                   ? 'bg-rose-500/20 shadow-[0_0_40px_rgba(225,29,72,0.6)]'
                   : buzzerState === 'COUNTDOWN'
                   ? 'bg-amber-500/15 shadow-[0_0_20px_rgba(245,158,11,0.4)]'
+                  : isLight
+                  ? 'bg-slate-100'
                   : 'bg-black/40'
               }`}>
                 {/* The Buzzer Button */}
@@ -682,15 +868,25 @@ export const BuzzerPlayer: React.FC = () => {
                       ? 'studio-buzzer-button'
                       : buzzerState === 'COUNTDOWN'
                       ? 'bg-gradient-to-b from-amber-600 to-rose-900 shadow-lg'
+                      : isLight
+                      ? 'bg-gradient-to-b from-slate-100 to-slate-200 border border-slate-300 text-slate-600 shadow-inner'
                       : 'bg-gradient-to-b from-[#1E2232] to-[#0D101A] border border-white/[0.08] shadow-inner'
                   }`}
                 >
                   <Bell className={`w-14 h-14 mb-2 transition-transform ${
-                    buzzerState === 'OPEN' ? 'text-white animate-bounce fill-current' : 'text-slate-500'
+                    buzzerState === 'OPEN' 
+                      ? 'text-white animate-bounce fill-current' 
+                      : isLight 
+                      ? 'text-slate-400' 
+                      : 'text-slate-500'
                   }`} />
 
                   <span className={`text-lg sm:text-xl font-black tracking-wider uppercase ${
-                    buzzerState === 'OPEN' ? 'text-white drop-shadow-md' : 'text-slate-400'
+                    buzzerState === 'OPEN' 
+                      ? 'text-white drop-shadow-md' 
+                      : isLight 
+                      ? 'text-slate-600' 
+                      : 'text-slate-400'
                   }`}>
                     {buzzerState === 'OPEN'
                       ? 'BẤM NGAY!'
@@ -700,7 +896,11 @@ export const BuzzerPlayer: React.FC = () => {
                   </span>
 
                   <span className={`text-[11px] font-medium mt-1 ${
-                    buzzerState === 'OPEN' ? 'text-amber-200' : 'text-slate-500'
+                    buzzerState === 'OPEN' 
+                      ? 'text-amber-200' 
+                      : isLight 
+                      ? 'text-slate-500' 
+                      : 'text-slate-500'
                   }`}>
                     {buzzerState === 'OPEN'
                       ? 'Chạm thật nhanh để giật quyền!'
@@ -710,7 +910,7 @@ export const BuzzerPlayer: React.FC = () => {
               </div>
             </div>
 
-            <p className="text-xs text-slate-400 mt-5 font-medium">
+            <p className={`text-xs mt-5 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               Chạm lên nút chuông trên màn hình ngay khi Host mở chuông
             </p>
           </div>
@@ -718,7 +918,9 @@ export const BuzzerPlayer: React.FC = () => {
       </div>
 
       {/* Footer Branding */}
-      <div className="text-center py-2 text-[10px] text-slate-500 font-mono">
+      <div className={`text-center py-2 text-[10px] font-mono ${
+        isLight ? 'text-slate-500' : 'text-slate-500'
+      }`}>
         HCM202 SPEED BUZZER • PHÒNG: {roomId}
       </div>
     </div>

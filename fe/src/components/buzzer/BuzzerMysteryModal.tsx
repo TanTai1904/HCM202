@@ -10,6 +10,7 @@ interface BuzzerMysteryModalProps {
   reward: MysteryReward | null;
   team: BuzzerTeam | null;
   onClaim: () => void;
+  isLight?: boolean;
 }
 
 export const BuzzerMysteryModal: React.FC<BuzzerMysteryModalProps> = ({
@@ -17,6 +18,7 @@ export const BuzzerMysteryModal: React.FC<BuzzerMysteryModalProps> = ({
   reward,
   team,
   onClaim,
+  isLight = true,
 }) => {
   const [isOpened, setIsOpened] = useState(false);
 
@@ -40,20 +42,28 @@ export const BuzzerMysteryModal: React.FC<BuzzerMysteryModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl font-sans">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md font-sans">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="relative w-full max-w-md rounded-3xl bg-[#0F121C] border border-white/[0.12] p-6 sm:p-8 text-center shadow-2xl text-slate-100 select-none overflow-hidden"
+          className={`relative w-full max-w-md rounded-3xl p-6 sm:p-8 text-center shadow-2xl select-none overflow-hidden border ${
+            isLight
+              ? 'bg-white border-2 border-amber-300 text-[#172033]'
+              : 'bg-[#0F121C] border-white/[0.12] text-slate-100'
+          }`}
         >
           {/* Header Tag */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-amber-300 text-xs font-semibold tracking-wider uppercase mb-3 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase mb-3 shadow-xs ${
+            isLight
+              ? 'bg-amber-100 border border-amber-300 text-amber-900'
+              : 'bg-white/[0.04] border border-white/[0.08] text-amber-300'
+          }`}>
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>HỘP QUÀ MAY MẮN • PHẦN THƯỞNG NHÓM</span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h2 className={`text-xl sm:text-2xl font-bold tracking-tight ${isLight ? 'text-[#172033]' : 'text-white'}`}>
             PHẦN THƯỞNG DÀNH CHO
           </h2>
           <p 
@@ -84,7 +94,7 @@ export const BuzzerMysteryModal: React.FC<BuzzerMysteryModalProps> = ({
                   Chạm để mở quà!
                 </span>
               </motion.div>
-              <p className="text-xs text-slate-400 mt-5">
+              <p className={`text-xs mt-5 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 Điểm thưởng hoặc quyền lợi chiến thuật đặc biệt cho nhóm!
               </p>
             </div>
@@ -99,10 +109,14 @@ export const BuzzerMysteryModal: React.FC<BuzzerMysteryModalProps> = ({
                 {reward.icon}
               </div>
 
-              <h3 className="text-xl sm:text-2xl font-black text-amber-300">
+              <h3 className={`text-xl sm:text-2xl font-black ${isLight ? 'text-amber-900' : 'text-amber-300'}`}>
                 {reward.title}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 mt-1.5 max-w-xs leading-relaxed bg-white/[0.04] p-3 rounded-xl border border-white/[0.06]">
+              <p className={`text-xs sm:text-sm mt-1.5 max-w-xs leading-relaxed p-3 rounded-xl border ${
+                isLight
+                  ? 'bg-amber-50 text-slate-800 border-amber-200'
+                  : 'bg-white/[0.04] text-slate-300 border-white/[0.06]'
+              }`}>
                 {reward.description}
               </p>
 

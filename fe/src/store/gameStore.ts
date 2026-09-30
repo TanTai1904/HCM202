@@ -9,7 +9,7 @@ import type {
   Category, 
   QuestionType 
 } from '@/types/game';
-import { ALL_QUESTIONS } from '@/data/questions';
+import { ALL_QUESTIONS, shuffleQuestionOptions } from '@/data/questions';
 import { CHAPTERS } from '@/data/chapters';
 import { audio } from '@/utils/audio';
 
@@ -285,8 +285,9 @@ export const useGameStore = create<GameState>()(
           }
         }
 
-        // Pick random question
-        const randomQ = categoryPool[Math.floor(Math.random() * categoryPool.length)];
+        // Pick random question with shuffled options
+        const rawRandomQ = categoryPool[Math.floor(Math.random() * categoryPool.length)];
+        const randomQ = shuffleQuestionOptions(rawRandomQ);
 
         set({
           currentQuestion: randomQ,

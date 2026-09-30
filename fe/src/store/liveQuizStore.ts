@@ -11,7 +11,7 @@ import type {
   LiveQuizRoomState,
 } from '@/types/liveQuiz';
 import { DEFAULT_TEAMS, ROUND_DEFINITIONS } from '@/data/liveQuizDefaults';
-import { ALL_QUESTIONS } from '@/data/questions';
+import { ALL_QUESTIONS, shuffleQuestionOptions } from '@/data/questions';
 import { liveQuizNetwork, type ConnectionStatus } from '@/services/liveQuizNetwork';
 import { audio } from '@/utils/audio';
 
@@ -74,9 +74,9 @@ function prepareQuestions(category: string, totalCount: number): LiveQuestionIte
     if (pool.length === 0) pool = [...ALL_QUESTIONS];
   }
 
-  // Shuffle pool
+  // Shuffle pool and randomize options for selected questions
   const shuffled = pool.sort(() => Math.random() - 0.5);
-  const selected = shuffled.slice(0, Math.min(totalCount, shuffled.length));
+  const selected = shuffled.slice(0, Math.min(totalCount, shuffled.length)).map(shuffleQuestionOptions);
 
   return selected.map((q, idx) => {
     let roundType: RoundId = 'ROUND_1_QUIZ';

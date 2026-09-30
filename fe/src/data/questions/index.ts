@@ -8,7 +8,34 @@ import practiceData from './practice.json';
 import realLifeData from './real-life.json';
 import finalData from './final.json';
 
-export const ALL_QUESTIONS: Question[] = [
+export function shuffleQuestionOptions(question: Question): Question {
+  if (!question.options || question.options.length <= 1) {
+    return { ...question };
+  }
+
+  const originalCorrectIndex = typeof question.correctAnswer === 'number' ? question.correctAnswer : 0;
+  const correctOptionText = question.options[originalCorrectIndex];
+
+  // Map options with their original index
+  const indexedOptions = question.options.map((opt, idx) => ({ opt, isCorrect: idx === originalCorrectIndex }));
+
+  // Fisher-Yates shuffle
+  for (let i = indexedOptions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indexedOptions[i], indexedOptions[j]] = [indexedOptions[j], indexedOptions[i]];
+  }
+
+  const shuffledOptions = indexedOptions.map(item => item.opt);
+  const newCorrectIndex = indexedOptions.findIndex(item => item.isCorrect);
+
+  return {
+    ...question,
+    options: shuffledOptions,
+    correctAnswer: newCorrectIndex !== -1 ? newCorrectIndex : 0,
+  };
+}
+
+const RAW_QUESTIONS: Question[] = [
   ...(cultureData as Question[]),
   ...(ethicsData as Question[]),
   ...(humanData as Question[]),
@@ -17,6 +44,8 @@ export const ALL_QUESTIONS: Question[] = [
   ...(realLifeData as Question[]),
   ...(finalData as Question[])
 ];
+
+export const ALL_QUESTIONS: Question[] = RAW_QUESTIONS.map(shuffleQuestionOptions);
 
 export function getQuestionsByCategory(category: Category): Question[] {
   return ALL_QUESTIONS.filter(q => q.category === category);
@@ -53,5 +82,6 @@ export function getRandomQuestion(
   }
 
   const randomIndex = Math.floor(Math.random() * pool.length);
-  return pool[randomIndex] || null;
+  const picked = pool[randomIndex];
+  return picked ? shuffleQuestionOptions(picked) : null;
 }
