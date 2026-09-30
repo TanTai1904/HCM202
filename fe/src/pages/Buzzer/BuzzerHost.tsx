@@ -238,6 +238,19 @@ export const BuzzerHost: React.FC = () => {
                 }
                 return t;
               }));
+
+              // Instantly broadcast victory to all connected phones
+              buzzerNetwork.publish('SYNC_STATE', {
+                ...current,
+                buzzerState: 'BUZZED',
+                activeBuzzTeamId: teamId,
+                tugPulls: updated,
+              });
+            } else {
+              // Lightweight broadcast of tug pulls so phones update in 1ms without choking network
+              buzzerNetwork.publish('TUG_PULL_UPDATE', {
+                tugPulls: updated,
+              });
             }
             return updated;
           });
@@ -266,10 +279,10 @@ export const BuzzerHost: React.FC = () => {
     };
   }, [roomId, broadcastSyncState]);
 
-  // Sync state whenever key parameters change
+  // Sync state whenever key parameters change (exclude tugPulls to prevent network congestion)
   useEffect(() => {
     broadcastSyncState();
-  }, [step, buzzerState, buzzerMode, tugThreshold, tugPulls, currentQuestionIndex, activeBuzzTeamId, lockedTeamIds, selectedOptionByPhone, isCorrectAnswer, broadcastSyncState]);
+  }, [step, buzzerState, buzzerMode, tugThreshold, currentQuestionIndex, activeBuzzTeamId, lockedTeamIds, selectedOptionByPhone, isCorrectAnswer, broadcastSyncState]);
 
   // Handle Team count change
   const handleUpdateTeamCount = (count: number) => {
@@ -346,6 +359,7 @@ export const BuzzerHost: React.FC = () => {
     setIsCorrectAnswer(null);
     setTugPulls({});
 
+    const nextState = buzzerMode === 'TUG_OF_WAR' ? 'TUG_OF_WAR' : 'OPEN';
     if (buzzerMode === 'TUG_OF_WAR') {
       audio.playTugWhistle();
       setBuzzerState('TUG_OF_WAR');
@@ -353,12 +367,29 @@ export const BuzzerHost: React.FC = () => {
       audio.playBuzzerOpen();
       setBuzzerState('OPEN');
     }
+
+    // Ultra-fast instant dispatch to all phones via LAN WebSocket / MQTT
+    buzzerNetwork.publish('HOST_OPEN_BUZZER', {
+      buzzerState: nextState,
+      buzzerMode,
+      timestamp: now,
+      tugThreshold,
+      lockedTeamIds,
+    });
   };
 
   // 3s Countdown before auto opening
   const handleStartCountdown = () => {
     setBuzzerState('COUNTDOWN');
     audio.playCountdown();
+
+    buzzerNetwork.publish('HOST_OPEN_BUZZER', {
+      buzzerState: 'COUNTDOWN',
+      buzzerMode,
+      timestamp: Date.now(),
+      tugThreshold,
+      lockedTeamIds,
+    });
 
     setTimeout(() => {
       audio.playCountdown();
@@ -375,7 +406,7 @@ export const BuzzerHost: React.FC = () => {
 
   // Manual buzz (Host taps on screen or keyboard 1..8)
   const handleManualBuzz = (teamId: string) => {
-    if (buzzerState === 'OPEN' || buzzerState === 'IDLE') {
+    if (buzzerState === 'OPEN' || buzzerState === 'IDLE' || buzzerState === 'TUG_OF_WAR') {
       audio.playBuzzerDing();
       setBuzzerState('BUZZED');
       setActiveBuzzTeamId(teamId);
@@ -386,18 +417,44 @@ export const BuzzerHost: React.FC = () => {
         }
         return t;
       }));
+
+      buzzerNetwork.publish('SYNC_STATE', {
+        ...stateRef.current,
+        buzzerState: 'BUZZED',
+        activeBuzzTeamId: teamId,
+        buzzReactionMs: 350,
+      });
     }
   };
 
   // Steal Buzzer: Re-open buzzer for remaining teams after a wrong answer
   const handleResetBuzzerForSteal = () => {
+    let nextLocked = lockedTeamIds;
     if (activeBuzzTeamId && !lockedTeamIds.includes(activeBuzzTeamId)) {
-      setLockedTeamIds(prev => [...prev, activeBuzzTeamId]);
+      nextLocked = [...lockedTeamIds, activeBuzzTeamId];
+      setLockedTeamIds(nextLocked);
     }
     setActiveBuzzTeamId(null);
     setSelectedOptionByPhone(null);
     setIsCorrectAnswer(null);
-    handleOpenBuzzer();
+    setTugPulls({});
+
+    const nextState = buzzerMode === 'TUG_OF_WAR' ? 'TUG_OF_WAR' : 'OPEN';
+    if (buzzerMode === 'TUG_OF_WAR') {
+      audio.playTugWhistle();
+      setBuzzerState('TUG_OF_WAR');
+    } else {
+      audio.playBuzzerOpen();
+      setBuzzerState('OPEN');
+    }
+
+    buzzerNetwork.publish('HOST_OPEN_BUZZER', {
+      buzzerState: nextState,
+      buzzerMode,
+      timestamp: Date.now(),
+      tugThreshold,
+      lockedTeamIds: nextLocked,
+    });
   };
 
   // Finish question / view explanation directly

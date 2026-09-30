@@ -106,6 +106,46 @@ export const BuzzerPlayer: React.FC = () => {
     }, 150);
 
     const unsubMsg = buzzerNetwork.subscribeMessage((msg: NetworkMessage) => {
+      // 1. Instant zero-latency buzzer opening / countdown from host
+      if (msg.type === 'HOST_OPEN_BUZZER') {
+        const payload = msg.payload;
+        setBuzzerState(payload.buzzerState);
+        if (payload.buzzerMode) setBuzzerMode(payload.buzzerMode);
+        if (payload.tugThreshold) setTugThreshold(payload.tugThreshold);
+        if (payload.lockedTeamIds) setLockedTeamIds(payload.lockedTeamIds);
+        setActiveBuzzTeamId(null);
+        setSelectedOption(null);
+        setIsCorrectAnswer(null);
+
+        if (payload.buzzerState === 'OPEN') {
+          audio.playBuzzerOpen();
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(60);
+          }
+        } else if (payload.buzzerState === 'TUG_OF_WAR') {
+          audio.playTugWhistle();
+          setTugPulls({});
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate([40, 40, 40]);
+          }
+        } else if (payload.buzzerState === 'COUNTDOWN') {
+          audio.playCountdown();
+        }
+        return;
+      }
+
+      // 2. Ultra-lightweight Tug-of-war pulls update (40 bytes instead of 5KB)
+      if (msg.type === 'TUG_PULL_UPDATE') {
+        if (msg.payload.tugPulls) {
+          setTugPulls(prev => ({
+            ...prev,
+            ...msg.payload.tugPulls,
+          }));
+        }
+        return;
+      }
+
+      // 3. Comprehensive room state synchronization
       if (msg.type === 'SYNC_STATE') {
         const payload = msg.payload;
         setBuzzerState(payload.buzzerState);

@@ -93,6 +93,7 @@ export interface NetworkMessage {
     | 'PLAYER_LEAVE'
     | 'PLAYER_BUZZ'
     | 'PLAYER_TUG_PULL'
+    | 'TUG_PULL_UPDATE'
     | 'PLAYER_SUBMIT_ANSWER'
     | 'HOST_OPEN_BUZZER'
     | 'HOST_RESET_BUZZER'

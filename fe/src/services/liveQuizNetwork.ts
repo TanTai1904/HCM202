@@ -5,6 +5,7 @@ export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'er
 
 class LiveQuizNetworkService {
   private client: MqttClient | null = null;
+  private ws: WebSocket | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
   private roomId: string = '';
   private isHost: boolean = false;
@@ -13,6 +14,8 @@ class LiveQuizNetworkService {
   private messageListeners: Set<(msg: LiveQuizNetworkMessage) => void> = new Set();
   private statusListeners: Set<(status: ConnectionStatus) => void> = new Set();
   private topic: string = '';
+  private seenMessageIds: Set<string> = new Set();
+  private reconnectWsTimer: any = null;
 
   constructor() {
     this.clientId = 'lq_' + Math.random().toString(36).substring(2, 9);
@@ -38,6 +41,7 @@ class LiveQuizNetworkService {
   }
 
   private setStatus(newStatus: ConnectionStatus) {
+    if (this.status === newStatus) return;
     this.status = newStatus;
     this.statusListeners.forEach((listener) => {
       try {
@@ -49,6 +53,15 @@ class LiveQuizNetworkService {
   }
 
   private dispatchMessage(msg: LiveQuizNetworkMessage) {
+    const msgKey = (msg as any).msgId || `${msg.senderId}_${msg.type}_${msg.timestamp}_${JSON.stringify(msg.payload || '')}`;
+    if (this.seenMessageIds.has(msgKey)) return;
+    this.seenMessageIds.add(msgKey);
+
+    if (this.seenMessageIds.size > 500) {
+      const firstEntries = Array.from(this.seenMessageIds).slice(0, 100);
+      firstEntries.forEach(k => this.seenMessageIds.delete(k));
+    }
+
     this.messageListeners.forEach((listener) => {
       try {
         listener(msg);
@@ -59,7 +72,7 @@ class LiveQuizNetworkService {
   }
 
   public connect(roomId: string, isHost: boolean, customClientId?: string) {
-    if (this.roomId === roomId && this.client?.connected) {
+    if (this.roomId === roomId && (this.ws?.readyState === WebSocket.OPEN || this.client?.connected)) {
       return;
     }
 
@@ -74,7 +87,7 @@ class LiveQuizNetworkService {
 
     this.setStatus('connecting');
 
-    // 1. Setup local BroadcastChannel for zero-latency local pairing
+    // 1. Setup local BroadcastChannel for zero-latency local pairing (0ms)
     try {
       if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
         this.broadcastChannel = new BroadcastChannel(`hcm202_lq_${this.roomId}`);
@@ -88,7 +101,10 @@ class LiveQuizNetworkService {
       console.warn('BroadcastChannel not available:', e);
     }
 
-    // 2. Setup MQTT over Secure WebSocket
+    // 2. Setup Direct Local LAN WebSocket (1ms)
+    this.initLocalWebSocket();
+
+    // 3. Setup MQTT over Secure WebSocket (Cloud fallback)
     const brokerUrl = 'wss://broker.emqx.io:8084/mqtt';
 
     try {
@@ -103,7 +119,7 @@ class LiveQuizNetworkService {
       this.client.on('connect', () => {
         this.setStatus('connected');
         if (this.client) {
-          this.client.subscribe(this.topic, { qos: 1 }, (err) => {
+          this.client.subscribe(this.topic, { qos: 0 }, (err) => {
             if (err) {
               console.warn('LiveQuiz MQTT subscribe error:', err);
             }
@@ -124,23 +140,63 @@ class LiveQuizNetworkService {
 
       this.client.on('error', (err) => {
         console.warn('LiveQuiz MQTT error:', err);
-        // If BroadcastChannel is working, remain connected locally
-        if (!this.broadcastChannel) {
+        if (this.ws?.readyState === WebSocket.OPEN || this.broadcastChannel) {
+          this.setStatus('connected');
+        } else {
           this.setStatus('error');
-        }
-      });
-
-      this.client.on('offline', () => {
-        if (!this.broadcastChannel) {
-          this.setStatus('disconnected');
         }
       });
     } catch (e) {
       console.error('LiveQuiz MQTT connect exception:', e);
-      if (this.broadcastChannel) {
+    }
+  }
+
+  private initLocalWebSocket() {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/livequiz-ws`;
+
+      const socket = new WebSocket(wsUrl);
+      this.ws = socket;
+
+      socket.onopen = () => {
+        console.log(`[LiveQuizNet] Ultra-fast LAN WebSocket connected: ${wsUrl}`);
         this.setStatus('connected');
-      } else {
-        this.setStatus('error');
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const msg: LiveQuizNetworkMessage = JSON.parse(event.data);
+          if (msg.senderId !== this.clientId && (!msg.roomId || msg.roomId === this.roomId)) {
+            this.dispatchMessage(msg);
+          }
+        } catch (err) {
+          console.error('[LiveQuizNet] Local WS message parse error:', err);
+        }
+      };
+
+      socket.onclose = () => {
+        this.ws = null;
+        if (this.roomId && !this.reconnectWsTimer) {
+          this.reconnectWsTimer = setTimeout(() => {
+            this.reconnectWsTimer = null;
+            if (this.roomId) this.initLocalWebSocket();
+          }, 3000);
+        }
+      };
+    } catch (e) {
+      console.warn('[LiveQuizNet] Could not initialize local WebSocket:', e);
+    }
+  }
+
+  private publishDirectWs(msg: LiveQuizNetworkMessage) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      try {
+        this.ws.send(JSON.stringify(msg));
+      } catch (err) {
+        console.warn('[LiveQuizNet] WS send error:', err);
       }
     }
   }
@@ -148,15 +204,19 @@ class LiveQuizNetworkService {
   public sendMessage(type: LiveQuizNetworkMessage['type'], payload: any) {
     if (!this.roomId) return;
 
-    const message: LiveQuizNetworkMessage = {
+    const msgId = `${this.clientId}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const message: LiveQuizNetworkMessage & { msgId: string } = {
       type,
       senderId: this.clientId,
       roomId: this.roomId,
       payload,
       timestamp: Date.now(),
+      msgId,
     };
 
-    // 1. BroadcastChannel dispatch
+    this.seenMessageIds.add(msgId);
+
+    // 1. BroadcastChannel dispatch (0ms)
     if (this.broadcastChannel) {
       try {
         this.broadcastChannel.postMessage(message);
@@ -165,7 +225,10 @@ class LiveQuizNetworkService {
       }
     }
 
-    // 2. MQTT dispatch
+    // 2. Direct LAN WebSocket (1ms)
+    this.publishDirectWs(message);
+
+    // 3. MQTT dispatch
     if (this.client?.connected) {
       try {
         const publishTopic = `hcm202/livequiz/${this.roomId}/${type.toLowerCase()}`;
@@ -177,6 +240,20 @@ class LiveQuizNetworkService {
   }
 
   public disconnect() {
+    if (this.reconnectWsTimer) {
+      clearTimeout(this.reconnectWsTimer);
+      this.reconnectWsTimer = null;
+    }
+
+    if (this.ws) {
+      try {
+        this.ws.close();
+      } catch (err) {
+        console.error('Error closing local WS:', err);
+      }
+      this.ws = null;
+    }
+
     if (this.broadcastChannel) {
       this.broadcastChannel.close();
       this.broadcastChannel = null;

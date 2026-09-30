@@ -5,6 +5,7 @@ export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'er
 
 class BuzzerNetworkService {
   private client: MqttClient | null = null;
+  private ws: WebSocket | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
   private roomId: string = '';
   private isHost: boolean = false;
@@ -13,6 +14,8 @@ class BuzzerNetworkService {
   private messageListeners: Set<(msg: NetworkMessage) => void> = new Set();
   private statusListeners: Set<(status: ConnectionStatus) => void> = new Set();
   private topic: string = '';
+  private seenMessageIds: Set<string> = new Set();
+  private reconnectWsTimer: any = null;
 
   constructor() {
     this.clientId = 'client_' + Math.random().toString(36).substring(2, 9);
@@ -38,6 +41,7 @@ class BuzzerNetworkService {
   }
 
   private setStatus(newStatus: ConnectionStatus) {
+    if (this.status === newStatus) return;
     this.status = newStatus;
     this.statusListeners.forEach(listener => {
       try {
@@ -49,7 +53,19 @@ class BuzzerNetworkService {
   }
 
   private dispatchMessage(msg: NetworkMessage) {
-    // Avoid processing message twice if it originated from self via broadcast
+    // Deduplication check: ignore if already processed
+    const msgKey = (msg as any).msgId || `${msg.senderId}_${msg.type}_${msg.timestamp}_${JSON.stringify(msg.payload || '')}`;
+    if (this.seenMessageIds.has(msgKey)) {
+      return;
+    }
+    this.seenMessageIds.add(msgKey);
+
+    // Keep seen set small (max 500 items)
+    if (this.seenMessageIds.size > 500) {
+      const firstEntries = Array.from(this.seenMessageIds).slice(0, 100);
+      firstEntries.forEach(k => this.seenMessageIds.delete(k));
+    }
+
     this.messageListeners.forEach(listener => {
       try {
         listener(msg);
@@ -60,7 +76,7 @@ class BuzzerNetworkService {
   }
 
   public connect(roomId: string, isHost: boolean, customClientId?: string) {
-    if (this.roomId === roomId && this.client?.connected) {
+    if (this.roomId === roomId && (this.ws?.readyState === WebSocket.OPEN || this.client?.connected)) {
       return;
     }
 
@@ -75,7 +91,7 @@ class BuzzerNetworkService {
 
     this.setStatus('connecting');
 
-    // 1. Setup local BroadcastChannel for zero-latency same-browser / multi-tab synchronization
+    // 1. Setup local BroadcastChannel for zero-latency same-browser / multi-tab synchronization (0ms)
     try {
       if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
         this.broadcastChannel = new BroadcastChannel(`hcm202_room_${this.roomId}`);
@@ -89,17 +105,17 @@ class BuzzerNetworkService {
       console.warn('BroadcastChannel not available:', e);
     }
 
-    // 2. Setup MQTT over WebSocket (EMQX public secure WebSocket broker)
-    // EMQX port 8084 is SSL/WSS, perfectly compatible with HTTPS deployments
+    // 2. Setup Direct Local LAN WebSocket Server (1ms ultra-low latency between phone & laptop on Wi-Fi)
+    this.initLocalWebSocket();
+
+    // 3. Setup MQTT over WebSocket (Cloud fallback for remote/4G users)
     const brokerUrls = [
       'wss://broker.emqx.io:8084/mqtt',
       'wss://broker.hivemq.com:8884/mqtt'
     ];
 
-    const currentUrl = brokerUrls[0];
-
     try {
-      this.client = mqtt.connect(currentUrl, {
+      this.client = mqtt.connect(brokerUrls[0], {
         clientId: `${this.isHost ? 'host' : 'player'}_${this.clientId}`,
         clean: true,
         connectTimeout: 5000,
@@ -132,47 +148,98 @@ class BuzzerNetworkService {
         }
       });
 
-      this.client.on('reconnect', () => {
-        this.setStatus('connecting');
-      });
-
       this.client.on('error', (err) => {
         console.warn('[BuzzerNet] MQTT warning/error:', err);
-        // Fall back to connected if broadcastChannel is active
-        if (this.broadcastChannel) {
+        if (this.ws?.readyState === WebSocket.OPEN || this.broadcastChannel) {
           this.setStatus('connected');
         } else {
           this.setStatus('error');
         }
       });
-
-      this.client.on('offline', () => {
-        if (!this.broadcastChannel) {
-          this.setStatus('disconnected');
-        }
-      });
-
     } catch (err) {
       console.error('[BuzzerNet] Failed to init MQTT:', err);
-      // Fallback gracefully
-      if (this.broadcastChannel) {
+    }
+  }
+
+  private initLocalWebSocket() {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/buzzer-ws`;
+      
+      const socket = new WebSocket(wsUrl);
+      this.ws = socket;
+
+      socket.onopen = () => {
+        console.log(`[BuzzerNet] Ultra-fast LAN WebSocket connected: ${wsUrl}`);
         this.setStatus('connected');
-      } else {
-        this.setStatus('error');
+
+        // Immediately send room handshake message
+        this.publishDirectWs({
+          type: 'REQUEST_SYNC',
+          senderId: this.clientId,
+          roomId: this.roomId,
+          payload: { roomId: this.roomId },
+          timestamp: Date.now(),
+        });
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const msg: NetworkMessage = JSON.parse(event.data);
+          if (msg.senderId !== this.clientId && (!msg.roomId || msg.roomId === this.roomId)) {
+            this.dispatchMessage(msg);
+          }
+        } catch (err) {
+          console.error('[BuzzerNet] Local WS message parse error:', err);
+        }
+      };
+
+      socket.onerror = () => {
+        // Local WS failed (e.g. running on static server or Vercel) - MQTT will handle it
+      };
+
+      socket.onclose = () => {
+        this.ws = null;
+        // Retry connection in background if room is still active
+        if (this.roomId && !this.reconnectWsTimer) {
+          this.reconnectWsTimer = setTimeout(() => {
+            this.reconnectWsTimer = null;
+            if (this.roomId) this.initLocalWebSocket();
+          }, 3000);
+        }
+      };
+    } catch (e) {
+      console.warn('[BuzzerNet] Could not initialize local WebSocket:', e);
+    }
+  }
+
+  private publishDirectWs(msg: NetworkMessage) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      try {
+        this.ws.send(JSON.stringify(msg));
+      } catch (err) {
+        console.warn('[BuzzerNet] WS send error:', err);
       }
     }
   }
 
   public publish(type: NetworkMessage['type'], payload: any) {
-    const msg: NetworkMessage = {
+    const msgId = `${this.clientId}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const msg: NetworkMessage & { msgId: string } = {
       type,
       senderId: this.clientId,
       roomId: this.roomId,
       payload,
       timestamp: Date.now(),
+      msgId,
     };
 
-    // 1. Broadcast locally (instant)
+    // Mark self as seen so we don't process own echo
+    this.seenMessageIds.add(msgId);
+
+    // 1. Broadcast locally in same browser tab (0ms)
     if (this.broadcastChannel) {
       try {
         this.broadcastChannel.postMessage(msg);
@@ -181,7 +248,10 @@ class BuzzerNetworkService {
       }
     }
 
-    // 2. Publish to MQTT Broker
+    // 2. Direct LAN WebSocket (1ms between phone & laptop on Wi-Fi)
+    this.publishDirectWs(msg);
+
+    // 3. Publish to Cloud MQTT Broker (for remote fallback)
     if (this.client && this.client.connected) {
       const pubTopic = `hcm202/room/${this.roomId}/${type}`;
       this.client.publish(pubTopic, JSON.stringify(msg), { qos: 0 });
@@ -189,6 +259,20 @@ class BuzzerNetworkService {
   }
 
   public disconnect() {
+    if (this.reconnectWsTimer) {
+      clearTimeout(this.reconnectWsTimer);
+      this.reconnectWsTimer = null;
+    }
+
+    if (this.ws) {
+      try {
+        this.ws.close();
+      } catch (err) {
+        console.error('Error closing local WS:', err);
+      }
+      this.ws = null;
+    }
+
     if (this.client) {
       try {
         this.client.end(true);
