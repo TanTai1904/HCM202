@@ -68,6 +68,8 @@ export const BuzzerPlayer: React.FC = () => {
   const [buzzerState, setBuzzerState] = useState<BuzzerState>('IDLE');
   const [buzzerMode, setBuzzerMode] = useState<'SPEED_TAP' | 'TUG_OF_WAR'>('TUG_OF_WAR');
   const [tugThreshold, setTugThreshold] = useState<number>(15);
+  const [tugDuration, setTugDuration] = useState<number>(8);
+  const [tugTimeLeft, setTugTimeLeft] = useState<number>(8);
   const [tugPulls, setTugPulls] = useState<Record<string, number>>({});
   const [activeBuzzTeamId, setActiveBuzzTeamId] = useState<string | null>(null);
   const [buzzReactionMs, setBuzzReactionMs] = useState<number | null>(null);
@@ -82,6 +84,26 @@ export const BuzzerPlayer: React.FC = () => {
   const [hasTappedEarly, setHasTappedEarly] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [localPullsEffect, setLocalPullsEffect] = useState<number>(0);
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [floatingHits, setFloatingHits] = useState<{ id: number; x: number; y: number; text: string }[]>([]);
+
+  // Refs for local smooth timer and buzz lock guard
+  const tugTimerRef = useRef<any>(null);
+  const hasClickedBuzzRef = useRef<boolean>(false);
+
+  // Restore saved team from localStorage if available
+  useEffect(() => {
+    if (roomId && !selectedTeam) {
+      const savedTeamId = localStorage.getItem('buzzer_player_team_' + roomId);
+      if (savedTeamId && teams.length > 0) {
+        const found = teams.find(t => t.id === savedTeamId);
+        if (found) {
+          setSelectedTeamId(found.id);
+          setSelectedTeam(found);
+        }
+      }
+    }
+  }, [roomId, teams, selectedTeam]);
 
   // Connect to Network
   useEffect(() => {
@@ -109,9 +131,16 @@ export const BuzzerPlayer: React.FC = () => {
       // 1. Instant zero-latency buzzer opening / countdown from host
       if (msg.type === 'HOST_OPEN_BUZZER') {
         const payload = msg.payload;
+        if (tugTimerRef.current) {
+          clearInterval(tugTimerRef.current);
+          tugTimerRef.current = null;
+        }
+        hasClickedBuzzRef.current = false;
+
         setBuzzerState(payload.buzzerState);
         if (payload.buzzerMode) setBuzzerMode(payload.buzzerMode);
         if (payload.tugThreshold) setTugThreshold(payload.tugThreshold);
+        if (payload.tugDuration) setTugDuration(payload.tugDuration);
         if (payload.lockedTeamIds) setLockedTeamIds(payload.lockedTeamIds);
         setActiveBuzzTeamId(null);
         setSelectedOption(null);
@@ -125,6 +154,22 @@ export const BuzzerPlayer: React.FC = () => {
         } else if (payload.buzzerState === 'TUG_OF_WAR') {
           audio.playTugWhistle();
           setTugPulls({});
+
+          const duration = payload.tugDuration || 8;
+          setTugTimeLeft(duration);
+          const startTs = payload.timestamp || Date.now();
+          tugTimerRef.current = setInterval(() => {
+            const elapsed = (Date.now() - startTs) / 1000;
+            const remaining = Math.max(0, duration - elapsed);
+            setTugTimeLeft(remaining);
+            if (remaining <= 0) {
+              if (tugTimerRef.current) {
+                clearInterval(tugTimerRef.current);
+                tugTimerRef.current = null;
+              }
+            }
+          }, 100);
+
           if (typeof navigator !== 'undefined' && navigator.vibrate) {
             navigator.vibrate([40, 40, 40]);
           }
@@ -134,7 +179,35 @@ export const BuzzerPlayer: React.FC = () => {
         return;
       }
 
-      // 2. Ultra-lightweight Tug-of-war pulls update (40 bytes instead of 5KB)
+      // 2. Host buzz locked: Một nhóm đã giành quyền trả lời! Khóa tất cả các nhóm khác ngay lập tức
+      if (msg.type === 'HOST_BUZZ_LOCKED') {
+        const { winnerTeamId, reactionMs, pulls } = msg.payload;
+        if (tugTimerRef.current) {
+          clearInterval(tugTimerRef.current);
+          tugTimerRef.current = null;
+        }
+
+        setBuzzerState('BUZZED');
+        setActiveBuzzTeamId(winnerTeamId);
+        if (reactionMs) setBuzzReactionMs(reactionMs);
+        if (pulls) setBuzzReactionMs(pulls);
+        if (msg.payload.tugPulls) setTugPulls(msg.payload.tugPulls);
+
+        if (winnerTeamId === selectedTeamId) {
+          audio.playVictory();
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate([100, 50, 100, 50, 200]);
+          }
+        } else {
+          audio.playWrong();
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(80);
+          }
+        }
+        return;
+      }
+
+      // 3. Ultra-lightweight Tug-of-war pulls update (40 bytes instead of 5KB)
       if (msg.type === 'TUG_PULL_UPDATE') {
         if (msg.payload.tugPulls) {
           setTugPulls(prev => ({
@@ -145,12 +218,16 @@ export const BuzzerPlayer: React.FC = () => {
         return;
       }
 
-      // 3. Comprehensive room state synchronization
+      // 4. Comprehensive room state synchronization
       if (msg.type === 'SYNC_STATE') {
         const payload = msg.payload;
         setBuzzerState(payload.buzzerState);
         if (payload.buzzerMode) setBuzzerMode(payload.buzzerMode);
         if (payload.tugThreshold) setTugThreshold(payload.tugThreshold);
+        if (payload.tugDuration) setTugDuration(payload.tugDuration);
+        if (payload.tugTimeLeft !== undefined && buzzerState !== 'TUG_OF_WAR') {
+          setTugTimeLeft(payload.tugTimeLeft);
+        }
         if (payload.tugPulls) setTugPulls(payload.tugPulls);
         setActiveBuzzTeamId(payload.activeBuzzTeamId);
         setBuzzReactionMs(payload.buzzReactionMs);
@@ -159,6 +236,11 @@ export const BuzzerPlayer: React.FC = () => {
         setIsCorrectAnswer(payload.isCorrectAnswer ?? null);
         setSelectedOptionByPhone(payload.selectedOptionByPhone ?? null);
         setLastAnswerResult(payload.lastAnswerResult ?? null);
+
+        if (payload.buzzerState === 'BUZZED' && tugTimerRef.current) {
+          clearInterval(tugTimerRef.current);
+          tugTimerRef.current = null;
+        }
 
         if (payload.teams) {
           setTeams(payload.teams);
@@ -171,22 +253,27 @@ export const BuzzerPlayer: React.FC = () => {
         // Reset local option selection when question or state changes
         if (payload.buzzerState === 'IDLE' || payload.buzzerState === 'OPEN' || payload.buzzerState === 'TUG_OF_WAR') {
           setSelectedOption(null);
+          hasClickedBuzzRef.current = false;
         }
       }
     });
 
     return () => {
+      if (tugTimerRef.current) {
+        clearInterval(tugTimerRef.current);
+      }
       unsubStatus();
       unsubMsg();
       buzzerNetwork.disconnect();
     };
-  }, [roomId, selectedTeamId]);
+  }, [roomId, selectedTeamId, buzzerState]);
 
-  // When team is selected, announce to Host
+  // When team is selected, save and announce to Host
   const handleSelectTeam = (team: BuzzerTeam) => {
     audio.playClick();
     setSelectedTeamId(team.id);
     setSelectedTeam(team);
+    localStorage.setItem('buzzer_player_team_' + roomId, team.id);
 
     buzzerNetwork.publish('PLAYER_JOIN', {
       teamId: team.id,
@@ -199,6 +286,7 @@ export const BuzzerPlayer: React.FC = () => {
     if (!selectedTeam) return;
     if (lockedTeamIds.includes(selectedTeam.id)) return;
     if (buzzerState !== 'TUG_OF_WAR') return;
+    if (activeBuzzTeamId !== null) return; // Đã chốt đội thắng, dừng bấm
 
     audio.playTugPull();
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -223,7 +311,7 @@ export const BuzzerPlayer: React.FC = () => {
     });
   };
 
-  // Buzzer Click Action
+  // Buzzer Click Action (Speed Tap)
   const handleBuzzerClick = () => {
     if (!selectedTeam) return;
 
@@ -237,7 +325,10 @@ export const BuzzerPlayer: React.FC = () => {
     }
 
     // 2. Click when OPEN and team is not locked
-    if (buzzerState === 'OPEN' && !lockedTeamIds.includes(selectedTeam.id)) {
+    if (buzzerState === 'OPEN' && !lockedTeamIds.includes(selectedTeam.id) && activeBuzzTeamId === null) {
+      if (hasClickedBuzzRef.current) return;
+      hasClickedBuzzRef.current = true;
+
       if (navigator.vibrate) {
         navigator.vibrate([120, 60, 120]);
       }
@@ -248,6 +339,45 @@ export const BuzzerPlayer: React.FC = () => {
         teamName: selectedTeam.name,
         clientTimestamp: Date.now(),
       });
+    }
+  };
+
+  // Full-screen tap handler for mobile
+  const handleScreenTap = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!selectedTeam) return;
+    if (lockedTeamIds.includes(selectedTeam.id)) return;
+    if (activeBuzzTeamId !== null) return; // Đã có đội giành quyền, các nhóm khác không được bấm nữa
+
+    let clientX = window.innerWidth / 2;
+    let clientY = window.innerHeight / 2;
+
+    if ('touches' in e && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if ('clientX' in e && (e as React.MouseEvent).clientX !== 0) {
+      clientX = (e as React.MouseEvent).clientX;
+      clientY = (e as React.MouseEvent).clientY;
+    }
+
+    // Visual shockwave ripple at touch coordinate
+    const rippleId = Date.now() + Math.random();
+    setRipples(prev => [...prev.slice(-6), { id: rippleId, x: clientX, y: clientY }]);
+    setTimeout(() => {
+      setRipples(prev => prev.filter(r => r.id !== rippleId));
+    }, 600);
+
+    if (buzzerState === 'TUG_OF_WAR') {
+      const hitId = Date.now() + Math.random();
+      setFloatingHits(prev => [...prev.slice(-6), { id: hitId, x: clientX, y: clientY, text: '+1' }]);
+      setTimeout(() => {
+        setFloatingHits(prev => prev.filter(h => h.id !== hitId));
+      }, 500);
+
+      handleTugPull();
+    } else if (buzzerState === 'OPEN') {
+      handleBuzzerClick();
+    } else if (buzzerState === 'IDLE' || buzzerState === 'COUNTDOWN') {
+      handleBuzzerClick();
     }
   };
 
@@ -430,11 +560,11 @@ export const BuzzerPlayer: React.FC = () => {
   const activeBuzzTeam = teams.find(t => t.id === activeBuzzTeamId) || null;
 
   return (
-    <div className={`min-h-[100dvh] flex flex-col justify-between p-4 select-none touch-manipulation relative overflow-hidden transition-all font-sans ${
+    <div className={`h-[100dvh] max-h-[100dvh] flex flex-col justify-between p-2 sm:p-4 select-none touch-manipulation relative overflow-hidden transition-all font-sans ${
       isLight ? 'theme-light bg-[#F7F3EA] bg-studio-light text-[#172033]' : 'bg-[#0B0E17] bg-studio-dark text-slate-100'
     } ${buzzerState === 'OPEN' ? (isLight ? 'ring-4 ring-rose-500/50' : 'ring-4 ring-rose-500/40') : ''}`}>
       {/* Top Mobile Bar */}
-      <div className={`flex items-center justify-between p-3 rounded-2xl backdrop-blur-xl border shadow-md relative z-10 ${
+      <div className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl backdrop-blur-xl border shadow-md relative z-20 shrink-0 ${
         isLight 
           ? 'bg-white/95 border-amber-900/15 text-[#172033]' 
           : 'bg-[#0E111B]/90 border-white/[0.08] text-slate-100'
@@ -491,7 +621,7 @@ export const BuzzerPlayer: React.FC = () => {
       </div>
 
       {/* Main Center Stage */}
-      <div className="flex-1 flex flex-col items-center justify-center py-6 relative z-10">
+      <div className="flex-1 w-full flex flex-col items-center justify-center my-2 relative z-10 overflow-hidden">
         {/* Warning Toast if tapped too early */}
         <AnimatePresence>
           {hasTappedEarly && (
@@ -679,37 +809,81 @@ export const BuzzerPlayer: React.FC = () => {
             </p>
           </motion.div>
         ) : buzzerState === 'TUG_OF_WAR' ? (
-          /* CASE TUG_OF_WAR: INTERACTIVE TAPPING ARENA */
-          <div className="w-full max-w-sm flex flex-col items-center text-center">
-            {/* Tug of war target banner */}
-            <div className={`mb-3 px-3.5 py-1.5 rounded-full border text-xs font-bold font-mono shadow-xs ${
-              isLight 
-                ? 'bg-amber-100 border-amber-300 text-amber-900' 
-                : 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+          /* CASE TUG_OF_WAR: INTERACTIVE FULL-SCREEN TAPPING ARENA */
+          <div 
+            onClick={handleScreenTap}
+            onTouchStart={handleScreenTap}
+            className="w-full flex-1 flex flex-col justify-between items-center text-center relative select-none cursor-pointer overflow-hidden rounded-3xl p-3 sm:p-4 transition-all touch-manipulation"
+            style={{
+              background: isLight 
+                ? 'linear-gradient(180deg, rgba(251,191,36,0.18) 0%, rgba(225,29,72,0.15) 100%)' 
+                : 'linear-gradient(180deg, rgba(245,158,11,0.14) 0%, rgba(225,29,72,0.22) 100%)',
+              border: isLight ? '2px solid rgba(245,158,11,0.4)' : '2px solid rgba(245,158,11,0.3)',
+              boxShadow: 'inset 0 0 50px rgba(245,158,11,0.15)',
+            }}
+          >
+            {/* Live Decreasing Countdown Timer Bar on Mobile */}
+            <div className={`w-full p-2.5 rounded-2xl border shadow-sm backdrop-blur-md relative z-20 ${
+              isLight ? 'bg-white/95 border-amber-900/15' : 'bg-black/50 border-white/10'
             }`}>
-              MỐC THẮNG: <span className="font-black">{tugThreshold} LẦN BẤM</span>
+              <div className="flex items-center justify-between text-xs font-bold mb-1">
+                <div className="flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${tugTimeLeft <= 3 ? 'bg-rose-500 animate-ping' : 'bg-amber-500 animate-pulse'}`} />
+                  <span className={`text-[11px] font-black uppercase tracking-wider ${tugTimeLeft <= 3 ? 'text-rose-600 animate-pulse' : isLight ? 'text-slate-700' : 'text-slate-300'}`}>
+                    {tugTimeLeft <= 3 ? '⚡ NƯỚC RÚT!' : '⏱️ THỜI GIAN THI KÉO:'}
+                  </span>
+                </div>
+                <span className={`font-mono text-sm font-black px-2 py-0.5 rounded-md ${
+                  tugTimeLeft <= 3 ? 'bg-rose-600 text-white animate-bounce' : isLight ? 'bg-amber-100 text-amber-950' : 'bg-amber-500/20 text-amber-300'
+                }`}>
+                  {tugTimeLeft.toFixed(1)}s
+                </span>
+              </div>
+
+              {/* Progress bar of timer */}
+              <div className={`w-full h-2 rounded-full p-0.5 overflow-hidden border relative ${
+                isLight ? 'bg-slate-200 border-slate-300' : 'bg-black/60 border-white/10'
+              }`}>
+                <motion.div
+                  className={`h-full rounded-full transition-all duration-100 ${
+                    tugTimeLeft <= 3 ? 'bg-rose-600 shadow-[0_0_10px_#f43f5e]' : 'bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-600'
+                  }`}
+                  style={{
+                    width: `${Math.max(0, Math.min(100, (tugTimeLeft / (tugDuration || 8)) * 100))}%`,
+                  }}
+                />
+              </div>
             </div>
 
-            {/* My team's pull status */}
+            {/* My team's pull status & Full-Screen Center Pull Area */}
             {(() => {
               const myPulls = tugPulls[selectedTeam.id] || 0;
               const myPct = Math.min(100, Math.round((myPulls / tugThreshold) * 100));
               const remaining = Math.max(0, tugThreshold - myPulls);
 
               return (
-                <div className={`w-full mb-4 p-3 rounded-2xl border shadow-lg ${
-                  isLight 
-                    ? 'bg-white/90 border-amber-900/15 text-slate-800' 
-                    : 'bg-white/[0.04] border-white/[0.1]'
-                }`}>
-                  <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-                    <span className={isLight ? 'text-slate-600' : 'text-slate-300'}>LỰC KÉO CỦA ĐỘI BẠN:</span>
-                    <span className={`font-mono font-black text-sm ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>
-                      {myPulls} / {tugThreshold} ({myPct}%)
+                <div className="flex-1 w-full flex flex-col items-center justify-center my-auto relative z-10 py-3">
+                  {/* Giant Pull Score */}
+                  <motion.div
+                    key={myPulls}
+                    initial={{ scale: 0.92 }}
+                    animate={{ scale: [1.08, 1] }}
+                    transition={{ duration: 0.15 }}
+                    className="flex flex-col items-center"
+                  >
+                    <span className="text-6xl sm:text-7xl font-black font-mono tracking-tight drop-shadow-[0_4px_25px_rgba(0,0,0,0.5)]"
+                      style={{ color: selectedTeam.accentColor || '#fbbf24' }}>
+                      {myPulls}
                     </span>
-                  </div>
+                    <span className={`text-xs font-black uppercase tracking-widest mt-1 px-3 py-1 rounded-full border shadow-sm ${
+                      isLight ? 'bg-white/90 border-amber-900/15 text-slate-800' : 'bg-black/40 border-white/10 text-amber-300'
+                    }`}>
+                      MỐC THẮNG: {tugThreshold} BẤM ({myPct}%)
+                    </span>
+                  </motion.div>
 
-                  <div className={`w-full h-3.5 rounded-full p-0.5 overflow-hidden border relative ${
+                  {/* Team Progress Track */}
+                  <div className={`w-full max-w-xs h-3.5 rounded-full p-0.5 overflow-hidden border relative mt-3 ${
                     isLight ? 'bg-slate-200 border-slate-300' : 'bg-black/60 border-white/10'
                   }`}>
                     <motion.div
@@ -720,53 +894,28 @@ export const BuzzerPlayer: React.FC = () => {
                         boxShadow: `0 0 15px ${selectedTeam.color}`,
                       }}
                     />
-                    <div className="absolute right-0 top-0 bottom-0 w-1 bg-amber-400" />
+                    <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-amber-400" />
                   </div>
 
-                  <p className={`text-[11px] font-bold mt-2 animate-pulse ${
-                    isLight ? 'text-amber-800' : 'text-amber-300'
-                  }`}>
-                    {remaining > 0 ? `🔥 CỐ LÊN! CÒN ${remaining} LẦN BẤM NỮA LÀ QUA VẠCH!` : '🎉 ĐÃ QUA VẠCH! CHỜ XÁC NHẬN!'}
+                  {/* Big Call-To-Action Banner: Tap Anywhere */}
+                  <div className="mt-4 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-rose-600 to-red-600 text-white font-black text-base sm:text-xl tracking-wider uppercase shadow-[0_0_35px_rgba(245,158,11,0.5)] border-2 border-amber-300 animate-pulse">
+                    🪢 CHẠM LIÊN TỤC TOÀN MÀN HÌNH!
+                  </div>
+
+                  <p className={`text-xs font-bold mt-2 ${isLight ? 'text-amber-900' : 'text-amber-200'}`}>
+                    {remaining > 0 ? `🔥 Chạm bất cứ đâu! Còn ${remaining} lần bấm nữa là knockout!` : '🎉 ĐÃ VƯỢT MỐC! ĐANG XÁC NHẬN!'}
+                  </p>
+                  <p className={`text-[10px] mt-0.5 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                    (Nếu hết giờ, đội nào cao hơn số lần bấm sẽ được chọn trả lời)
                   </p>
                 </div>
               );
             })()}
 
-            {/* GIANT PULL BUTTON */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.91 }}
-              onClick={handleTugPull}
-              className="w-56 h-56 sm:w-64 sm:h-64 rounded-full flex flex-col items-center justify-center cursor-pointer relative overflow-hidden transition-all shadow-[0_0_50px_rgba(245,158,11,0.5)] border-4 border-amber-300 active:ring-8 active:ring-amber-400/50 bg-gradient-to-br from-amber-500 via-rose-600 to-red-700 text-white select-none"
-            >
-              <span className="text-4xl sm:text-5xl mb-1 animate-bounce">🪢</span>
-              <span className="text-xl sm:text-2xl font-black uppercase tracking-wider drop-shadow-md">
-                BẤM KÉO!
-              </span>
-              <span className="text-xs font-bold text-amber-200 mt-1 uppercase tracking-widest">
-                NHẤP LIÊN TỤC!
-              </span>
-
-              {/* Floating +1 effect indicator */}
-              <AnimatePresence>
-                {localPullsEffect > 0 && (
-                  <motion.span
-                    key={localPullsEffect}
-                    initial={{ opacity: 1, y: 0, scale: 1 }}
-                    animate={{ opacity: 0, y: -45, scale: 1.4 }}
-                    transition={{ duration: 0.4 }}
-                    className="absolute font-black text-amber-200 text-xl pointer-events-none drop-shadow"
-                  >
-                    +1
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
-
-            {/* Other teams preview */}
-            <div className="w-full mt-4 space-y-1.5">
-              <span className={`text-[10px] font-bold uppercase tracking-widest block text-left ${
-                isLight ? 'text-slate-500' : 'text-slate-400'
+            {/* Other teams preview at bottom */}
+            <div className="w-full pt-2 border-t border-white/10 relative z-10">
+              <span className={`text-[10px] font-bold uppercase tracking-widest block text-left mb-1 ${
+                isLight ? 'text-slate-600' : 'text-slate-400'
               }`}>
                 TIẾN ĐỘ CÁC ĐỘI ĐỐI THỦ:
               </span>
@@ -775,14 +924,14 @@ export const BuzzerPlayer: React.FC = () => {
                   const p = tugPulls[t.id] || 0;
                   const pct = Math.min(100, Math.round((p / tugThreshold) * 100));
                   return (
-                    <div key={t.id} className={`p-2 rounded-xl border text-left shadow-xs ${
+                    <div key={t.id} className={`p-1.5 rounded-xl border text-left shadow-xs ${
                       isLight ? 'bg-white/80 border-amber-900/10' : 'bg-white/[0.02] border-white/[0.06]'
                     }`}>
-                      <div className="flex items-center justify-between text-[11px] font-bold">
+                      <div className="flex items-center justify-between text-[10px] font-bold">
                         <span className={`truncate ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>{t.name}</span>
                         <span className={`font-mono ${isLight ? 'text-amber-700' : 'text-amber-400'}`}>{p}/{tugThreshold}</span>
                       </div>
-                      <div className={`w-full h-1.5 rounded-full overflow-hidden mt-1 ${isLight ? 'bg-slate-200' : 'bg-black/40'}`}>
+                      <div className={`w-full h-1 rounded-full overflow-hidden mt-1 ${isLight ? 'bg-slate-200' : 'bg-black/40'}`}>
                         <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: t.color }} />
                       </div>
                     </div>
@@ -790,6 +939,38 @@ export const BuzzerPlayer: React.FC = () => {
                 })}
               </div>
             </div>
+
+            {/* Floating ripples on touch */}
+            {ripples.map((r) => (
+              <span
+                key={r.id}
+                className="absolute pointer-events-none rounded-full border-2 border-amber-300/80 animate-ping"
+                style={{
+                  left: r.x - 35,
+                  top: r.y - 35,
+                  width: 70,
+                  height: 70,
+                  backgroundColor: 'rgba(251,191,36,0.3)',
+                  boxShadow: '0 0 25px rgba(245,158,11,0.6)',
+                }}
+              />
+            ))}
+
+            {/* Floating +1 hits */}
+            {floatingHits.map((h) => (
+              <span
+                key={h.id}
+                className="absolute pointer-events-none font-black text-2xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] animate-bounce"
+                style={{
+                  left: h.x - 12,
+                  top: h.y - 25,
+                  color: '#fef08a',
+                  zIndex: 50,
+                }}
+              >
+                {h.text}
+              </span>
+            ))}
           </div>
         ) : isMyTeamBuzzed ? (
           /* CASE B: MY TEAM WON THE BUZZER! */
@@ -810,7 +991,9 @@ export const BuzzerPlayer: React.FC = () => {
                 XUẤT SẮC! BẠN ĐÃ GIÀNH ĐƯỢC QUYỀN TRẢ LỜI!
               </span>
               <p className={`text-xs font-mono font-bold mt-1 ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
-                {buzzReactionMs ? `⚡ Tốc độ: ${(buzzReactionMs / 1000).toFixed(3)}s` : 'Nhanh như chớp!'}
+                {buzzReactionMs ? (
+                  buzzerMode === 'TUG_OF_WAR' ? `🪢 Lực kéo: ${buzzReactionMs} lần bấm` : `⚡ Tốc độ: ${(buzzReactionMs / 1000).toFixed(3)}s`
+                ) : 'Nhanh như chớp!'}
               </p>
               <p className={`text-[11px] mt-2 px-3 py-1 rounded-lg ${
                 isLight ? 'bg-white border border-amber-900/15 text-slate-700' : 'bg-black/40 text-slate-300'
@@ -857,102 +1040,116 @@ export const BuzzerPlayer: React.FC = () => {
             )}
           </div>
         ) : isOtherTeamBuzzed ? (
-          /* CASE C: ANOTHER TEAM BUZZED FIRST */
+          /* CASE C: ANOTHER TEAM BUZZED FIRST (TẤT CẢ CÁC ĐỘI KHÁC BỊ KHÓA) */
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className={`flex flex-col items-center text-center p-6 rounded-2xl border max-w-xs shadow-xl ${
+            className={`w-full flex-1 flex flex-col items-center justify-center text-center p-6 rounded-3xl border shadow-xl select-none ${
               isLight 
-                ? 'bg-white/90 border-amber-900/15 text-slate-800' 
-                : 'bg-white/[0.04] border-white/[0.1]'
+                ? 'bg-white/95 border-amber-900/15 text-slate-800' 
+                : 'bg-white/[0.04] border-white/[0.1] text-slate-200'
             }`}
           >
-            <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center mb-3 animate-pulse ${
+            <div className={`w-20 h-20 rounded-2xl border flex items-center justify-center mb-4 ${
               isLight ? 'bg-amber-100 border-amber-300 text-amber-700' : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
             }`}>
-              <Clock className="w-8 h-8" />
+              <Lock className="w-10 h-10 animate-pulse text-amber-500" />
             </div>
-            <h2 className={`text-base font-bold ${isLight ? 'text-[#172033]' : 'text-white'}`}>
-              ĐỘI BẠN ĐÃ NHANH HƠN MỘT TÍCH TẮC!
+
+            <span className={`text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border mb-2 ${
+              isLight ? 'bg-amber-50 text-amber-900 border-amber-300' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+            }`}>
+              ĐÃ CÓ ĐỘI GIÀNH QUYỀN TRẢ LỜI
+            </span>
+
+            <h2 className={`text-xl sm:text-2xl font-black ${isLight ? 'text-[#172033]' : 'text-white'}`}>
+              {activeBuzzTeam ? activeBuzzTeam.name : 'ĐỘI ĐỐI THỦ'} ĐÃ NHANH HƠN!
             </h2>
-            <p className={`text-xs mt-1.5 leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-              Chú ý lắng nghe câu trả lời. Nếu đội bạn sai, hãy sẵn sàng bấm cướp chuông!
+
+            <p className={`text-xs sm:text-sm mt-2 max-w-xs leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+              Màn hình của bạn đã tạm khóa. Hãy quan sát máy chiếu xem đối thủ trả lời. Nếu đội bạn trả lời sai, hãy chuẩn bị cướp chuông!
             </p>
+
+            {buzzReactionMs !== null && (
+              <div className={`mt-4 px-3.5 py-1.5 rounded-xl border font-mono text-xs font-bold ${
+                isLight ? 'bg-slate-100 border-slate-300 text-slate-700' : 'bg-black/40 border-white/10 text-amber-300'
+              }`}>
+                {buzzerMode === 'TUG_OF_WAR' 
+                  ? `Đạt ${buzzReactionMs} lần bấm lực!` 
+                  : `Tốc độ bấm: ${(buzzReactionMs / 1000).toFixed(3)}s`}
+              </div>
+            )}
           </motion.div>
         ) : (
-          /* CASE D: TACTILE LUXURY STUDIO BUZZER BUTTON (SPEED TAP) */
-          <div className="flex flex-col items-center">
-            {/* Outer Hardware Collar */}
-            <div className={`p-3 sm:p-4 rounded-full border shadow-2xl transition-colors ${
-              isLight 
-                ? 'bg-white border-amber-900/15 shadow-[0_20px_50px_rgba(0,0,0,0.1)]' 
-                : 'bg-[#141724] border-white/[0.12] shadow-[0_25px_60px_rgba(0,0,0,0.8)]'
+          /* CASE D: FULL-SCREEN TACTILE SPEED BUZZER ARENA */
+          <div 
+            onClick={handleScreenTap}
+            onTouchStart={handleScreenTap}
+            className={`w-full flex-1 flex flex-col justify-center items-center text-center relative select-none cursor-pointer overflow-hidden rounded-3xl p-6 transition-all touch-manipulation ${
+              buzzerState === 'OPEN'
+                ? 'bg-gradient-to-b from-rose-600 via-red-600 to-amber-600 text-white shadow-[0_0_60px_rgba(225,29,72,0.6)] ring-4 ring-rose-400/50'
+                : buzzerState === 'COUNTDOWN'
+                ? isLight ? 'bg-amber-100 text-amber-950 border-2 border-amber-300' : 'bg-gradient-to-b from-amber-600/30 to-rose-900/40 text-amber-200 border border-amber-500/30'
+                : isLight ? 'bg-white/80 border-2 border-slate-200 text-slate-700' : 'bg-white/[0.03] border border-white/10 text-slate-300'
+            }`}
+          >
+            {/* Massive Icon */}
+            <div className={`p-6 rounded-full transition-transform duration-200 ${
+              buzzerState === 'OPEN' ? 'bg-white/20 shadow-[0_0_40px_rgba(255,255,255,0.4)] scale-110' : ''
             }`}>
-              {/* Inner Glowing Bezel */}
-              <div className={`p-2 rounded-full transition-all duration-300 ${
-                buzzerState === 'OPEN'
-                  ? 'bg-rose-500/20 shadow-[0_0_40px_rgba(225,29,72,0.6)]'
-                  : buzzerState === 'COUNTDOWN'
-                  ? 'bg-amber-500/15 shadow-[0_0_20px_rgba(245,158,11,0.4)]'
-                  : isLight
-                  ? 'bg-slate-100'
-                  : 'bg-black/40'
-              }`}>
-                {/* The Buzzer Button */}
-                <motion.div
-                  whileHover={{ scale: buzzerState === 'OPEN' ? 1.03 : 1 }}
-                  whileTap={{ scale: buzzerState === 'OPEN' ? 0.94 : 0.98 }}
-                  onClick={handleBuzzerClick}
-                  className={`w-60 h-60 sm:w-72 sm:h-72 rounded-full flex flex-col items-center justify-center cursor-pointer relative overflow-hidden transition-all ${
-                    buzzerState === 'OPEN'
-                      ? 'studio-buzzer-button'
-                      : buzzerState === 'COUNTDOWN'
-                      ? 'bg-gradient-to-b from-amber-600 to-rose-900 shadow-lg'
-                      : isLight
-                      ? 'bg-gradient-to-b from-slate-100 to-slate-200 border border-slate-300 text-slate-600 shadow-inner'
-                      : 'bg-gradient-to-b from-[#1E2232] to-[#0D101A] border border-white/[0.08] shadow-inner'
-                  }`}
-                >
-                  <Bell className={`w-14 h-14 mb-2 transition-transform ${
-                    buzzerState === 'OPEN' 
-                      ? 'text-white animate-bounce fill-current' 
-                      : isLight 
-                      ? 'text-slate-400' 
-                      : 'text-slate-500'
-                  }`} />
-
-                  <span className={`text-lg sm:text-xl font-black tracking-wider uppercase ${
-                    buzzerState === 'OPEN' 
-                      ? 'text-white drop-shadow-md' 
-                      : isLight 
-                      ? 'text-slate-600' 
-                      : 'text-slate-400'
-                  }`}>
-                    {buzzerState === 'OPEN'
-                      ? 'BẤM NGAY!'
-                      : buzzerState === 'COUNTDOWN'
-                      ? 'CHUẨN BỊ...'
-                      : 'CHỜ HIỆU LỆNH'}
-                  </span>
-
-                  <span className={`text-[11px] font-medium mt-1 ${
-                    buzzerState === 'OPEN' 
-                      ? 'text-amber-200' 
-                      : isLight 
-                      ? 'text-slate-500' 
-                      : 'text-slate-500'
-                  }`}>
-                    {buzzerState === 'OPEN'
-                      ? 'Chạm thật nhanh để giật quyền!'
-                      : 'Màn hình máy chiếu đang mở đề'}
-                  </span>
-                </motion.div>
-              </div>
+              <Bell className={`w-24 h-24 sm:w-28 sm:h-28 transition-transform ${
+                buzzerState === 'OPEN' 
+                  ? 'text-white animate-bounce fill-current drop-shadow-[0_0_25px_rgba(255,255,255,0.8)]' 
+                  : isLight ? 'text-slate-400' : 'text-slate-500'
+              }`} />
             </div>
 
-            <p className={`text-xs mt-5 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-              Chạm lên nút chuông trên màn hình ngay khi Host mở chuông
+            {/* Giant Title */}
+            <h2 className={`text-3xl sm:text-4xl font-black uppercase tracking-tight mt-4 ${
+              buzzerState === 'OPEN' ? 'text-white drop-shadow-lg' : isLight ? 'text-[#172033]' : 'text-white'
+            }`}>
+              {buzzerState === 'OPEN'
+                ? 'BẤM NGAY!'
+                : buzzerState === 'COUNTDOWN'
+                ? 'CHUẨN BỊ...'
+                : 'CHỜ HIỆU LỆNH'}
+            </h2>
+
+            {/* Call To Action Banner */}
+            <div className={`mt-4 px-6 py-3 rounded-2xl font-black text-base sm:text-lg tracking-wider uppercase shadow-lg ${
+              buzzerState === 'OPEN'
+                ? 'bg-white text-rose-700 shadow-[0_0_30px_rgba(255,255,255,0.6)] animate-pulse'
+                : isLight ? 'bg-slate-100 text-slate-600 border border-slate-200' : 'bg-white/[0.06] text-slate-300'
+            }`}>
+              {buzzerState === 'OPEN'
+                ? '🚨 CHẠM BẤT CỨ ĐÂU ĐỂ CƯỚP CHUÔNG!'
+                : buzzerState === 'COUNTDOWN'
+                ? '⚡ TAY ĐẶT SẴN TRÊN MÀN HÌNH!'
+                : '⏳ MÀN HÌNH MÁY CHIẾU ĐANG MỞ ĐỀ'}
+            </div>
+
+            <p className={`text-xs mt-3 font-semibold ${
+              buzzerState === 'OPEN' ? 'text-amber-200' : isLight ? 'text-slate-500' : 'text-slate-400'
+            }`}>
+              {buzzerState === 'OPEN'
+                ? 'Toàn bộ màn hình điện thoại là nút chuông — chạm bất cứ điểm nào!'
+                : 'Chuông sẽ mở bất ngờ! Đội nào chạm nhanh hơn sẽ giành quyền!'}
             </p>
+
+            {/* Floating ripples on touch */}
+            {ripples.map((r) => (
+              <span
+                key={r.id}
+                className="absolute pointer-events-none rounded-full border-2 border-white animate-ping"
+                style={{
+                  left: r.x - 35,
+                  top: r.y - 35,
+                  width: 70,
+                  height: 70,
+                  backgroundColor: 'rgba(255,255,255,0.3)',
+                }}
+              />
+            ))}
           </div>
         )}
       </div>

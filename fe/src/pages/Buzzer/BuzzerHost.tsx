@@ -70,7 +70,14 @@ export const BuzzerHost: React.FC = () => {
   // Buzzer Mechanism: Tug-of-war (Kéo co) or Speed Tap
   const [buzzerMode, setBuzzerMode] = useState<BuzzerMode>('TUG_OF_WAR');
   const [tugThreshold, setTugThreshold] = useState<number>(15);
+  const [tugDuration, setTugDuration] = useState<number>(8); // Mặc định 8s đếm ngược kéo co
+  const [tugTimeLeft, setTugTimeLeft] = useState<number>(8);
   const [tugPulls, setTugPulls] = useState<Record<string, number>>({});
+
+  // Atomic Winner Lock Ref - Ngăn chặn triệt để race condition khi nhiều đội cùng bấm
+  const buzzerWinnerLockedRef = useRef<boolean>(false);
+  const tugTimerIntervalRef = useRef<any>(null);
+  const tugPullsRef = useRef<Record<string, number>>({});
 
   // In-game round state
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -95,6 +102,8 @@ export const BuzzerHost: React.FC = () => {
     buzzerState,
     buzzerMode,
     tugThreshold,
+    tugDuration,
+    tugTimeLeft,
     tugPulls,
     activeBuzzTeamId,
     buzzerOpenTimestamp,
@@ -109,6 +118,8 @@ export const BuzzerHost: React.FC = () => {
       buzzerState,
       buzzerMode,
       tugThreshold,
+      tugDuration,
+      tugTimeLeft,
       tugPulls,
       activeBuzzTeamId,
       buzzerOpenTimestamp,
@@ -117,7 +128,17 @@ export const BuzzerHost: React.FC = () => {
       currentQuestionIndex,
       questions,
     };
-  }, [buzzerState, buzzerMode, tugThreshold, tugPulls, activeBuzzTeamId, buzzerOpenTimestamp, lockedTeamIds, teams, currentQuestionIndex, questions]);
+    tugPullsRef.current = tugPulls;
+  }, [buzzerState, buzzerMode, tugThreshold, tugDuration, tugTimeLeft, tugPulls, activeBuzzTeamId, buzzerOpenTimestamp, lockedTeamIds, teams, currentQuestionIndex, questions]);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (tugTimerIntervalRef.current) {
+        clearInterval(tugTimerIntervalRef.current);
+      }
+    };
+  }, []);
 
   // Broadcast current state to all players
   const broadcastSyncState = useCallback(() => {
@@ -128,6 +149,8 @@ export const BuzzerHost: React.FC = () => {
       buzzerState,
       buzzerMode,
       tugThreshold,
+      tugDuration,
+      tugTimeLeft,
       tugPulls,
       activeQuestionIndex: currentQuestionIndex,
       totalQuestions: questions.length,
@@ -156,6 +179,8 @@ export const BuzzerHost: React.FC = () => {
     buzzerState, 
     buzzerMode, 
     tugThreshold, 
+    tugDuration,
+    tugTimeLeft,
     tugPulls, 
     currentQuestionIndex, 
     questions, 
@@ -169,6 +194,72 @@ export const BuzzerHost: React.FC = () => {
     lastAnswerResult,
     teams
   ]);
+
+  // Handle Tug-of-war countdown timeout: Team with the highest pulls wins and is selected to answer!
+  const handleTugTimeout = useCallback(() => {
+    if (buzzerWinnerLockedRef.current) return;
+    if (stateRef.current.buzzerState !== 'TUG_OF_WAR') return;
+
+    buzzerWinnerLockedRef.current = true;
+    if (tugTimerIntervalRef.current) {
+      clearInterval(tugTimerIntervalRef.current);
+      tugTimerIntervalRef.current = null;
+    }
+
+    const currentPulls = tugPullsRef.current;
+    const availableTeams = stateRef.current.teams.filter(t => !stateRef.current.lockedTeamIds.includes(t.id));
+
+    let winningTeamId: string | null = null;
+    let maxPulls = -1;
+
+    availableTeams.forEach(t => {
+      const pulls = currentPulls[t.id] || 0;
+      if (pulls > maxPulls) {
+        maxPulls = pulls;
+        winningTeamId = t.id;
+      }
+    });
+
+    if (winningTeamId && maxPulls > 0) {
+      audio.playTugWhistle();
+      audio.playVictory();
+      setBuzzerState('BUZZED');
+      setActiveBuzzTeamId(winningTeamId);
+      setBuzzReactionMs(maxPulls);
+
+      setTeams(tPrev => tPrev.map(t => {
+        if (t.id === winningTeamId) {
+          return { ...t, buzzCount: t.buzzCount + 1 };
+        }
+        return t;
+      }));
+
+      // Khóa tất cả các đội khác ngay lập tức và phát thông báo
+      buzzerNetwork.publish('HOST_BUZZ_LOCKED', {
+        winnerTeamId: winningTeamId,
+        pulls: maxPulls,
+        buzzerMode: 'TUG_OF_WAR',
+        reason: 'TIMEOUT_HIGHEST_PULLS',
+        tugPulls: currentPulls,
+      });
+
+      buzzerNetwork.publish('SYNC_STATE', {
+        ...stateRef.current,
+        buzzerState: 'BUZZED',
+        activeBuzzTeamId: winningTeamId,
+        buzzReactionMs: maxPulls,
+        tugPulls: currentPulls,
+      });
+    } else {
+      audio.playWrong();
+      setBuzzerState('IDLE');
+      buzzerNetwork.publish('SYNC_STATE', {
+        ...stateRef.current,
+        buzzerState: 'IDLE',
+        activeBuzzTeamId: null,
+      });
+    }
+  }, []);
 
   // Connect to Buzzer Network on mount
   useEffect(() => {
@@ -192,11 +283,19 @@ export const BuzzerHost: React.FC = () => {
         setTimeout(() => broadcastSyncState(), 100);
       }
 
-      // Handle Classic Speed Buzzer
+      // Handle Classic Speed Buzzer - Ai bấm nhanh hơn được chọn, các đội khác bị khóa ngay lập tức
       if (msg.type === 'PLAYER_BUZZ') {
         const { teamId, clientTimestamp } = msg.payload;
 
+        // Atomic lock check: Nếu đã có đội bấm trước rồi thì bỏ qua hoàn toàn các đội sau
+        if (buzzerWinnerLockedRef.current) {
+          return;
+        }
+
         if (current.buzzerState === 'OPEN' && !current.lockedTeamIds.includes(teamId)) {
+          // Khóa ngay lập tức trong 0ms trước bất kỳ tác vụ nào khác
+          buzzerWinnerLockedRef.current = true;
+
           const reaction = Math.max(50, (clientTimestamp || Date.now()) - current.buzzerOpenTimestamp);
           
           audio.playBuzzerDing();
@@ -211,6 +310,21 @@ export const BuzzerHost: React.FC = () => {
             }
             return t;
           }));
+
+          // Khóa tất cả các điện thoại khác qua mạng ngay lập tức
+          buzzerNetwork.publish('HOST_BUZZ_LOCKED', {
+            winnerTeamId: teamId,
+            reactionMs: reaction,
+            buzzerMode: 'SPEED_TAP',
+            reason: 'SPEED_WINNER',
+          });
+
+          buzzerNetwork.publish('SYNC_STATE', {
+            ...current,
+            buzzerState: 'BUZZED',
+            activeBuzzTeamId: teamId,
+            buzzReactionMs: reaction,
+          });
         }
       }
 
@@ -218,42 +332,61 @@ export const BuzzerHost: React.FC = () => {
       if (msg.type === 'PLAYER_TUG_PULL') {
         const { teamId } = msg.payload;
 
+        if (buzzerWinnerLockedRef.current) return;
+
         if (current.buzzerState === 'TUG_OF_WAR' && !current.lockedTeamIds.includes(teamId)) {
           audio.playTugPull();
-          setTugPulls(prev => {
-            const nextPulls = (prev[teamId] || 0) + 1;
-            const updated = { ...prev, [teamId]: nextPulls };
+          const nextPulls = (tugPullsRef.current[teamId] || 0) + 1;
+          tugPullsRef.current[teamId] = nextPulls;
 
-            // Check if team pulled across the threshold!
-            if (nextPulls >= current.tugThreshold) {
-              audio.playTugWhistle();
-              audio.playVictory();
-              setBuzzerState('BUZZED');
-              setActiveBuzzTeamId(teamId);
-              setBuzzReactionMs(nextPulls);
+          setTugPulls(prev => ({
+            ...prev,
+            [teamId]: nextPulls
+          }));
 
-              setTeams(tPrev => tPrev.map(t => {
-                if (t.id === teamId) {
-                  return { ...t, buzzCount: t.buzzCount + 1 };
-                }
-                return t;
-              }));
-
-              // Instantly broadcast victory to all connected phones
-              buzzerNetwork.publish('SYNC_STATE', {
-                ...current,
-                buzzerState: 'BUZZED',
-                activeBuzzTeamId: teamId,
-                tugPulls: updated,
-              });
-            } else {
-              // Lightweight broadcast of tug pulls so phones update in 1ms without choking network
-              buzzerNetwork.publish('TUG_PULL_UPDATE', {
-                tugPulls: updated,
-              });
+          // Kiểm tra xem đội nào đạt mốc chiến thắng trước khi hết giờ (Knockout)
+          if (nextPulls >= current.tugThreshold) {
+            buzzerWinnerLockedRef.current = true;
+            if (tugTimerIntervalRef.current) {
+              clearInterval(tugTimerIntervalRef.current);
+              tugTimerIntervalRef.current = null;
             }
-            return updated;
-          });
+
+            audio.playTugWhistle();
+            audio.playVictory();
+            setBuzzerState('BUZZED');
+            setActiveBuzzTeamId(teamId);
+            setBuzzReactionMs(nextPulls);
+
+            setTeams(tPrev => tPrev.map(t => {
+              if (t.id === teamId) {
+                return { ...t, buzzCount: t.buzzCount + 1 };
+              }
+              return t;
+            }));
+
+            // Khóa tất cả các điện thoại khác ngay lập tức
+            buzzerNetwork.publish('HOST_BUZZ_LOCKED', {
+              winnerTeamId: teamId,
+              pulls: nextPulls,
+              buzzerMode: 'TUG_OF_WAR',
+              reason: 'THRESHOLD_REACHED',
+              tugPulls: { ...tugPullsRef.current },
+            });
+
+            buzzerNetwork.publish('SYNC_STATE', {
+              ...current,
+              buzzerState: 'BUZZED',
+              activeBuzzTeamId: teamId,
+              buzzReactionMs: nextPulls,
+              tugPulls: { ...tugPullsRef.current },
+            });
+          } else {
+            // Lightweight broadcast of tug pulls so phones update in 1ms without choking network
+            buzzerNetwork.publish('TUG_PULL_UPDATE', {
+              tugPulls: { ...tugPullsRef.current },
+            });
+          }
         }
       }
 
@@ -277,7 +410,7 @@ export const BuzzerHost: React.FC = () => {
       unsubscribeMsg();
       buzzerNetwork.disconnect();
     };
-  }, [roomId, broadcastSyncState]);
+  }, [roomId, broadcastSyncState, handleTugTimeout]);
 
   // Sync state whenever key parameters change (exclude tugPulls to prevent network congestion)
   useEffect(() => {
@@ -342,6 +475,13 @@ export const BuzzerHost: React.FC = () => {
     setHasMysteryGift(nextGift);
     setBuzzerState('IDLE');
     setTugPulls({});
+    tugPullsRef.current = {};
+    buzzerWinnerLockedRef.current = false;
+    if (tugTimerIntervalRef.current) {
+      clearInterval(tugTimerIntervalRef.current);
+      tugTimerIntervalRef.current = null;
+    }
+    setTugTimeLeft(tugDuration);
     setActiveBuzzTeamId(null);
     setBuzzReactionMs(null);
     setLockedTeamIds([]);
@@ -352,17 +492,40 @@ export const BuzzerHost: React.FC = () => {
 
   // Open the buzzer for all players
   const handleOpenBuzzer = () => {
+    buzzerWinnerLockedRef.current = false;
+    if (tugTimerIntervalRef.current) {
+      clearInterval(tugTimerIntervalRef.current);
+      tugTimerIntervalRef.current = null;
+    }
+
     const now = Date.now();
     setBuzzerOpenTimestamp(now);
     setActiveBuzzTeamId(null);
     setSelectedOptionByPhone(null);
     setIsCorrectAnswer(null);
     setTugPulls({});
+    tugPullsRef.current = {};
 
     const nextState = buzzerMode === 'TUG_OF_WAR' ? 'TUG_OF_WAR' : 'OPEN';
     if (buzzerMode === 'TUG_OF_WAR') {
       audio.playTugWhistle();
       setBuzzerState('TUG_OF_WAR');
+      setTugTimeLeft(tugDuration);
+
+      const startTime = now;
+      const duration = tugDuration;
+      tugTimerIntervalRef.current = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        const remaining = Math.max(0, duration - elapsed);
+        setTugTimeLeft(remaining);
+        if (remaining <= 0) {
+          if (tugTimerIntervalRef.current) {
+            clearInterval(tugTimerIntervalRef.current);
+            tugTimerIntervalRef.current = null;
+          }
+          handleTugTimeout();
+        }
+      }, 100);
     } else {
       audio.playBuzzerOpen();
       setBuzzerState('OPEN');
@@ -374,12 +537,20 @@ export const BuzzerHost: React.FC = () => {
       buzzerMode,
       timestamp: now,
       tugThreshold,
+      tugDuration,
+      tugTimeLeft: tugDuration,
       lockedTeamIds,
     });
   };
 
   // 3s Countdown before auto opening
   const handleStartCountdown = () => {
+    buzzerWinnerLockedRef.current = false;
+    if (tugTimerIntervalRef.current) {
+      clearInterval(tugTimerIntervalRef.current);
+      tugTimerIntervalRef.current = null;
+    }
+
     setBuzzerState('COUNTDOWN');
     audio.playCountdown();
 
@@ -388,6 +559,8 @@ export const BuzzerHost: React.FC = () => {
       buzzerMode,
       timestamp: Date.now(),
       tugThreshold,
+      tugDuration,
+      tugTimeLeft: tugDuration,
       lockedTeamIds,
     });
 
@@ -407,6 +580,12 @@ export const BuzzerHost: React.FC = () => {
   // Manual buzz (Host taps on screen or keyboard 1..8)
   const handleManualBuzz = (teamId: string) => {
     if (buzzerState === 'OPEN' || buzzerState === 'IDLE' || buzzerState === 'TUG_OF_WAR') {
+      buzzerWinnerLockedRef.current = true;
+      if (tugTimerIntervalRef.current) {
+        clearInterval(tugTimerIntervalRef.current);
+        tugTimerIntervalRef.current = null;
+      }
+
       audio.playBuzzerDing();
       setBuzzerState('BUZZED');
       setActiveBuzzTeamId(teamId);
@@ -417,6 +596,13 @@ export const BuzzerHost: React.FC = () => {
         }
         return t;
       }));
+
+      buzzerNetwork.publish('HOST_BUZZ_LOCKED', {
+        winnerTeamId: teamId,
+        reactionMs: 350,
+        buzzerMode,
+        reason: 'MANUAL_HOST_PICK',
+      });
 
       buzzerNetwork.publish('SYNC_STATE', {
         ...stateRef.current,
@@ -429,6 +615,12 @@ export const BuzzerHost: React.FC = () => {
 
   // Steal Buzzer: Re-open buzzer for remaining teams after a wrong answer
   const handleResetBuzzerForSteal = () => {
+    buzzerWinnerLockedRef.current = false;
+    if (tugTimerIntervalRef.current) {
+      clearInterval(tugTimerIntervalRef.current);
+      tugTimerIntervalRef.current = null;
+    }
+
     let nextLocked = lockedTeamIds;
     if (activeBuzzTeamId && !lockedTeamIds.includes(activeBuzzTeamId)) {
       nextLocked = [...lockedTeamIds, activeBuzzTeamId];
@@ -438,11 +630,31 @@ export const BuzzerHost: React.FC = () => {
     setSelectedOptionByPhone(null);
     setIsCorrectAnswer(null);
     setTugPulls({});
+    tugPullsRef.current = {};
+
+    const now = Date.now();
+    setBuzzerOpenTimestamp(now);
 
     const nextState = buzzerMode === 'TUG_OF_WAR' ? 'TUG_OF_WAR' : 'OPEN';
     if (buzzerMode === 'TUG_OF_WAR') {
       audio.playTugWhistle();
       setBuzzerState('TUG_OF_WAR');
+      setTugTimeLeft(tugDuration);
+
+      const startTime = now;
+      const duration = tugDuration;
+      tugTimerIntervalRef.current = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        const remaining = Math.max(0, duration - elapsed);
+        setTugTimeLeft(remaining);
+        if (remaining <= 0) {
+          if (tugTimerIntervalRef.current) {
+            clearInterval(tugTimerIntervalRef.current);
+            tugTimerIntervalRef.current = null;
+          }
+          handleTugTimeout();
+        }
+      }, 100);
     } else {
       audio.playBuzzerOpen();
       setBuzzerState('OPEN');
@@ -451,8 +663,10 @@ export const BuzzerHost: React.FC = () => {
     buzzerNetwork.publish('HOST_OPEN_BUZZER', {
       buzzerState: nextState,
       buzzerMode,
-      timestamp: Date.now(),
+      timestamp: now,
       tugThreshold,
+      tugDuration,
+      tugTimeLeft: tugDuration,
       lockedTeamIds: nextLocked,
     });
   };
@@ -635,6 +849,8 @@ export const BuzzerHost: React.FC = () => {
             onToggleBuzzerMode={() => setBuzzerMode(prev => prev === 'TUG_OF_WAR' ? 'SPEED_TAP' : 'TUG_OF_WAR')}
             tugThreshold={tugThreshold}
             onUpdateTugThreshold={setTugThreshold}
+            tugDuration={tugDuration}
+            onUpdateTugDuration={setTugDuration}
             onStartGame={handleStartGame}
             isLight={theme === 'light'}
           />
@@ -652,6 +868,9 @@ export const BuzzerHost: React.FC = () => {
             onToggleBuzzerMode={() => setBuzzerMode(prev => prev === 'TUG_OF_WAR' ? 'SPEED_TAP' : 'TUG_OF_WAR')}
             tugThreshold={tugThreshold}
             onUpdateTugThreshold={setTugThreshold}
+            tugDuration={tugDuration}
+            tugTimeLeft={tugTimeLeft}
+            onUpdateTugDuration={setTugDuration}
             tugPulls={tugPulls}
             activeBuzzTeam={activeBuzzTeam}
             buzzReactionMs={buzzReactionMs}

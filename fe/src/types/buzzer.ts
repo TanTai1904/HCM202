@@ -69,6 +69,8 @@ export interface BuzzerRoomState {
   buzzerState: BuzzerState;
   buzzerMode: BuzzerMode;
   tugThreshold: number; // Mức kéo co để giành quyền trả lời (ví dụ 15 bấm)
+  tugDuration?: number; // Thời lượng kéo co (giây, mặc định 8s)
+  tugTimeLeft?: number; // Thời gian kéo co còn lại (giây)
   tugPulls: Record<string, number>; // teamId -> số lần bấm hiện tại
   activeQuestionIndex: number;
   totalQuestions: number;
@@ -94,6 +96,8 @@ export interface NetworkMessage {
     | 'PLAYER_BUZZ'
     | 'PLAYER_TUG_PULL'
     | 'TUG_PULL_UPDATE'
+    | 'TUG_TIMER_UPDATE'
+    | 'HOST_BUZZ_LOCKED'
     | 'PLAYER_SUBMIT_ANSWER'
     | 'HOST_OPEN_BUZZER'
     | 'HOST_RESET_BUZZER'

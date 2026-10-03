@@ -28,6 +28,9 @@ interface BuzzerPlayArenaProps {
   onToggleBuzzerMode: () => void;
   tugThreshold: number;
   onUpdateTugThreshold: (val: number) => void;
+  tugDuration?: number;
+  tugTimeLeft?: number;
+  onUpdateTugDuration?: (val: number) => void;
   tugPulls: Record<string, number>;
   activeBuzzTeam: BuzzerTeam | null;
   buzzReactionMs: number | null;
@@ -58,6 +61,9 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
   onToggleBuzzerMode,
   tugThreshold,
   onUpdateTugThreshold,
+  tugDuration = 8,
+  tugTimeLeft = 8,
+  onUpdateTugDuration,
   tugPulls,
   activeBuzzTeam,
   buzzReactionMs,
@@ -343,24 +349,46 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                 </div>
 
                 {buzzerMode === 'TUG_OF_WAR' && (
-                  <div className="flex items-center gap-1 text-[11px]">
-                    <span className={isLight ? 'text-slate-600' : 'text-slate-400'}>Mốc thắng:</span>
-                    <select
-                      value={tugThreshold}
-                      disabled={buzzerState !== 'IDLE'}
-                      onChange={(e) => onUpdateTugThreshold(Number(e.target.value))}
-                      className={`px-2 py-0.5 rounded border font-mono font-bold text-xs ${
-                        isLight
-                          ? 'bg-slate-100 border-slate-300 text-amber-900'
-                          : 'bg-black/40 border-white/10 text-amber-300'
-                      }`}
-                    >
-                      {[10, 15, 20, 25, 30].map(v => (
-                        <option key={v} value={v} className={isLight ? 'bg-white text-slate-900' : 'bg-[#0E111B] text-slate-200'}>
-                          {v} bấm
-                        </option>
-                      ))}
-                    </select>
+                  <div className="flex items-center gap-3 text-[11px]">
+                    <div className="flex items-center gap-1">
+                      <span className={isLight ? 'text-slate-600' : 'text-slate-400'}>Mốc thắng:</span>
+                      <select
+                        value={tugThreshold}
+                        disabled={buzzerState !== 'IDLE'}
+                        onChange={(e) => onUpdateTugThreshold(Number(e.target.value))}
+                        className={`px-2 py-0.5 rounded border font-mono font-bold text-xs ${
+                          isLight
+                            ? 'bg-slate-100 border-slate-300 text-amber-900'
+                            : 'bg-black/40 border-white/10 text-amber-300'
+                        }`}
+                      >
+                        {[10, 15, 20, 25, 30].map(v => (
+                          <option key={v} value={v} className={isLight ? 'bg-white text-slate-900' : 'bg-[#0E111B] text-slate-200'}>
+                            {v} bấm
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <span className={isLight ? 'text-slate-600' : 'text-slate-400'}>Thời gian:</span>
+                      <select
+                        value={tugDuration}
+                        disabled={buzzerState !== 'IDLE'}
+                        onChange={(e) => onUpdateTugDuration && onUpdateTugDuration(Number(e.target.value))}
+                        className={`px-2 py-0.5 rounded border font-mono font-bold text-xs ${
+                          isLight
+                            ? 'bg-slate-100 border-slate-300 text-rose-900'
+                            : 'bg-black/40 border-white/10 text-rose-300'
+                        }`}
+                      >
+                        {[5, 8, 10, 15].map(v => (
+                          <option key={v} value={v} className={isLight ? 'bg-white text-slate-900' : 'bg-[#0E111B] text-slate-200'}>
+                            {v}s {v === 8 ? '(Chuẩn)' : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 )}
               </div>
@@ -379,7 +407,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                     </h3>
                     <p className={`text-xs mt-1 max-w-xs leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                       {buzzerMode === 'TUG_OF_WAR' 
-                        ? `Các đội chuẩn bị bấm liên tục trên điện thoại. Đội nào kéo qua mốc ${tugThreshold} lần bấm trước sẽ giành quyền trả lời!`
+                        ? `Các đội chuẩn bị bấm liên tục trên điện thoại trong ${tugDuration}s. Đội nào kéo qua mốc ${tugThreshold} lần bấm trước HOẶC có số lần bấm cao nhất khi hết giờ sẽ giành quyền trả lời!`
                         : 'Để các đội đọc kỹ câu hỏi. Sau đó Host bấm nút dưới hoặc phím SPACE để mở chuông!'}
                     </p>
                   </div>
@@ -394,7 +422,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                     >
                       <span className="text-lg">{buzzerMode === 'TUG_OF_WAR' ? '🪢' : '🔔'}</span>
                       <span>
-                        {buzzerMode === 'TUG_OF_WAR' ? `MỞ THI KÉO CO (${tugThreshold} BẤM) [SPACE]` : 'MỞ CHUÔNG NGAY [SPACE]'}
+                        {buzzerMode === 'TUG_OF_WAR' ? `MỞ THI KÉO CO (${tugDuration}s / ${tugThreshold} BẤM) [SPACE]` : 'MỞ CHUÔNG NGAY [SPACE]'}
                       </span>
                     </button>
 
@@ -431,7 +459,7 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                     {buzzerMode === 'TUG_OF_WAR' ? '🪢' : '⚡'}
                   </motion.div>
                   <p className={`text-sm font-bold mt-4 animate-pulse ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
-                    TAY ĐẶT SẴN TRÊN NÚT BẤM!
+                    TAY ĐẶT SẴN TRÊN MÀN HÌNH ĐIỆN THOẠI!
                   </p>
                 </div>
               )}
@@ -439,23 +467,61 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
               {/* 3A. STATE: TUG OF WAR BATTLE (KÉO CO ĐANG DIỄN RA) */}
               {buzzerState === 'TUG_OF_WAR' && (
                 <div className="w-full flex flex-col items-center">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="w-3 h-3 rounded-full bg-amber-500 animate-ping" />
-                    <span className={`text-xs font-black uppercase tracking-wider ${isLight ? 'text-amber-800' : 'text-amber-300'}`}>
-                      ĐANG TRANH TÀI KÉO CO!
-                    </span>
+                  {/* Live Decreasing Countdown Timer Bar */}
+                  <div className={`w-full mb-3 p-3 rounded-2xl border shadow-md ${
+                    isLight 
+                      ? 'bg-white border-amber-900/15' 
+                      : 'bg-white/[0.04] border-white/[0.1]'
+                  }`}>
+                    <div className="flex items-center justify-between text-xs font-black mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2.5 h-2.5 rounded-full ${
+                          tugTimeLeft <= 3 ? 'bg-rose-500 animate-ping' : 'bg-amber-500 animate-pulse'
+                        }`} />
+                        <span className={`uppercase tracking-wider ${
+                          tugTimeLeft <= 3 ? 'text-rose-600 font-extrabold animate-pulse' : isLight ? 'text-slate-800' : 'text-slate-200'
+                        }`}>
+                          {tugTimeLeft <= 3 ? '⚡ NƯỚC RÚT! SẮP HẾT GIỜ!' : '⏱️ THỜI GIAN THI KÉO GIẢM DẦN:'}
+                        </span>
+                      </div>
+                      <span className={`font-mono text-base font-black px-2.5 py-0.5 rounded-lg border shadow-xs ${
+                        tugTimeLeft <= 3 
+                          ? 'bg-rose-600 text-white border-rose-400 animate-bounce' 
+                          : isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      }`}>
+                        {tugTimeLeft.toFixed(1)}s
+                      </span>
+                    </div>
+
+                    {/* Visual Decreasing Bar */}
+                    <div className={`w-full h-3 rounded-full p-0.5 overflow-hidden border relative ${
+                      isLight ? 'bg-slate-200 border-slate-300' : 'bg-black/60 border-white/10'
+                    }`}>
+                      <motion.div
+                        className={`h-full rounded-full transition-all duration-100 ${
+                          tugTimeLeft <= 3 
+                            ? 'bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 shadow-[0_0_15px_#f43f5e]' 
+                            : 'bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-600 shadow-[0_0_12px_#f59e0b]'
+                        }`}
+                        style={{
+                          width: `${Math.max(0, Math.min(100, (tugTimeLeft / (tugDuration || 8)) * 100))}%`,
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-semibold mt-1.5">
+                      <span className={isLight ? 'text-slate-600' : 'text-slate-400'}>
+                        Mốc knockout: <b className={isLight ? 'text-amber-800' : 'text-amber-300'}>{tugThreshold} bấm</b>
+                      </span>
+                      <span className={`text-[10px] font-bold ${isLight ? 'text-rose-700' : 'text-rose-400'}`}>
+                        ★ Hết giờ: Đội nào có số lần bấm cao nhất sẽ giành quyền trả lời!
+                      </span>
+                    </div>
                   </div>
 
-                  <h3 className={`text-xl sm:text-2xl font-black tracking-tight animate-pulse mb-1 ${isLight ? 'text-[#172033]' : 'text-white'}`}>
-                    🪢 BẤM THẬT NHANH ĐỂ KÉO QUA VẠCH!
+                  <h3 className={`text-xl sm:text-2xl font-black tracking-tight animate-pulse mb-3 ${isLight ? 'text-[#172033]' : 'text-white'}`}>
+                    🪢 BẤM LIÊN TỤC ĐỂ DẪN ĐẦU HOẶC QUA VẠCH!
                   </h3>
-                  <p className={`text-xs font-mono font-bold mb-4 px-3 py-1 rounded-full border ${
-                    isLight
-                      ? 'bg-amber-50 text-amber-900 border-amber-300'
-                      : 'bg-black/40 text-slate-300 border-white/10'
-                  }`}>
-                    MỐC CHIẾN THẮNG: <span className={isLight ? 'text-amber-800 font-extrabold' : 'text-amber-300 font-extrabold'}>{tugThreshold} LẦN BẤM</span>
-                  </p>
 
                   {/* Tug-of-war teams live pulling progress bars */}
                   <div className="w-full space-y-3">

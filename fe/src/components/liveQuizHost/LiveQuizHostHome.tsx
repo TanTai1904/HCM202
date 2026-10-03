@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, HelpCircle, Info, BookOpen, Volume2, VolumeX } from 'lucide-react';
+import { Play, HelpCircle, Info, BookOpen, Volume2, VolumeX, Sparkles, Users, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { audio } from '@/utils/audio';
 
@@ -224,29 +224,63 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-[#172033]/10 shadow-2xl text-left"
+              className="bg-white rounded-3xl p-6 sm:p-7 max-w-xl w-full border border-[#172033]/10 shadow-2xl text-left max-h-[90vh] flex flex-col"
             >
-              <h3 className="text-xl font-black text-[#172033] mb-4 flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-[#9E1B32]" />
-                <span>Quy trình tham gia lớp học</span>
-              </h3>
-              <div className="space-y-3 text-sm text-[#172033]/80 font-body leading-relaxed">
-                <div className="p-3 rounded-xl bg-[#F7F3EA] border border-[#172033]/5">
-                  <strong className="text-[#9E1B32]">1. Quét QR:</strong> Sinh viên dùng camera điện thoại quét mã QR chiếu trên bảng để vào phòng.
+              <div className="flex items-center justify-between pb-3 border-b border-[#172033]/10">
+                <h3 className="text-lg sm:text-xl font-black text-[#172033] flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-[#9E1B32]" />
+                  <span>Hướng dẫn & Thể lệ thi đấu</span>
+                </h3>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#9E1B32] bg-[#9E1B32]/10 px-2.5 py-1 rounded-full">
+                  Live Quiz 4 Đội
+                </span>
+              </div>
+
+              <div className="mt-4 space-y-3.5 text-sm text-[#172033]/85 font-body leading-relaxed overflow-y-auto pr-1">
+                {/* 1. Mục tiêu */}
+                <div className="p-3.5 rounded-2xl bg-[#F7F3EA] border border-[#172033]/5">
+                  <div className="flex items-center gap-2 font-black text-sm text-[#9E1B32] mb-1.5 font-display uppercase tracking-wide">
+                    <Sparkles className="w-4 h-4" />
+                    <span>1. Mục tiêu</span>
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 text-xs sm:text-sm text-[#172033]/80 font-medium">
+                    <li>Ôn tập, củng cố kiến thức môn học <strong>Tư tưởng Hồ Chí Minh (HCM202)</strong> sinh động, trực quan.</li>
+                    <li>Gắn kết tinh thần đồng đội, tạo không khí học tập và thi đua sôi nổi giữa các nhóm.</li>
+                    <li>Đưa đội vươn lên dẫn đầu bảng xếp hạng tổng sắp để giành ngôi Quán quân!</li>
+                  </ul>
                 </div>
-                <div className="p-3 rounded-xl bg-[#F7F3EA] border border-[#172033]/5">
-                  <strong className="text-[#9E1B32]">2. Nhập tên & Vào đội:</strong> Nhập tên của bạn, chọn hoặc nhận màu đội (Đỏ, Xanh, Vàng...).
+
+                {/* 2. Cách chơi */}
+                <div className="p-3.5 rounded-2xl bg-[#F7F3EA] border border-[#172033]/5">
+                  <div className="flex items-center gap-2 font-black text-sm text-[#1D4ED8] mb-1.5 font-display uppercase tracking-wide">
+                    <Users className="w-4 h-4" />
+                    <span>2. Cách chơi</span>
+                  </div>
+                  <div className="space-y-1.5 text-xs sm:text-sm text-[#172033]/80 font-medium">
+                    <p><strong>• Bước 1 - Quét QR:</strong> Dùng camera điện thoại quét mã QR trên màn chiếu để vào phòng (không cần tải app).</p>
+                    <p><strong>• Bước 2 - Vào đội:</strong> Nhập họ tên, hệ thống tự động xếp đều vào 4 đội (Đỏ, Xanh, Vàng, Lục).</p>
+                    <p><strong>• Bước 3 - Chọn đáp án:</strong> Đọc câu hỏi trên máy chiếu và bấm chọn A, B, C hoặc D trên điện thoại trước khi hết giờ.</p>
+                  </div>
                 </div>
-                <div className="p-3 rounded-xl bg-[#F7F3EA] border border-[#172033]/5">
-                  <strong className="text-[#9E1B32]">3. Trả lời trực tiếp:</strong> Câu hỏi hiển thị trên máy chiếu, điện thoại hiển thị 4 nút bấm A, B, C, D để chọn nhanh.
-                </div>
-                <div className="p-3 rounded-xl bg-[#F7F3EA] border border-[#172033]/5">
-                  <strong className="text-[#9E1B32]">4. Ghi điểm đồng đội:</strong> Mỗi câu đúng cộng điểm vào bảng tổng sắp của nhóm!
+
+                {/* 3. Luật chơi */}
+                <div className="p-3.5 rounded-2xl bg-[#F7F3EA] border border-[#172033]/5">
+                  <div className="flex items-center gap-2 font-black text-sm text-[#3F7D5A] mb-1.5 font-display uppercase tracking-wide">
+                    <Award className="w-4 h-4" />
+                    <span>3. Luật chơi</span>
+                  </div>
+                  <ul className="list-disc list-inside space-y-1 text-xs sm:text-sm text-[#172033]/80 font-medium">
+                    <li><strong>Thời gian:</strong> 15s – 30s/câu. Hết giờ hệ thống tự động khóa nhận đáp án.</li>
+                    <li><strong>Điểm đồng đội:</strong> Mỗi cá nhân trả lời đúng cộng <strong>+200 điểm</strong> vào quỹ điểm của đội (càng nhiều bạn đúng, đội càng nhiều điểm).</li>
+                    <li><strong>Không phạt:</strong> Trả lời sai hoặc không kịp chọn không bị trừ điểm.</li>
+                    <li><strong>Chiến thắng:</strong> Đội có tổng điểm tích lũy cao nhất sau tất cả các câu hỏi sẽ giành chiến thắng chung cuộc!</li>
+                  </ul>
                 </div>
               </div>
+
               <button
                 onClick={() => setShowHowToPlay(false)}
-                className="mt-6 w-full py-3 rounded-xl bg-[#172033] text-white font-bold text-sm cursor-pointer hover:bg-[#25324d] transition-colors"
+                className="mt-4 w-full py-2.5 rounded-xl bg-[#172033] text-white font-bold text-sm cursor-pointer hover:bg-[#25324d] transition-colors shadow-md"
               >
                 ĐÃ HIỂU
               </button>

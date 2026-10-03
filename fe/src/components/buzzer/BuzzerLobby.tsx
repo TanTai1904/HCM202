@@ -38,6 +38,8 @@ interface BuzzerLobbyProps {
   onToggleBuzzerMode: () => void;
   tugThreshold: number;
   onUpdateTugThreshold: (val: number) => void;
+  tugDuration?: number;
+  onUpdateTugDuration?: (val: number) => void;
   onStartGame: () => void;
   isLight?: boolean;
 }
@@ -72,6 +74,8 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
   onToggleBuzzerMode,
   tugThreshold,
   onUpdateTugThreshold,
+  tugDuration = 8,
+  onUpdateTugDuration,
   onStartGame,
   isLight = true,
 }) => {
@@ -340,32 +344,59 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
                   </div>
 
                   {buzzerMode === 'TUG_OF_WAR' && (
-                    <div className={`mt-2.5 pt-2 border-t flex items-center justify-between ${
-                      isLight ? 'border-slate-200' : 'border-white/[0.06]'
-                    }`}>
-                      <span className={`text-[11px] font-medium ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
-                        Mức kéo co để thắng (vạch đích):
-                      </span>
-                      <div className="flex items-center gap-1">
-                        {[10, 15, 20, 30].map(val => (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => {
-                              audio.playClick();
-                              onUpdateTugThreshold(val);
-                            }}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono border transition-all cursor-pointer ${
-                              tugThreshold === val
-                                ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-sm'
-                                : isLight
-                                ? 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
-                                : 'bg-white/[0.03] text-slate-400 border-white/[0.08] hover:text-white'
-                            }`}
-                          >
-                            {val} lần
-                          </button>
-                        ))}
+                    <div className="space-y-2 mt-2.5 pt-2 border-t border-slate-200 dark:border-white/[0.06]">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-[11px] font-medium ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
+                          Mức kéo co để thắng (vạch đích):
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {[10, 15, 20, 30].map(val => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => {
+                                audio.playClick();
+                                onUpdateTugThreshold(val);
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono border transition-all cursor-pointer ${
+                                tugThreshold === val
+                                  ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-sm'
+                                  : isLight
+                                  ? 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                                  : 'bg-white/[0.03] text-slate-400 border-white/[0.08] hover:text-white'
+                              }`}
+                            >
+                              {val} lần
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className={`text-[11px] font-medium ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
+                          Thời gian giảm dần thi kéo:
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {[5, 8, 10, 15].map(val => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => {
+                                audio.playClick();
+                                if (onUpdateTugDuration) onUpdateTugDuration(val);
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono border transition-all cursor-pointer ${
+                                tugDuration === val
+                                  ? 'bg-rose-600 text-white border-rose-400 shadow-sm'
+                                  : isLight
+                                  ? 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                                  : 'bg-white/[0.03] text-slate-400 border-white/[0.08] hover:text-white'
+                              }`}
+                            >
+                              {val}s {val === 8 ? '(Chuẩn)' : ''}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}
