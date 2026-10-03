@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { buzzerNetwork } from '@/services/buzzerNetwork';
 import { audio } from '@/utils/audio';
 import type { BuzzerTeam, BuzzerState, NetworkMessage, AnswerResultRecord } from '@/types/buzzer';
@@ -17,14 +18,51 @@ import {
   Shield,
   Star,
   Sun,
-  Moon
+  Moon,
+  Camera,
+  QrCode,
+  X,
+  Image as ImageIcon,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getInitialTeams } from '@/data/buzzerTeams';
 
+const cleanRoomInput = (val: string): string => {
+  if (!val) return '';
+  const trimmed = val.trim();
+
+  // 1. If it's a URL or contains query parameter (e.g. ?room=HCM654, ?pin=HCM654, /join?room=...)
+  const urlMatch = trimmed.match(/[?&](?:room|pin|r)=([^&#\s]+)/i);
+  if (urlMatch) {
+    return decodeURIComponent(urlMatch[1]).trim().toUpperCase();
+  }
+
+  // 2. If it contains standard HCM room code format (e.g. HCM202, HCM654, HCM-123)
+  const hcmMatch = trimmed.match(/HCM-?[A-Z0-9]{2,}/i);
+  if (hcmMatch) {
+    return hcmMatch[0].replace('-', '').toUpperCase();
+  }
+
+  // 3. If it ends with path like /join/HCM654 or /buzzer-play/HCM654
+  const pathMatch = trimmed.match(/(?:\/join|\/buzzer-play|\/play|\/room)\/([A-Z0-9_-]+)/i);
+  if (pathMatch) {
+    return pathMatch[1].trim().toUpperCase();
+  }
+
+  // 4. If it's a direct room code or short alphanumeric code
+  if (/^[A-Za-z0-9_-]{3,16}$/.test(trimmed)) {
+    return trimmed.toUpperCase();
+  }
+
+  return trimmed.toUpperCase();
+};
+
 export const BuzzerPlayer: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const roomParam = searchParams.get('room') || searchParams.get('pin') || '';
+  const rawParam = searchParams.get('room') || searchParams.get('pin') || searchParams.get('r') || '';
+  const roomParam = cleanRoomInput(rawParam);
 
   // Theme support (default 'light')
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -58,12 +96,188 @@ export const BuzzerPlayer: React.FC = () => {
 
   const isLight = theme === 'light';
 
-  const [inputRoom, setInputRoom] = useState(roomParam.toUpperCase());
-  const [roomId, setRoomId] = useState(roomParam.toUpperCase());
+  const [inputRoom, setInputRoom] = useState(roomParam);
+  const [roomId, setRoomId] = useState(roomParam);
+
+  // In-app Camera QR Scanner state
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [scannerError, setScannerError] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+  const [isScanningActive, setIsScanningActive] = useState(false);
+  const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
+
+  const stopScanner = async () => {
+    if (html5QrCodeRef.current) {
+      try {
+        if (html5QrCodeRef.current.isScanning) {
+          await html5QrCodeRef.current.stop();
+        }
+        html5QrCodeRef.current.clear();
+      } catch (err) {
+        console.warn('Error stopping scanner:', err);
+      }
+      html5QrCodeRef.current = null;
+    }
+    setIsScanningActive(false);
+    setScannerOpen(false);
+    setScannerError(null);
+  };
+
+  const handleDetectedCode = async (rawText: string) => {
+    const extracted = cleanRoomInput(rawText);
+    if (extracted) {
+      audio.playLockIn();
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        try {
+          navigator.vibrate([100, 50, 100]);
+        } catch {
+          // ignore
+        }
+      }
+      await stopScanner();
+      setInputRoom(extracted);
+      setRoomId(extracted);
+
+      // Keep search params in URL synced
+      try {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('room', extracted);
+        window.history.replaceState({}, '', newUrl.toString());
+      } catch {
+        // ignore
+      }
+    } else {
+      setScannerError(`Mã QR không đúng định dạng phòng: "${rawText.slice(0, 35)}..."`);
+    }
+  };
+
+  const startScanner = () => {
+    setScannerOpen(true);
+    setScannerError(null);
+  };
+
+  const toggleFacingMode = () => {
+    setFacingMode(prev => (prev === 'environment' ? 'user' : 'environment'));
+  };
+
+  // Mount and manage Html5Qrcode lifecycle cleanly
+  useEffect(() => {
+    if (!scannerOpen) return;
+
+    let isMounted = true;
+    let qrInstance: Html5Qrcode | null = null;
+
+    const runScanner = async () => {
+      // Delay 120ms to ensure DOM element #html5-qr-reader is mounted by React
+      await new Promise(r => setTimeout(r, 120));
+      if (!isMounted) return;
+
+      const container = document.getElementById('html5-qr-reader');
+      if (!container) return;
+
+      try {
+        qrInstance = new Html5Qrcode('html5-qr-reader', {
+          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+          verbose: false,
+        });
+        html5QrCodeRef.current = qrInstance;
+
+        const qrConfig = {
+          fps: 15,
+          qrbox: (viewWidth: number, viewHeight: number) => {
+            const minEdge = Math.min(viewWidth, viewHeight);
+            const edge = Math.floor(minEdge * 0.75);
+            return { width: Math.max(edge, 180), height: Math.max(edge, 180) };
+          },
+          aspectRatio: 1.0,
+        };
+
+        try {
+          await qrInstance.start(
+            { facingMode: facingMode },
+            qrConfig,
+            (decodedText) => {
+              if (isMounted) {
+                handleDetectedCode(decodedText);
+              }
+            },
+            () => {}
+          );
+        } catch (firstErr) {
+          console.warn('Initial camera facingMode failed, falling back to default camera:', firstErr);
+          await qrInstance.start(
+            true, // fallback to any camera available
+            qrConfig,
+            (decodedText) => {
+              if (isMounted) {
+                handleDetectedCode(decodedText);
+              }
+            },
+            () => {}
+          );
+        }
+
+        if (isMounted) {
+          setIsScanningActive(true);
+        }
+      } catch (err: any) {
+        console.warn('Camera scan initialization failed:', err);
+        if (isMounted) {
+          setScannerError(
+            'Không thể mở camera. Vui lòng cho phép quyền Camera trong cài đặt trình duyệt hoặc dùng tính năng Tải ảnh mã QR / Nhập mã PIN.'
+          );
+        }
+      }
+    };
+
+    runScanner();
+
+    return () => {
+      isMounted = false;
+      setIsScanningActive(false);
+      if (qrInstance) {
+        if (qrInstance.isScanning) {
+          qrInstance.stop().then(() => {
+            try { qrInstance?.clear(); } catch {}
+          }).catch(() => {});
+        } else {
+          try { qrInstance.clear(); } catch {}
+        }
+      }
+      html5QrCodeRef.current = null;
+    };
+  }, [scannerOpen, facingMode]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setScannerError(null);
+    try {
+      if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+        await html5QrCodeRef.current.stop();
+        html5QrCodeRef.current.clear();
+        html5QrCodeRef.current = null;
+        setIsScanningActive(false);
+      }
+
+      const tempScanner = new Html5Qrcode('html5-qr-reader', {
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        verbose: false,
+      });
+      html5QrCodeRef.current = tempScanner;
+
+      const decodedText = await tempScanner.scanFile(file, true);
+      handleDetectedCode(decodedText);
+    } catch (err: any) {
+      console.warn('File decode error:', err);
+      setScannerError('Không tìm thấy mã QR trong ảnh này. Vui lòng thử ảnh khác hoặc bật camera quét trực tiếp.');
+    }
+  };
 
   useEffect(() => {
     if (roomParam) {
-      const clean = roomParam.trim().toUpperCase();
+      const clean = cleanRoomInput(roomParam);
       setInputRoom(clean);
       setRoomId(clean);
     }
@@ -423,6 +637,122 @@ export const BuzzerPlayer: React.FC = () => {
           </button>
         </div>
 
+        {/* IN-APP CAMERA SCANNER MODAL */}
+        <AnimatePresence>
+          {scannerOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+            >
+              <div className="w-full max-w-sm bg-[#172033] text-white rounded-3xl p-5 sm:p-6 border-2 border-rose-500 shadow-2xl relative flex flex-col items-center">
+                {/* Close Button */}
+                <button
+                  onClick={stopScanner}
+                  className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                  title="Đóng camera"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 font-bold text-xs uppercase mb-3">
+                  <Camera className="w-4 h-4 text-rose-400 animate-pulse" />
+                  <span>CAMERA QUÉT MÃ QR</span>
+                </div>
+
+                <h2 className="text-xl font-black text-center mb-1">
+                  HƯỚNG CAMERA VÀO MÃ QR
+                </h2>
+                <p className="text-xs text-slate-400 text-center mb-4">
+                  Quét mã QR trên màn hình máy chiếu hoặc laptop của giáo viên
+                </p>
+
+                {/* Video Viewport with Reticle */}
+                <div className="w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden bg-black relative border-2 border-rose-500/60 shadow-inner flex items-center justify-center">
+                  {/* Container where Html5Qrcode mounts its video */}
+                  <div id="html5-qr-reader" className="w-full h-full relative overflow-hidden" />
+
+                  {/* Switch Camera Button (Front / Back) */}
+                  <button
+                    type="button"
+                    onClick={toggleFacingMode}
+                    className="absolute top-2.5 right-2.5 z-20 px-2.5 py-1 rounded-xl bg-black/70 hover:bg-black/90 text-white border border-white/20 transition-all cursor-pointer shadow-md flex items-center gap-1.5 text-[11px] font-bold active:scale-95"
+                    title="Đổi camera trước / sau"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{facingMode === 'environment' ? 'Camera sau' : 'Camera trước'}</span>
+                  </button>
+
+                  {/* Scanner Reticle Overlay */}
+                  <div className="absolute inset-5 border-2 border-rose-400/80 rounded-xl pointer-events-none z-10">
+                    {/* Corner accents */}
+                    <div className="absolute -top-1 -left-1 w-4 h-4 border-t-4 border-l-4 border-rose-500" />
+                    <div className="absolute -top-1 -right-1 w-4 h-4 border-t-4 border-r-4 border-rose-500" />
+                    <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-4 border-l-4 border-rose-500" />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-4 border-r-4 border-rose-500" />
+
+                    {/* Animated Scanning Laser Line */}
+                    <motion.div
+                      animate={{ y: [0, 195, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                      className="w-full h-0.5 bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_12px_#f43f5e]"
+                    />
+                  </div>
+                </div>
+
+                <style>{`
+                  #html5-qr-reader {
+                    width: 100% !important;
+                    height: 100% !important;
+                    position: relative !important;
+                    border: none !important;
+                  }
+                  #html5-qr-reader video {
+                    width: 100% !important;
+                    height: 100% !important;
+                    object-fit: cover !important;
+                    border-radius: 0.875rem !important;
+                  }
+                  #html5-qr-reader img {
+                    display: none !important;
+                  }
+                  #html5-qr-reader__scan_region {
+                    min-height: 100% !important;
+                  }
+                `}</style>
+
+                {scannerError && (
+                  <div className="mt-3 p-2.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-300 text-center flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                    <span className="leading-tight">{scannerError}</span>
+                  </div>
+                )}
+
+                {/* Fallback Option: Upload Image */}
+                <div className="mt-4 pt-3 border-t border-white/10 w-full flex items-center justify-between gap-2">
+                  <label className="flex-1 py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-center flex items-center justify-center gap-1.5 cursor-pointer transition-colors active:scale-95">
+                    <ImageIcon className="w-4 h-4 text-amber-400" />
+                    <span>Tải ảnh mã QR</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    onClick={stopScanner}
+                    className="py-2 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs cursor-pointer transition-colors active:scale-95"
+                  >
+                    Nhập mã bằng tay
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="w-full max-w-sm studio-card relative z-10">
           <div className={`studio-card-inner p-7 text-center rounded-2xl ${
             isLight ? 'bg-white/95 border border-amber-900/15 shadow-xl' : ''
@@ -435,17 +765,42 @@ export const BuzzerPlayer: React.FC = () => {
               KẾT NỐI CHUÔNG BẤM
             </h1>
             <p className={`text-xs mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-              Nhập mã phòng hiển thị trên màn hình máy chiếu
+              Quét mã QR hoặc nhập mã phòng để vào ngay
             </p>
+
+            {/* Quick Camera QR Scan Button */}
+            <div className="mt-5 mb-4">
+              <button
+                type="button"
+                onClick={startScanner}
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-sm tracking-wide uppercase shadow-[0_0_20px_rgba(225,29,72,0.35)] flex items-center justify-center gap-2.5 cursor-pointer active:scale-95 transition-all border border-white/20"
+              >
+                <Camera className="w-5 h-5 text-white animate-bounce" />
+                <span>📷 QUÉT MÃ QR BẰNG CAMERA</span>
+              </button>
+            </div>
+
+            <div className="relative my-4 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className={`w-full border-t ${isLight ? 'border-slate-200' : 'border-white/10'}`} />
+              </div>
+              <span className={`relative px-3 text-[11px] font-bold uppercase tracking-wider ${
+                isLight ? 'bg-white text-slate-400' : 'bg-[#172033] text-slate-500'
+              }`}>
+                HOẶC NHẬP MÃ PIN
+              </span>
+            </div>
 
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                if (inputRoom.trim()) {
-                  setRoomId(inputRoom.trim().toUpperCase());
+                const cleaned = cleanRoomInput(inputRoom);
+                if (cleaned) {
+                  setInputRoom(cleaned);
+                  setRoomId(cleaned);
                 }
               }}
-              className="mt-6 space-y-3"
+              className="space-y-3"
             >
               <input
                 type="text"
@@ -460,9 +815,9 @@ export const BuzzerPlayer: React.FC = () => {
               />
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 text-white font-black text-base shadow-[0_0_20px_rgba(225,29,72,0.3)] cursor-pointer active:scale-95 transition-all"
+                className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md cursor-pointer active:scale-95 transition-all"
               >
-                VÀO PHÒNG THI ĐẤU ➔
+                VÀO PHÒNG BẰNG MÃ PIN ➔
               </button>
             </form>
           </div>
@@ -496,11 +851,29 @@ export const BuzzerPlayer: React.FC = () => {
         <div className="max-w-md mx-auto w-full my-auto py-6 relative z-10">
           {/* Header */}
           <div className="text-center mb-6">
-            <span className={`text-xs font-semibold px-3.5 py-1.5 rounded-full font-mono border shadow-sm ${
-              isLight ? 'bg-white border-amber-900/15 text-slate-700' : 'bg-white/[0.05] text-slate-300 border-white/[0.1]'
-            }`}>
-              PHÒNG: <span className={`font-bold ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>{roomId}</span>
-            </span>
+            <div className="inline-flex items-center gap-2">
+              <span className={`text-xs font-semibold px-3.5 py-1.5 rounded-full font-mono border shadow-sm ${
+                isLight ? 'bg-white border-amber-900/15 text-slate-700' : 'bg-white/[0.05] text-slate-300 border-white/[0.1]'
+              }`}>
+                PHÒNG: <span className={`font-bold ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>{roomId}</span>
+              </span>
+              <button
+                onClick={() => {
+                  audio.playClick();
+                  setRoomId('');
+                  setInputRoom('');
+                  localStorage.removeItem('buzzer_player_team_' + roomId);
+                }}
+                className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-colors cursor-pointer ${
+                  isLight 
+                    ? 'bg-slate-100 hover:bg-slate-200 text-rose-700 border-slate-200' 
+                    : 'bg-white/[0.05] hover:bg-white/10 text-rose-400 border-white/10'
+                }`}
+                title="Đổi sang phòng khác hoặc quét lại mã QR"
+              >
+                (Đổi phòng / Quét lại)
+              </button>
+            </div>
             <h1 className={`text-2xl sm:text-3xl font-black mt-3 tracking-tight ${isLight ? 'text-[#172033]' : 'text-white'}`}>
               CHỌN ĐỘI TRANH TÀI
             </h1>

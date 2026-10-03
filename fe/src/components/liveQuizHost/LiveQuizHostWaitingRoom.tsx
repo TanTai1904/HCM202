@@ -37,9 +37,37 @@ export const LiveQuizHostWaitingRoom: React.FC<LiveQuizHostWaitingRoomProps> = (
     prevCountRef.current = totalConnected;
   }, [totalConnected]);
 
-  const joinUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/join?room=${roomId}`
-    : `https://hcm202.live/join?room=${roomId}`;
+  const [joinUrl, setJoinUrl] = useState(() => {
+    if (typeof window === 'undefined') return `https://hcm202.live/join?room=${roomId}`;
+    const origin = window.location.origin;
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocal) {
+      const savedIp = localStorage.getItem('buzzer_preferred_ip');
+      if (savedIp) {
+        const port = window.location.port || '5173';
+        return `http://${savedIp}:${port}/join?room=${roomId}`;
+      }
+    }
+    return `${origin}/join?room=${roomId}`;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocal) {
+      fetch('/api/lan-info')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && (data.ip || (data.ips && data.ips.length > 0))) {
+            const port = data.port || window.location.port || '5173';
+            const savedIp = localStorage.getItem('buzzer_preferred_ip');
+            const targetIp = (savedIp && data.ips?.includes(savedIp)) ? savedIp : (data.ip || data.ips[0]);
+            setJoinUrl(`http://${targetIp}:${port}/join?room=${roomId}`);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [roomId]);
 
   const handleCopyCode = () => {
     audio.playClick();
@@ -124,8 +152,8 @@ export const LiveQuizHostWaitingRoom: React.FC<LiveQuizHostWaitingRoomProps> = (
               <QRCodeSVG
                 value={joinUrl}
                 size={240}
-                level="H"
-                marginSize={2}
+                level="M"
+                marginSize={3}
                 fgColor="#172033"
                 bgColor="#FFFFFF"
                 className="w-48 h-48 sm:w-64 sm:h-64 rounded-xl"
@@ -262,8 +290,8 @@ export const LiveQuizHostWaitingRoom: React.FC<LiveQuizHostWaitingRoomProps> = (
               <QRCodeSVG
                 value={joinUrl}
                 size={340}
-                level="H"
-                marginSize={2}
+                level="M"
+                marginSize={3}
                 fgColor="#172033"
                 bgColor="#FFFFFF"
                 className="w-64 h-64 sm:w-80 sm:h-80"

@@ -15,9 +15,15 @@ import {
   RefreshCw,
   ArrowRight,
   Shield,
-  Sparkles
+  Sparkles,
+  Maximize2,
+  Minimize2,
+  QrCode,
+  X,
+  Wifi,
+  Info
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface BuzzerLobbyProps {
   roomId: string;
@@ -81,9 +87,25 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [copiedPin, setCopiedPin] = useState(false);
-  const [hostUrl, setHostUrl] = useState('');
-  const [editingUrl, setEditingUrl] = useState(false);
+  const [fullscreenQr, setFullscreenQr] = useState(false);
+  const [adapters, setAdapters] = useState<Array<{ name: string; ip: string }>>([]);
   const [lanIps, setLanIps] = useState<string[]>([]);
+  const [editingUrl, setEditingUrl] = useState(false);
+
+  // Initialize with non-empty URL immediately
+  const [hostUrl, setHostUrl] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    const origin = window.location.origin;
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocal) {
+      const savedIp = localStorage.getItem('buzzer_preferred_ip');
+      if (savedIp) {
+        const port = window.location.port || '5173';
+        return `http://${savedIp}:${port}/join?room=${roomId}`;
+      }
+    }
+    return `${origin}/join?room=${roomId}`;
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -91,29 +113,44 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
     const hostname = window.location.hostname;
     const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
 
-    if (isLocal) {
-      // Auto-detect local LAN IP (e.g. 192.168.1.25) so phone camera connects directly!
-      fetch('/api/lan-info')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.ip && data.ip !== '127.0.0.1') {
-            const detected = data.ip;
-            const port = data.port || window.location.port || '5173';
-            if (Array.isArray(data.ips)) {
-              setLanIps(data.ips);
-            }
-            setHostUrl(`http://${detected}:${port}/buzzer-play?room=${roomId}`);
-          } else {
-            setHostUrl(`${window.location.origin}/buzzer-play?room=${roomId}`);
+    // Always discover local LAN IPs & adapters so Host screen can switch between Wi-Fi interfaces
+    fetch('/api/lan-info')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && (data.ip || (data.ips && data.ips.length > 0))) {
+          const ipsList: string[] = Array.isArray(data.ips) ? data.ips : [data.ip];
+          setLanIps(ipsList);
+          if (Array.isArray(data.adapters)) {
+            setAdapters(data.adapters);
           }
-        })
-        .catch(() => {
-          setHostUrl(`${window.location.origin}/buzzer-play?room=${roomId}`);
-        });
-    } else {
-      setHostUrl(`${window.location.origin}/buzzer-play?room=${roomId}`);
-    }
+
+          const port = data.port || window.location.port || '5173';
+          const savedIp = localStorage.getItem('buzzer_preferred_ip');
+          
+          let targetIp = data.ip || ipsList[0];
+          if (savedIp && ipsList.includes(savedIp)) {
+            targetIp = savedIp;
+          } else if (ipsList.includes(hostname)) {
+            targetIp = hostname;
+          }
+
+          if (isLocal || ipsList.includes(hostname)) {
+            setHostUrl(`http://${targetIp}:${port}/join?room=${roomId}`);
+          }
+        }
+      })
+      .catch(() => {
+        // Fallback to origin if LAN discovery endpoint is unavailable (e.g. production)
+        setHostUrl(`${window.location.origin}/join?room=${roomId}`);
+      });
   }, [roomId]);
+
+  const handleSelectIp = (ip: string) => {
+    audio.playClick();
+    localStorage.setItem('buzzer_preferred_ip', ip);
+    const port = window.location.port || '5173';
+    setHostUrl(`http://${ip}:${port}/join?room=${roomId}`);
+  };
 
   const handleCopyLink = () => {
     audio.playClick();
@@ -135,11 +172,114 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
 
   const handleOpenSimulator = () => {
     audio.playClick();
-    window.open(`/buzzer-play?room=${roomId}`, '_blank');
+    window.open(`/join?room=${roomId}`, '_blank');
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 select-none relative z-10 font-sans">
+      {/* FULLSCREEN QR MODAL FOR CLASSROOM PROJECTOR / BIG SCREEN */}
+      <AnimatePresence>
+        {fullscreenQr && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+            onClick={() => setFullscreenQr(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center shadow-2xl border-4 border-rose-500 relative overflow-hidden"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setFullscreenQr(false)}
+                className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                title="Đóng"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 text-rose-700 font-bold text-xs uppercase mb-3">
+                <Smartphone className="w-4 h-4" />
+                <span>QUÉT MÃ QR BẰNG CAMERA ĐIỆN THOẠI</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">
+                THAM GIA PHÒNG ĐẤU CHUÔNG
+              </h2>
+
+              {/* Huge Room PIN */}
+              <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-amber-50 border-2 border-amber-300 shadow-sm mb-4">
+                <span className="text-xs font-bold text-amber-800 uppercase tracking-wider">MÃ PHÒNG:</span>
+                <span className="text-2xl sm:text-3xl font-mono font-black text-amber-950 tracking-widest">{roomId}</span>
+                <button
+                  onClick={handleCopyPin}
+                  className="p-1.5 rounded-lg bg-amber-200/70 hover:bg-amber-300 text-amber-900 transition-colors cursor-pointer ml-1"
+                  title="Sao chép mã phòng"
+                >
+                  {copiedPin ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+
+              {/* Massive Crisp QR Code */}
+              <div className="p-4 bg-white rounded-2xl border-2 border-slate-200 shadow-lg mx-auto inline-block my-2">
+                <QRCodeSVG
+                  value={hostUrl}
+                  size={300}
+                  level="M"
+                  marginSize={3}
+                  className="w-64 h-64 sm:w-72 sm:h-72 mx-auto"
+                />
+              </div>
+
+              <p className="text-xs sm:text-sm font-semibold text-slate-600 mt-3">
+                Mở ứng dụng Camera trên điện thoại (hoặc Zalo) quét mã trên màn hình
+              </p>
+
+              {/* IP Chooser inside modal if multiple */}
+              {lanIps.length > 1 && (
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center gap-1.5 flex-wrap">
+                  <span className="text-[11px] font-bold text-slate-500">Đổi IP mạng Wi-Fi:</span>
+                  {lanIps.map((ip) => {
+                    const isSelected = hostUrl.includes(ip);
+                    const adapter = adapters.find(a => a.ip === ip);
+                    const label = adapter ? `${adapter.name}: ${ip}` : ip;
+                    return (
+                      <button
+                        key={ip}
+                        onClick={() => handleSelectIp(ip)}
+                        className={`text-xs px-2.5 py-1 rounded-lg font-mono font-bold border transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+                            : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Copy URL */}
+              <div className="mt-3 flex items-center gap-2 p-2 bg-slate-50 rounded-xl border text-xs">
+                <span className="font-mono text-slate-600 truncate flex-1 text-left px-2 text-[11px]">{hostUrl}</span>
+                <button
+                  onClick={handleCopyLink}
+                  className="px-3 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold shrink-0 transition-colors cursor-pointer"
+                >
+                  {copied ? 'Đã sao chép!' : 'Sao chép link'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Top Header */}
       <div className="text-center mb-6 sm:mb-8 relative">
         <motion.div
@@ -202,24 +342,51 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
               )}
             </div>
 
-            {/* QR Code Container */}
-            <div className={`relative p-3.5 rounded-2xl border shadow-xl my-1 group hover:scale-[1.01] transition-transform ${
-              isLight ? 'bg-white border-slate-200' : 'bg-white/[0.04] border-white/[0.12]'
+            {/* QR Code Container with High Contrast & Standard Margin for Instant Camera Scan */}
+            <div className={`relative p-3.5 rounded-2xl border shadow-xl my-1 group transition-all ${
+              isLight ? 'bg-white border-slate-200 shadow-slate-200/50' : 'bg-white/[0.04] border-white/[0.12]'
             }`}>
-              <div className="p-2.5 bg-white rounded-xl shadow-inner">
+              <div className="p-2.5 bg-white rounded-xl shadow-inner relative">
                 <QRCodeSVG
                   value={hostUrl}
-                  size={190}
-                  level="H"
-                  includeMargin={false}
+                  size={215}
+                  level="M"
+                  marginSize={3}
+                  className="rounded-lg"
                 />
+
+                {/* Quick Fullscreen Hover Trigger */}
+                <button
+                  onClick={() => {
+                    audio.playClick();
+                    setFullscreenQr(true);
+                  }}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 hover:bg-black text-white transition-all cursor-pointer shadow-md opacity-80 hover:opacity-100 hover:scale-105"
+                  title="Phóng to mã QR toàn màn hình máy chiếu"
+                >
+                  <Maximize2 className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
-            <p className={`text-xs font-medium mt-3 flex items-center gap-1.5 ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>
-              <Smartphone className="w-3.5 h-3.5 text-rose-500" />
-              Mở Camera điện thoại quét mã QR để tham gia
-            </p>
+            {/* Scan Prompt + Fullscreen Zoom Button */}
+            <div className="flex items-center gap-2 mt-3">
+              <p className={`text-xs font-semibold flex items-center gap-1.5 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
+                <Smartphone className="w-3.5 h-3.5 text-rose-500" />
+                <span>Mở Camera điện thoại quét mã QR</span>
+              </p>
+              <button
+                onClick={() => {
+                  audio.playClick();
+                  setFullscreenQr(true);
+                }}
+                className="text-[11px] px-2 py-0.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
+                title="Phóng to QR để cả lớp nhìn rõ"
+              >
+                <Maximize2 className="w-3 h-3" />
+                <span>Phóng to</span>
+              </button>
+            </div>
 
             {/* Direct Join Link Bar */}
             <div className="w-full mt-3.5">
@@ -239,25 +406,26 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
               {/* Multiple LAN IPs switch (e.g. Wi-Fi / Hotspot) */}
               {lanIps.length > 1 && (
                 <div className="flex items-center gap-1.5 mb-2 overflow-x-auto py-1">
-                  <span className="text-[10px] text-slate-400 shrink-0">IP Wi-Fi:</span>
+                  <span className="text-[10px] text-slate-500 font-bold shrink-0 flex items-center gap-0.5">
+                    <Wifi className="w-3 h-3 text-emerald-600" />
+                    <span>IP Mạng:</span>
+                  </span>
                   {lanIps.map((ip) => {
-                    const port = window.location.port || '5173';
-                    const targetUrl = `http://${ip}:${port}/buzzer-play?room=${roomId}`;
                     const isSelected = hostUrl.includes(ip);
+                    const adapter = adapters.find(a => a.ip === ip);
+                    const label = adapter ? `${adapter.name} (${ip})` : ip;
                     return (
                       <button
                         key={ip}
-                        onClick={() => {
-                          audio.playClick();
-                          setHostUrl(targetUrl);
-                        }}
-                        className={`text-[10px] px-2 py-0.5 rounded-md font-mono cursor-pointer transition-all border ${
+                        onClick={() => handleSelectIp(ip)}
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-mono cursor-pointer transition-all border shrink-0 ${
                           isSelected
-                            ? 'bg-rose-600 text-white border-rose-600 font-bold shadow-xs'
-                            : 'bg-white/80 hover:bg-slate-200 text-slate-700 border-slate-300'
+                            ? 'bg-rose-600 text-white border-rose-600 font-bold shadow-xs ring-1 ring-rose-400'
+                            : 'bg-white/90 hover:bg-slate-100 text-slate-700 border-slate-300'
                         }`}
+                        title={`Bấm để chuyển mã QR sang IP ${label}`}
                       >
-                        {ip}
+                        {label}
                       </button>
                     );
                   })}

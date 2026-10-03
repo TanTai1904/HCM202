@@ -16,14 +16,43 @@ function buzzerWebSocketPlugin() {
       server.middlewares.use("/api/lan-info", (req, res) => {
         try {
           const interfaces = os.networkInterfaces();
+          const adapters = [];
           const ips = [];
+
           for (const name of Object.keys(interfaces)) {
+            // Ignore virtual machine or loopback interfaces if possible
+            const isVirtual = /virtual|vbox|vmware|docker|wsl|hyper-v|loopback/i.test(name);
             for (const iface of interfaces[name] || []) {
               if (iface.family === "IPv4" && !iface.internal) {
-                ips.push(iface.address);
+                // Ignore VirtualBox standard host-only 192.168.56.x
+                if (!iface.address.startsWith("192.168.56.")) {
+                  adapters.push({
+                    name: name,
+                    ip: iface.address,
+                    isVirtual,
+                  });
+                }
               }
             }
           }
+
+          // Sort physical Wi-Fi / Ethernet interfaces first
+          adapters.sort((a, b) => {
+            if (a.isVirtual && !b.isVirtual) return 1;
+            if (!a.isVirtual && b.isVirtual) return -1;
+            const aIsWifi = /wi-fi|wlan|wireless/i.test(a.name);
+            const bIsWifi = /wi-fi|wlan|wireless/i.test(b.name);
+            if (aIsWifi && !bIsWifi) return -1;
+            if (!aIsWifi && bIsWifi) return 1;
+            return 0;
+          });
+
+          for (const item of adapters) {
+            if (!ips.includes(item.ip)) {
+              ips.push(item.ip);
+            }
+          }
+
           const port = server.config.server.port || 5173;
           res.setHeader("Content-Type", "application/json");
           res.setHeader("Access-Control-Allow-Origin", "*");
@@ -31,6 +60,7 @@ function buzzerWebSocketPlugin() {
             JSON.stringify({
               ip: ips[0] || "127.0.0.1",
               ips: ips,
+              adapters: adapters.map(a => ({ name: a.name, ip: a.ip })),
               port,
               urls: ips.map((ip) => `http://${ip}:${port}`),
             })
