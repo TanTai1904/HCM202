@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import os from "os";
 import { WebSocketServer, WebSocket } from "ws";
 
 function buzzerWebSocketPlugin() {
@@ -10,6 +11,36 @@ function buzzerWebSocketPlugin() {
     name: "buzzer-ws-server",
     configureServer(server) {
       if (!server.httpServer) return;
+
+      // Provide local LAN IP discovery for QR codes so phones on Wi-Fi connect seamlessly
+      server.middlewares.use("/api/lan-info", (req, res) => {
+        try {
+          const interfaces = os.networkInterfaces();
+          const ips = [];
+          for (const name of Object.keys(interfaces)) {
+            for (const iface of interfaces[name] || []) {
+              if (iface.family === "IPv4" && !iface.internal) {
+                ips.push(iface.address);
+              }
+            }
+          }
+          const port = server.config.server.port || 5173;
+          res.setHeader("Content-Type", "application/json");
+          res.setHeader("Access-Control-Allow-Origin", "*");
+          res.end(
+            JSON.stringify({
+              ip: ips[0] || "127.0.0.1",
+              ips: ips,
+              port,
+              urls: ips.map((ip) => `http://${ip}:${port}`),
+            })
+          );
+        } catch (err) {
+          res.statusCode = 500;
+          res.end(JSON.stringify({ error: String(err) }));
+        }
+      });
+
       const wss = new WebSocketServer({ noServer: true });
 
       server.httpServer.on("upgrade", (request, socket, head) => {
@@ -83,6 +114,11 @@ function buzzerWebSocketPlugin() {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), buzzerWebSocketPlugin()],
+  server: {
+    host: true, // Listen on all network interfaces (0.0.0.0) so phone can connect!
+    port: 5173,
+    cors: true,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

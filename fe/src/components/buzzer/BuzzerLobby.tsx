@@ -83,11 +83,35 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
   const [copiedPin, setCopiedPin] = useState(false);
   const [hostUrl, setHostUrl] = useState('');
   const [editingUrl, setEditingUrl] = useState(false);
+  const [lanIps, setLanIps] = useState<string[]>([]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const origin = window.location.origin;
-      setHostUrl(`${origin}/buzzer-play?room=${roomId}`);
+    if (typeof window === 'undefined') return;
+
+    const hostname = window.location.hostname;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+
+    if (isLocal) {
+      // Auto-detect local LAN IP (e.g. 192.168.1.25) so phone camera connects directly!
+      fetch('/api/lan-info')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.ip && data.ip !== '127.0.0.1') {
+            const detected = data.ip;
+            const port = data.port || window.location.port || '5173';
+            if (Array.isArray(data.ips)) {
+              setLanIps(data.ips);
+            }
+            setHostUrl(`http://${detected}:${port}/buzzer-play?room=${roomId}`);
+          } else {
+            setHostUrl(`${window.location.origin}/buzzer-play?room=${roomId}`);
+          }
+        })
+        .catch(() => {
+          setHostUrl(`${window.location.origin}/buzzer-play?room=${roomId}`);
+        });
+    } else {
+      setHostUrl(`${window.location.origin}/buzzer-play?room=${roomId}`);
     }
   }, [roomId]);
 
@@ -200,25 +224,61 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
             {/* Direct Join Link Bar */}
             <div className="w-full mt-3.5">
               <div className={`flex items-center justify-between text-[11px] mb-1 px-1 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-                <span>Đường dẫn truy cập:</span>
+                <span className="flex items-center gap-1 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Đường dẫn truy cập:</span>
+                </span>
                 <button
                   onClick={() => setEditingUrl(!editingUrl)}
-                  className="text-rose-600 hover:text-rose-700 cursor-pointer font-medium underline text-[10px]"
+                  className="text-rose-600 hover:text-rose-700 cursor-pointer font-bold underline text-[10px]"
                 >
                   {editingUrl ? 'Hoàn tất' : 'Đổi IP / URL'}
                 </button>
               </div>
 
+              {/* Multiple LAN IPs switch (e.g. Wi-Fi / Hotspot) */}
+              {lanIps.length > 1 && (
+                <div className="flex items-center gap-1.5 mb-2 overflow-x-auto py-1">
+                  <span className="text-[10px] text-slate-400 shrink-0">IP Wi-Fi:</span>
+                  {lanIps.map((ip) => {
+                    const port = window.location.port || '5173';
+                    const targetUrl = `http://${ip}:${port}/buzzer-play?room=${roomId}`;
+                    const isSelected = hostUrl.includes(ip);
+                    return (
+                      <button
+                        key={ip}
+                        onClick={() => {
+                          audio.playClick();
+                          setHostUrl(targetUrl);
+                        }}
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-mono cursor-pointer transition-all border ${
+                          isSelected
+                            ? 'bg-rose-600 text-white border-rose-600 font-bold shadow-xs'
+                            : 'bg-white/80 hover:bg-slate-200 text-slate-700 border-slate-300'
+                        }`}
+                      >
+                        {ip}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               {editingUrl && (
-                <input
-                  type="text"
-                  value={hostUrl}
-                  onChange={(e) => setHostUrl(e.target.value)}
-                  className={`w-full px-3 py-1.5 text-xs rounded-xl border font-mono focus:outline-none focus:border-rose-500 mb-2 shadow-inner ${
-                    isLight ? 'bg-white text-slate-800 border-slate-300' : 'bg-black/40 text-slate-200 border-rose-500/50'
-                  }`}
-                  placeholder="http://192.168.1.x:5173/join?room=..."
-                />
+                <div className="mb-2">
+                  <input
+                    type="text"
+                    value={hostUrl}
+                    onChange={(e) => setHostUrl(e.target.value)}
+                    className={`w-full px-3 py-1.5 text-xs rounded-xl border font-mono focus:outline-none focus:border-rose-500 shadow-inner ${
+                      isLight ? 'bg-white text-slate-800 border-slate-300' : 'bg-black/40 text-slate-200 border-rose-500/50'
+                    }`}
+                    placeholder="http://192.168.1.x:5173/buzzer-play?room=..."
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1 italic">
+                    * Nhập IP mạng Wi-Fi của máy tính để điện thoại quét mã QR cùng vào được.
+                  </p>
+                </div>
               )}
 
               <div className={`flex items-center gap-2 p-1.5 rounded-xl border text-xs ${
