@@ -34,7 +34,7 @@ const cleanRoomInput = (val: string): string => {
   const trimmed = val.trim();
 
   // 1. If it's a URL or contains query parameter (e.g. ?room=HCM654, ?pin=HCM654, /join?room=...)
-  const urlMatch = trimmed.match(/[?&](?:room|pin|r)=([^&#\s]+)/i);
+  const urlMatch = trimmed.match(/[?&](?:room|pin|r|code)=([^&#\s]+)/i);
   if (urlMatch) {
     return decodeURIComponent(urlMatch[1]).trim().toUpperCase();
   }
@@ -46,7 +46,7 @@ const cleanRoomInput = (val: string): string => {
   }
 
   // 3. If it ends with path like /join/HCM654 or /buzzer-play/HCM654
-  const pathMatch = trimmed.match(/(?:\/join|\/buzzer-play|\/play|\/room)\/([A-Z0-9_-]+)/i);
+  const pathMatch = trimmed.match(/(?:\/join|\/buzzer-play|\/play|\/room|\/player)\/([A-Z0-9_-]+)/i);
   if (pathMatch) {
     return pathMatch[1].trim().toUpperCase();
   }
@@ -59,10 +59,72 @@ const cleanRoomInput = (val: string): string => {
   return trimmed.toUpperCase();
 };
 
+export const getInitialRoomFromUrl = (): string => {
+  if (typeof window === 'undefined') return '';
+
+  // 1. Search params from window.location.search
+  try {
+    const sp = new URLSearchParams(window.location.search);
+    const fromSearch = sp.get('room') || sp.get('pin') || sp.get('r') || sp.get('code');
+    if (fromSearch) {
+      const clean = cleanRoomInput(fromSearch);
+      if (clean) return clean;
+    }
+  } catch {}
+
+  // 2. Hash params or hash room code
+  try {
+    if (window.location.hash) {
+      const hashStr = window.location.hash;
+      const qIdx = hashStr.indexOf('?');
+      if (qIdx !== -1) {
+        const hashSp = new URLSearchParams(hashStr.substring(qIdx));
+        const fromHash = hashSp.get('room') || hashSp.get('pin') || hashSp.get('r') || hashSp.get('code');
+        if (fromHash) {
+          const clean = cleanRoomInput(fromHash);
+          if (clean) return clean;
+        }
+      }
+      const match = hashStr.match(/HCM[-_]?[A-Z0-9]{2,}/i);
+      if (match) {
+        const clean = cleanRoomInput(match[0]);
+        if (clean) return clean;
+      }
+    }
+  } catch {}
+
+  // 3. Pathname like /join/HCM650 or /buzzer-play/HCM650 or /play/HCM650
+  try {
+    const pathMatch = window.location.pathname.match(/(?:\/join|\/buzzer-play|\/play|\/room|\/player)\/([A-Z0-9_-]+)/i);
+    if (pathMatch) {
+      const clean = cleanRoomInput(pathMatch[1]);
+      if (clean) return clean;
+    }
+  } catch {}
+
+  // 4. Fallback search in entire href
+  try {
+    const href = window.location.href;
+    const match = href.match(/[?&#](?:room|pin|r|code)=([^&#\s]+)/i);
+    if (match) {
+      const clean = cleanRoomInput(decodeURIComponent(match[1]));
+      if (clean) return clean;
+    }
+    const hcmMatch = href.match(/HCM[-_]?[0-9A-Z]{2,}/i);
+    if (hcmMatch && !href.includes('/doc')) {
+      const clean = cleanRoomInput(hcmMatch[0]);
+      if (clean) return clean;
+    }
+  } catch {}
+
+  return '';
+};
+
 export const BuzzerPlayer: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const rawParam = searchParams.get('room') || searchParams.get('pin') || searchParams.get('r') || '';
-  const roomParam = cleanRoomInput(rawParam);
+  const roomFromUrl = getInitialRoomFromUrl();
+  const rawParam = searchParams.get('room') || searchParams.get('pin') || searchParams.get('r') || roomFromUrl;
+  const roomParam = cleanRoomInput(rawParam) || roomFromUrl;
 
   // Theme support (default 'light')
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -206,7 +268,7 @@ export const BuzzerPlayer: React.FC = () => {
         } catch (firstErr) {
           console.warn('Initial camera facingMode failed, falling back to default camera:', firstErr);
           await qrInstance.start(
-            true, // fallback to any camera available
+            { facingMode: 'user' },
             qrConfig,
             (decodedText) => {
               if (isMounted) {
@@ -313,21 +375,12 @@ export const BuzzerPlayer: React.FC = () => {
   const tugTimerRef = useRef<any>(null);
   const hasClickedBuzzRef = useRef<boolean>(false);
 
-  // Restore saved team from localStorage if available
+  const selectedTeamIdRef = useRef<string>('');
   useEffect(() => {
-    if (roomId && !selectedTeam) {
-      const savedTeamId = localStorage.getItem('buzzer_player_team_' + roomId);
-      if (savedTeamId && teams.length > 0) {
-        const found = teams.find(t => t.id === savedTeamId);
-        if (found) {
-          setSelectedTeamId(found.id);
-          setSelectedTeam(found);
-        }
-      }
-    }
-  }, [roomId, teams, selectedTeam]);
+    selectedTeamIdRef.current = selectedTeamId;
+  }, [selectedTeamId]);
 
-  // Connect to Network
+  // Connect to Network - Only runs when roomId changes, avoiding disconnects during play
   useEffect(() => {
     if (!roomId) return;
 
@@ -403,7 +456,7 @@ export const BuzzerPlayer: React.FC = () => {
 
       // 2. Host buzz locked: Một nhóm đã giành quyền trả lời! Khóa tất cả các nhóm khác ngay lập tức
       if (msg.type === 'HOST_BUZZ_LOCKED') {
-        const { winnerTeamId, reactionMs, pulls } = msg.payload;
+        const { winnerTeamId, reactionMs, pulls, currentQuestion: lockedQ } = msg.payload;
         if (tugTimerRef.current) {
           clearInterval(tugTimerRef.current);
           tugTimerRef.current = null;
@@ -414,8 +467,9 @@ export const BuzzerPlayer: React.FC = () => {
         if (reactionMs) setBuzzReactionMs(reactionMs);
         if (pulls) setBuzzReactionMs(pulls);
         if (msg.payload.tugPulls) setTugPulls(msg.payload.tugPulls);
+        if (lockedQ) setCurrentQuestion(lockedQ);
 
-        if (winnerTeamId === selectedTeamId) {
+        if (winnerTeamId === selectedTeamIdRef.current) {
           audio.playVictory();
           if (typeof navigator !== 'undefined' && navigator.vibrate) {
             navigator.vibrate([100, 50, 100, 50, 200]);
@@ -453,7 +507,7 @@ export const BuzzerPlayer: React.FC = () => {
         if (payload.tugPulls) setTugPulls(payload.tugPulls);
         setActiveBuzzTeamId(payload.activeBuzzTeamId);
         setBuzzReactionMs(payload.buzzReactionMs);
-        setCurrentQuestion(payload.currentQuestion);
+        if (payload.currentQuestion) setCurrentQuestion(payload.currentQuestion);
         setLockedTeamIds(payload.lockedTeamIds || []);
         setIsCorrectAnswer(payload.isCorrectAnswer ?? null);
         setSelectedOptionByPhone(payload.selectedOptionByPhone ?? null);
@@ -466,9 +520,14 @@ export const BuzzerPlayer: React.FC = () => {
 
         if (payload.teams) {
           setTeams(payload.teams);
-          if (selectedTeamId) {
-            const updated = payload.teams.find((t: BuzzerTeam) => t.id === selectedTeamId);
-            if (updated) setSelectedTeam(updated);
+          const currentId = selectedTeamIdRef.current || (typeof window !== 'undefined' ? localStorage.getItem('buzzer_player_team_' + roomId) : null);
+          if (currentId) {
+            const updated = payload.teams.find((t: BuzzerTeam) => t.id === currentId);
+            if (updated) {
+              setSelectedTeam(updated);
+              setSelectedTeamId(currentId);
+              selectedTeamIdRef.current = currentId;
+            }
           }
         }
 
@@ -488,19 +547,47 @@ export const BuzzerPlayer: React.FC = () => {
       unsubMsg();
       buzzerNetwork.disconnect();
     };
-  }, [roomId, selectedTeamId, buzzerState]);
+  }, [roomId]);
+
+  // Auto-restore previously selected team from localStorage if available
+  useEffect(() => {
+    if (!roomId) return;
+    try {
+      const savedId = localStorage.getItem('buzzer_player_team_' + roomId);
+      if (savedId && !selectedTeam) {
+        const found = teams.find(t => t.id === savedId);
+        if (found) {
+          setSelectedTeamId(savedId);
+          selectedTeamIdRef.current = savedId;
+          setSelectedTeam(found);
+        }
+      }
+    } catch {}
+  }, [roomId, teams, selectedTeam]);
 
   // When team is selected, save and announce to Host
   const handleSelectTeam = (team: BuzzerTeam) => {
     audio.playClick();
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try { navigator.vibrate(40); } catch {}
+    }
     setSelectedTeamId(team.id);
+    selectedTeamIdRef.current = team.id;
     setSelectedTeam(team);
-    localStorage.setItem('buzzer_player_team_' + roomId, team.id);
+    try {
+      localStorage.setItem('buzzer_player_team_' + roomId, team.id);
+    } catch {}
 
     buzzerNetwork.publish('PLAYER_JOIN', {
       teamId: team.id,
       teamName: team.name,
+      clientTimestamp: Date.now(),
     });
+
+    // Immediate sync request so player gets freshest Host state right away
+    setTimeout(() => {
+      buzzerNetwork.publish('REQUEST_SYNC', { roomId });
+    }, 100);
   };
 
   // Tug-of-War (Kéo Co) Tap Action
@@ -521,16 +608,36 @@ export const BuzzerPlayer: React.FC = () => {
 
     setLocalPullsEffect(prev => prev + 1);
 
+    const nextPulls = (tugPulls[selectedTeam.id] || 0) + 1;
+
     // Optimistic local increment
     setTugPulls(prev => ({
       ...prev,
-      [selectedTeam.id]: (prev[selectedTeam.id] || 0) + 1,
+      [selectedTeam.id]: nextPulls,
     }));
 
     buzzerNetwork.publish('PLAYER_TUG_PULL', {
       teamId: selectedTeam.id,
+      pullCount: nextPulls,
       clientTimestamp: Date.now(),
     });
+
+    // Knockout check: Nếu đội mình bấm đủ mốc chiến thắng (15 lần), tự động claim quyền trả lời ngay lập tức!
+    if (nextPulls >= tugThreshold) {
+      if (tugTimerRef.current) {
+        clearInterval(tugTimerRef.current);
+        tugTimerRef.current = null;
+      }
+      setBuzzerState('BUZZED');
+      setActiveBuzzTeamId(selectedTeam.id);
+      setBuzzReactionMs(nextPulls);
+      audio.playVictory();
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        try {
+          navigator.vibrate([100, 50, 100, 50, 200]);
+        } catch {}
+      }
+    }
   };
 
   // Buzzer Click Action (Speed Tap)
@@ -829,14 +936,23 @@ export const BuzzerPlayer: React.FC = () => {
   // 2. Select Team Screen if not chosen yet
   if (!selectedTeam) {
     return (
-      <div className={`min-h-[100dvh] flex flex-col p-4 select-none font-sans relative overflow-hidden transition-colors ${
+      <div className={`min-h-[100dvh] flex flex-col justify-center items-center p-4 select-none font-sans relative overflow-hidden transition-colors ${
         isLight ? 'theme-light bg-[#F7F3EA] bg-studio-light text-[#172033]' : 'bg-[#0B0E17] bg-studio-dark text-slate-100'
       }`}>
-        {/* Quick Theme Toggle */}
-        <div className="absolute top-4 right-4 z-20">
+        {/* Quick Theme Toggle & Connection status */}
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+          <div className={`flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border shadow-xs ${
+            isLight ? 'bg-white border-amber-900/15 text-slate-700' : 'bg-white/[0.05] border-white/10 text-slate-300'
+          }`}>
+            <span className={`w-2 h-2 rounded-full ${
+              connectionStatus === 'connected' ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-amber-500 animate-ping'
+            }`} />
+            <span>{connectionStatus === 'connected' ? 'ĐÃ KẾT NỐI' : 'ĐANG KẾT NỐI...'}</span>
+          </div>
+
           <button
             onClick={toggleTheme}
-            className={`p-2 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer ${
+            className={`p-2 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all shadow-xs cursor-pointer ${
               isLight 
                 ? 'bg-white border-amber-900/15 text-[#172033] hover:bg-amber-50' 
                 : 'bg-white/[0.05] border-white/10 text-slate-300 hover:text-white'
@@ -844,65 +960,47 @@ export const BuzzerPlayer: React.FC = () => {
             title="Đổi giao diện Sáng / Tối"
           >
             {isLight ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-sky-400" />}
-            <span className="hidden sm:inline">{isLight ? 'SÁNG' : 'TỐI'}</span>
           </button>
         </div>
 
-        <div className="max-w-md mx-auto w-full my-auto py-6 relative z-10">
+        <div className="max-w-xl mx-auto w-full my-auto py-6 relative z-10 text-center">
           {/* Header */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-2">
-              <span className={`text-xs font-semibold px-3.5 py-1.5 rounded-full font-mono border shadow-sm ${
-                isLight ? 'bg-white border-amber-900/15 text-slate-700' : 'bg-white/[0.05] text-slate-300 border-white/[0.1]'
-              }`}>
-                PHÒNG: <span className={`font-bold ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>{roomId}</span>
-              </span>
-              <button
-                onClick={() => {
-                  audio.playClick();
-                  setRoomId('');
-                  setInputRoom('');
-                  localStorage.removeItem('buzzer_player_team_' + roomId);
-                }}
-                className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-colors cursor-pointer ${
-                  isLight 
-                    ? 'bg-slate-100 hover:bg-slate-200 text-rose-700 border-slate-200' 
-                    : 'bg-white/[0.05] hover:bg-white/10 text-rose-400 border-white/10'
-                }`}
-                title="Đổi sang phòng khác hoặc quét lại mã QR"
-              >
-                (Đổi phòng / Quét lại)
-              </button>
-            </div>
-            <h1 className={`text-2xl sm:text-3xl font-black mt-3 tracking-tight ${isLight ? 'text-[#172033]' : 'text-white'}`}>
+          <div className="mb-6">
+            <span className={`inline-flex items-center text-xs font-semibold px-4 py-1.5 rounded-full font-mono border shadow-xs ${
+              isLight ? 'bg-white border-amber-900/15 text-slate-700' : 'bg-white/[0.05] text-slate-300 border-white/[0.1]'
+            }`}>
+              PHÒNG: <span className={`ml-1.5 font-black ${isLight ? 'text-[#9E1B32]' : 'text-amber-300'}`}>{roomId}</span>
+            </span>
+
+            <h1 className={`text-3xl sm:text-4xl font-black mt-3 tracking-tight ${isLight ? 'text-[#172033]' : 'text-white'}`}>
               CHỌN ĐỘI TRANH TÀI
             </h1>
-            <p className={`text-xs mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+            <p className={`text-xs sm:text-sm mt-1.5 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               Chạm vào nhóm của bạn để nhận chuông bấm thi đấu
             </p>
           </div>
 
-          {/* Teams Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Teams Grid - 2 columns matching user screenshot */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-lg mx-auto w-full">
             {teams.length > 0 ? (
               teams.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => handleSelectTeam(t)}
-                  className={`p-3.5 rounded-2xl border flex items-center gap-3.5 transition-all active:scale-95 text-left cursor-pointer shadow-md group ${
+                  className={`p-3.5 sm:p-4 rounded-2xl border flex items-center justify-between gap-3 transition-all active:scale-95 text-left cursor-pointer shadow-md group ${
                     isLight 
                       ? 'bg-white/95 border-amber-900/15 hover:border-amber-500/60 hover:shadow-lg' 
                       : 'border-white/[0.08] bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]'
                   }`}
                 >
                   <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center text-xl font-bold text-white shrink-0 shadow-sm"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white shrink-0 shadow-sm"
                     style={{ backgroundColor: t.color }}
                   >
                     {t.icon}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`font-bold text-sm truncate transition-colors ${
+                    <p className={`font-bold text-sm sm:text-base truncate transition-colors ${
                       isLight ? 'text-[#172033] group-hover:text-[#9E1B32]' : 'text-slate-100 group-hover:text-amber-300'
                     }`}>
                       {t.name}
@@ -913,8 +1011,8 @@ export const BuzzerPlayer: React.FC = () => {
                       {t.score} điểm
                     </p>
                   </div>
-                  <ArrowRight className={`w-4 h-4 group-hover:translate-x-1 transition-all ${
-                    isLight ? 'text-slate-500 group-hover:text-[#9E1B32]' : 'text-slate-400 group-hover:text-amber-300'
+                  <ArrowRight className={`w-4 h-4 shrink-0 group-hover:translate-x-1 transition-all ${
+                    isLight ? 'text-slate-400 group-hover:text-[#9E1B32]' : 'text-slate-400 group-hover:text-amber-300'
                   }`} />
                 </button>
               ))
@@ -928,6 +1026,23 @@ export const BuzzerPlayer: React.FC = () => {
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Discreet change room option */}
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => {
+                audio.playClick();
+                setRoomId('');
+                setInputRoom('');
+                localStorage.removeItem('buzzer_player_team_' + roomId);
+              }}
+              className={`text-[11px] font-medium underline opacity-60 hover:opacity-100 transition-opacity cursor-pointer ${
+                isLight ? 'text-slate-500 hover:text-rose-700' : 'text-slate-400 hover:text-rose-400'
+              }`}
+            >
+              Đổi sang phòng khác / Nhập mã PIN thủ công
+            </button>
           </div>
         </div>
       </div>
@@ -967,7 +1082,15 @@ export const BuzzerPlayer: React.FC = () => {
                 {selectedTeam.score} điểm
               </span>
               <button
-                onClick={() => setSelectedTeam(null)}
+                onClick={() => {
+                  audio.playClick();
+                  setSelectedTeam(null);
+                  setSelectedTeamId('');
+                  selectedTeamIdRef.current = '';
+                  try {
+                    localStorage.removeItem('buzzer_player_team_' + roomId);
+                  } catch {}
+                }}
                 className={`text-[10px] underline cursor-pointer ${isLight ? 'text-slate-500 hover:text-[#9E1B32]' : 'text-slate-400 hover:text-white'}`}
               >
                 (Đổi đội)
@@ -1383,42 +1506,71 @@ export const BuzzerPlayer: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* Answer Options Selector on Mobile */}
-            {currentQuestion && currentQuestion.options && (
-              <div className="w-full space-y-2">
-                {currentQuestion.options.map((opt: string, idx: number) => {
-                  const letters = ['A', 'B', 'C', 'D'];
-                  const isPicked = selectedOption === idx;
+            {/* Answer Options Selector on Mobile - Always interactive and guaranteed to render */}
+            {(() => {
+              const optionsToDisplay: string[] = 
+                currentQuestion && Array.isArray(currentQuestion.options) && currentQuestion.options.length > 0
+                  ? currentQuestion.options
+                  : ['Đáp án A', 'Đáp án B', 'Đáp án C', 'Đáp án D'];
 
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => handleSelectAnswerOption(idx)}
-                      className={`w-full p-3 rounded-xl border flex items-center gap-3 text-left transition-all cursor-pointer shadow-sm ${
-                        isPicked
-                          ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 ring-2 ring-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)] scale-[1.01]'
-                          : isLight
-                          ? 'bg-white border-amber-900/15 text-slate-800 hover:bg-amber-50/70 hover:border-amber-400'
-                          : 'bg-white/[0.04] text-slate-200 border-white/[0.08] hover:border-white/20'
-                      }`}
-                    >
-                      <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
-                        isPicked 
-                          ? 'bg-slate-950 text-amber-300 font-black' 
-                          : isLight 
-                          ? 'bg-amber-100 text-amber-950' 
-                          : 'bg-white/[0.08] text-slate-300'
-                      }`}>
-                        {letters[idx]}
+              const letters = ['A', 'B', 'C', 'D'];
+              const buttonColors = [
+                { bg: 'bg-rose-600', ring: 'border-rose-400' },
+                { bg: 'bg-amber-500', ring: 'border-amber-400' },
+                { bg: 'bg-blue-600', ring: 'border-blue-400' },
+                { bg: 'bg-emerald-600', ring: 'border-emerald-400' },
+              ];
+
+              return (
+                <div className="w-full space-y-2 mt-1">
+                  {selectedOption !== null && (
+                    <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-800 dark:text-emerald-300 text-xs font-black flex items-center justify-center gap-2 animate-pulse">
+                      <span>✓ ĐÃ BẤM CHỌN ĐÁP ÁN: </span>
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white font-black text-sm">
+                        {letters[selectedOption]}
                       </span>
-                      <span className="text-xs font-semibold leading-snug line-clamp-2">
-                        {opt}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {optionsToDisplay.slice(0, 4).map((opt: string, idx: number) => {
+                      const isPicked = selectedOption === idx;
+                      const col = buttonColors[idx] || buttonColors[0];
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleSelectAnswerOption(idx)}
+                          className={`w-full p-3 sm:p-3.5 rounded-2xl border-2 flex items-center gap-3 text-left transition-all cursor-pointer shadow-md active:scale-95 ${
+                            isPicked
+                              ? 'bg-amber-400 text-slate-950 font-black border-amber-300 ring-4 ring-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.6)] scale-[1.02]'
+                              : isLight
+                              ? 'bg-white border-amber-900/15 text-slate-800 hover:bg-amber-50 hover:border-amber-400'
+                              : 'bg-white/[0.05] text-slate-100 border-white/10 hover:bg-white/[0.1] hover:border-white/25'
+                          }`}
+                        >
+                          <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm text-white ${
+                            isPicked ? 'bg-slate-950 text-amber-300' : col.bg
+                          }`}>
+                            {letters[idx]}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-xs font-bold leading-snug line-clamp-2 block">
+                              {opt}
+                            </span>
+                            {isPicked && (
+                              <span className="text-[10px] font-black uppercase text-amber-950 mt-0.5 inline-block">
+                                ✓ Lựa chọn của bạn
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         ) : isOtherTeamBuzzed ? (
           /* CASE C: ANOTHER TEAM BUZZED FIRST (TẤT CẢ CÁC ĐỘI KHÁC BỊ KHÓA) */

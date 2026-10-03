@@ -53,7 +53,13 @@ function buzzerWebSocketPlugin() {
             }
           }
 
-          const port = server.config.server.port || 5173;
+          let port = server.config.server.port || 5173;
+          if (server.httpServer && server.httpServer.address()) {
+            const addr = server.httpServer.address();
+            if (typeof addr === 'object' && addr && addr.port) {
+              port = addr.port;
+            }
+          }
           res.setHeader("Content-Type", "application/json");
           res.setHeader("Access-Control-Allow-Origin", "*");
           res.end(

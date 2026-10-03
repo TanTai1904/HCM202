@@ -99,6 +99,8 @@ export const BuzzerHost: React.FC = () => {
 
   // Keep references to state for socket message handlers
   const stateRef = useRef({
+    roomId,
+    step,
     buzzerState,
     buzzerMode,
     tugThreshold,
@@ -111,10 +113,18 @@ export const BuzzerHost: React.FC = () => {
     teams,
     currentQuestionIndex,
     questions,
+    multiplier,
+    hasMysteryGift,
+    buzzReactionMs,
+    selectedOptionByPhone,
+    isCorrectAnswer,
+    lastAnswerResult,
   });
 
   useEffect(() => {
     stateRef.current = {
+      roomId,
+      step,
       buzzerState,
       buzzerMode,
       tugThreshold,
@@ -127,9 +137,36 @@ export const BuzzerHost: React.FC = () => {
       teams,
       currentQuestionIndex,
       questions,
+      multiplier,
+      hasMysteryGift,
+      buzzReactionMs,
+      selectedOptionByPhone,
+      isCorrectAnswer,
+      lastAnswerResult,
     };
     tugPullsRef.current = tugPulls;
-  }, [buzzerState, buzzerMode, tugThreshold, tugDuration, tugTimeLeft, tugPulls, activeBuzzTeamId, buzzerOpenTimestamp, lockedTeamIds, teams, currentQuestionIndex, questions]);
+  }, [
+    roomId,
+    step,
+    buzzerState,
+    buzzerMode,
+    tugThreshold,
+    tugDuration,
+    tugTimeLeft,
+    tugPulls,
+    activeBuzzTeamId,
+    buzzerOpenTimestamp,
+    lockedTeamIds,
+    teams,
+    currentQuestionIndex,
+    questions,
+    multiplier,
+    hasMysteryGift,
+    buzzReactionMs,
+    selectedOptionByPhone,
+    isCorrectAnswer,
+    lastAnswerResult,
+  ]);
 
   // Clean up timer on unmount
   useEffect(() => {
@@ -140,30 +177,31 @@ export const BuzzerHost: React.FC = () => {
     };
   }, []);
 
-  // Broadcast current state to all players
+  // Broadcast current state to all players - 100% stable callback reading from stateRef.current
   const broadcastSyncState = useCallback(() => {
-    const currentQ = questions[currentQuestionIndex] || null;
+    const s = stateRef.current;
+    const currentQ = s.questions[s.currentQuestionIndex] || null;
     buzzerNetwork.publish('SYNC_STATE', {
-      roomId,
-      step,
-      buzzerState,
-      buzzerMode,
-      tugThreshold,
-      tugDuration,
-      tugTimeLeft,
-      tugPulls,
-      activeQuestionIndex: currentQuestionIndex,
-      totalQuestions: questions.length,
+      roomId: s.roomId,
+      step: s.step,
+      buzzerState: s.buzzerState,
+      buzzerMode: s.buzzerMode,
+      tugThreshold: s.tugThreshold,
+      tugDuration: s.tugDuration,
+      tugTimeLeft: s.tugTimeLeft,
+      tugPulls: s.tugPulls,
+      activeQuestionIndex: s.currentQuestionIndex,
+      totalQuestions: s.questions.length,
       currentQuestion: currentQ,
-      multiplier,
-      hasMysteryGift,
-      activeBuzzTeamId,
-      buzzReactionMs,
-      lockedTeamIds,
-      selectedOptionByPhone,
-      isCorrectAnswer,
-      lastAnswerResult,
-      teams: teams.map(t => ({
+      multiplier: s.multiplier,
+      hasMysteryGift: s.hasMysteryGift,
+      activeBuzzTeamId: s.activeBuzzTeamId,
+      buzzReactionMs: s.buzzReactionMs,
+      lockedTeamIds: s.lockedTeamIds,
+      selectedOptionByPhone: s.selectedOptionByPhone,
+      isCorrectAnswer: s.isCorrectAnswer,
+      lastAnswerResult: s.lastAnswerResult,
+      teams: s.teams.map(t => ({
         id: t.id,
         name: t.name,
         color: t.color,
@@ -171,29 +209,10 @@ export const BuzzerHost: React.FC = () => {
         icon: t.icon,
         score: t.score,
         shieldActive: t.shieldActive,
+        connectedDevices: t.connectedDevices || 0,
       })),
     });
-  }, [
-    roomId, 
-    step, 
-    buzzerState, 
-    buzzerMode, 
-    tugThreshold, 
-    tugDuration,
-    tugTimeLeft,
-    tugPulls, 
-    currentQuestionIndex, 
-    questions, 
-    multiplier, 
-    hasMysteryGift, 
-    activeBuzzTeamId, 
-    buzzReactionMs, 
-    lockedTeamIds, 
-    selectedOptionByPhone, 
-    isCorrectAnswer, 
-    lastAnswerResult,
-    teams
-  ]);
+  }, []);
 
   // Handle Tug-of-war countdown timeout: Team with the highest pulls wins and is selected to answer!
   const handleTugTimeout = useCallback(() => {
@@ -234,6 +253,8 @@ export const BuzzerHost: React.FC = () => {
         return t;
       }));
 
+      const curQ = stateRef.current.questions[stateRef.current.currentQuestionIndex] || null;
+
       // Khóa tất cả các đội khác ngay lập tức và phát thông báo
       buzzerNetwork.publish('HOST_BUZZ_LOCKED', {
         winnerTeamId: winningTeamId,
@@ -241,25 +262,22 @@ export const BuzzerHost: React.FC = () => {
         buzzerMode: 'TUG_OF_WAR',
         reason: 'TIMEOUT_HIGHEST_PULLS',
         tugPulls: currentPulls,
+        currentQuestion: curQ,
       });
 
-      buzzerNetwork.publish('SYNC_STATE', {
-        ...stateRef.current,
-        buzzerState: 'BUZZED',
-        activeBuzzTeamId: winningTeamId,
-        buzzReactionMs: maxPulls,
-        tugPulls: currentPulls,
-      });
+      stateRef.current.buzzerState = 'BUZZED';
+      stateRef.current.activeBuzzTeamId = winningTeamId;
+      stateRef.current.buzzReactionMs = maxPulls;
+      stateRef.current.tugPulls = currentPulls;
+      broadcastSyncState();
     } else {
       audio.playWrong();
       setBuzzerState('IDLE');
-      buzzerNetwork.publish('SYNC_STATE', {
-        ...stateRef.current,
-        buzzerState: 'IDLE',
-        activeBuzzTeamId: null,
-      });
+      stateRef.current.buzzerState = 'IDLE';
+      stateRef.current.activeBuzzTeamId = null;
+      broadcastSyncState();
     }
-  }, []);
+  }, [broadcastSyncState]);
 
   // Connect to Buzzer Network on mount
   useEffect(() => {
@@ -311,32 +329,35 @@ export const BuzzerHost: React.FC = () => {
             return t;
           }));
 
+          const curQ = stateRef.current.questions[stateRef.current.currentQuestionIndex] || null;
+
           // Khóa tất cả các điện thoại khác qua mạng ngay lập tức
           buzzerNetwork.publish('HOST_BUZZ_LOCKED', {
             winnerTeamId: teamId,
             reactionMs: reaction,
             buzzerMode: 'SPEED_TAP',
             reason: 'SPEED_WINNER',
+            currentQuestion: curQ,
           });
 
-          buzzerNetwork.publish('SYNC_STATE', {
-            ...current,
-            buzzerState: 'BUZZED',
-            activeBuzzTeamId: teamId,
-            buzzReactionMs: reaction,
-          });
+          stateRef.current.buzzerState = 'BUZZED';
+          stateRef.current.activeBuzzTeamId = teamId;
+          stateRef.current.buzzReactionMs = reaction;
+          broadcastSyncState();
         }
       }
 
       // Handle Tug-of-War (Kéo Co) Tap Pull
       if (msg.type === 'PLAYER_TUG_PULL') {
-        const { teamId } = msg.payload;
+        const { teamId, pullCount } = msg.payload;
 
         if (buzzerWinnerLockedRef.current) return;
 
         if (current.buzzerState === 'TUG_OF_WAR' && !current.lockedTeamIds.includes(teamId)) {
           audio.playTugPull();
-          const nextPulls = (tugPullsRef.current[teamId] || 0) + 1;
+          const currentCount = tugPullsRef.current[teamId] || 0;
+          // Use authoritative max of reported pullCount and local increment
+          const nextPulls = Math.max(currentCount + 1, typeof pullCount === 'number' ? pullCount : currentCount + 1);
           tugPullsRef.current[teamId] = nextPulls;
 
           setTugPulls(prev => ({
@@ -365,6 +386,8 @@ export const BuzzerHost: React.FC = () => {
               return t;
             }));
 
+            const curQ = stateRef.current.questions[stateRef.current.currentQuestionIndex] || null;
+
             // Khóa tất cả các điện thoại khác ngay lập tức
             buzzerNetwork.publish('HOST_BUZZ_LOCKED', {
               winnerTeamId: teamId,
@@ -372,15 +395,14 @@ export const BuzzerHost: React.FC = () => {
               buzzerMode: 'TUG_OF_WAR',
               reason: 'THRESHOLD_REACHED',
               tugPulls: { ...tugPullsRef.current },
+              currentQuestion: curQ,
             });
 
-            buzzerNetwork.publish('SYNC_STATE', {
-              ...current,
-              buzzerState: 'BUZZED',
-              activeBuzzTeamId: teamId,
-              buzzReactionMs: nextPulls,
-              tugPulls: { ...tugPullsRef.current },
-            });
+            stateRef.current.buzzerState = 'BUZZED';
+            stateRef.current.activeBuzzTeamId = teamId;
+            stateRef.current.buzzReactionMs = nextPulls;
+            stateRef.current.tugPulls = { ...tugPullsRef.current };
+            broadcastSyncState();
           } else {
             // Lightweight broadcast of tug pulls so phones update in 1ms without choking network
             buzzerNetwork.publish('TUG_PULL_UPDATE', {
@@ -392,12 +414,12 @@ export const BuzzerHost: React.FC = () => {
 
       if (msg.type === 'PLAYER_SUBMIT_ANSWER') {
         const { teamId, optionIndex } = msg.payload;
-        if (current.activeBuzzTeamId === teamId) {
+        if (stateRef.current.activeBuzzTeamId === teamId) {
           setSelectedOptionByPhone(optionIndex);
           audio.playClick();
 
           // Auto-resolve to guarantee 100% synchronization between Web and Phone
-          const curQ = current.questions[current.currentQuestionIndex];
+          const curQ = stateRef.current.questions[stateRef.current.currentQuestionIndex];
           if (curQ && typeof curQ.correctAnswer === 'number') {
             const isRight = optionIndex === curQ.correctAnswer;
             handleResolveAnswer(isRight);
@@ -410,12 +432,25 @@ export const BuzzerHost: React.FC = () => {
       unsubscribeMsg();
       buzzerNetwork.disconnect();
     };
-  }, [roomId, broadcastSyncState, handleTugTimeout]);
+  }, [roomId]);
 
   // Sync state whenever key parameters change (exclude tugPulls to prevent network congestion)
   useEffect(() => {
     broadcastSyncState();
-  }, [step, buzzerState, buzzerMode, tugThreshold, currentQuestionIndex, activeBuzzTeamId, lockedTeamIds, selectedOptionByPhone, isCorrectAnswer, broadcastSyncState]);
+  }, [
+    step, 
+    buzzerState, 
+    buzzerMode, 
+    tugThreshold, 
+    currentQuestionIndex, 
+    activeBuzzTeamId, 
+    lockedTeamIds, 
+    selectedOptionByPhone, 
+    isCorrectAnswer, 
+    lastAnswerResult,
+    teams,
+    broadcastSyncState
+  ]);
 
   // Handle Team count change
   const handleUpdateTeamCount = (count: number) => {

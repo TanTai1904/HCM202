@@ -342,6 +342,22 @@ export const BuzzerLobby: React.FC<BuzzerLobbyProps> = ({
               )}
             </div>
 
+            {/* Total Connected Devices Live Indicator */}
+            {(() => {
+              const totalDevices = teams.reduce((acc, t) => acc + (t.connectedDevices || 0), 0);
+              return (
+                <div className={`mb-2 px-3 py-1 rounded-full border text-xs font-bold flex items-center gap-1.5 shadow-2xs ${
+                  totalDevices > 0
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                    : isLight ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-white/[0.04] text-slate-400 border-white/10'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${totalDevices > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                  <Smartphone className={`w-3.5 h-3.5 ${totalDevices > 0 ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <span>{totalDevices > 0 ? `Đã có ${totalDevices} điện thoại kết nối` : 'Chờ điện thoại quét mã...'}</span>
+                </div>
+              );
+            })()}
+
             {/* QR Code Container with High Contrast & Standard Margin for Instant Camera Scan */}
             <div className={`relative p-3.5 rounded-2xl border shadow-xl my-1 group transition-all ${
               isLight ? 'bg-white border-slate-200 shadow-slate-200/50' : 'bg-white/[0.04] border-white/[0.12]'

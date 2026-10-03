@@ -131,6 +131,9 @@ class BuzzerNetworkService {
           this.client.subscribe(this.topic, { qos: 0 }, (err) => {
             if (err) {
               console.error('[BuzzerNet] Subscribe error:', err);
+            } else if (!this.isHost) {
+              // Immediately ask host for current room state via MQTT
+              this.publish('REQUEST_SYNC', { roomId: this.roomId });
             }
           });
         }
