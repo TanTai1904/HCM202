@@ -78,6 +78,8 @@ export const BuzzerHost: React.FC = () => {
   const buzzerWinnerLockedRef = useRef<boolean>(false);
   const tugTimerIntervalRef = useRef<any>(null);
   const tugPullsRef = useRef<Record<string, number>>({});
+  const stealAutoTimerRef = useRef<any>(null);
+  const handleResolveAnswerRef = useRef<(isCorrect: boolean, overrideTeamId?: string, overrideOptionIndex?: number) => void>(() => {});
 
   // In-game round state
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -173,6 +175,9 @@ export const BuzzerHost: React.FC = () => {
     return () => {
       if (tugTimerIntervalRef.current) {
         clearInterval(tugTimerIntervalRef.current);
+      }
+      if (stealAutoTimerRef.current) {
+        clearTimeout(stealAutoTimerRef.current);
       }
     };
   }, []);
@@ -422,7 +427,7 @@ export const BuzzerHost: React.FC = () => {
           const curQ = stateRef.current.questions[stateRef.current.currentQuestionIndex];
           if (curQ && typeof curQ.correctAnswer === 'number') {
             const isRight = optionIndex === curQ.correctAnswer;
-            handleResolveAnswer(isRight);
+            handleResolveAnswerRef.current(isRight, teamId, optionIndex);
           }
         }
       }
@@ -512,6 +517,10 @@ export const BuzzerHost: React.FC = () => {
     setTugPulls({});
     tugPullsRef.current = {};
     buzzerWinnerLockedRef.current = false;
+    if (stealAutoTimerRef.current) {
+      clearTimeout(stealAutoTimerRef.current);
+      stealAutoTimerRef.current = null;
+    }
     if (tugTimerIntervalRef.current) {
       clearInterval(tugTimerIntervalRef.current);
       tugTimerIntervalRef.current = null;
@@ -528,6 +537,10 @@ export const BuzzerHost: React.FC = () => {
   // Open the buzzer for all players
   const handleOpenBuzzer = () => {
     buzzerWinnerLockedRef.current = false;
+    if (stealAutoTimerRef.current) {
+      clearTimeout(stealAutoTimerRef.current);
+      stealAutoTimerRef.current = null;
+    }
     if (tugTimerIntervalRef.current) {
       clearInterval(tugTimerIntervalRef.current);
       tugTimerIntervalRef.current = null;
@@ -581,6 +594,10 @@ export const BuzzerHost: React.FC = () => {
   // 3s Countdown before auto opening
   const handleStartCountdown = () => {
     buzzerWinnerLockedRef.current = false;
+    if (stealAutoTimerRef.current) {
+      clearTimeout(stealAutoTimerRef.current);
+      stealAutoTimerRef.current = null;
+    }
     if (tugTimerIntervalRef.current) {
       clearInterval(tugTimerIntervalRef.current);
       tugTimerIntervalRef.current = null;
@@ -616,6 +633,10 @@ export const BuzzerHost: React.FC = () => {
   const handleManualBuzz = (teamId: string) => {
     if (buzzerState === 'OPEN' || buzzerState === 'IDLE' || buzzerState === 'TUG_OF_WAR') {
       buzzerWinnerLockedRef.current = true;
+      if (stealAutoTimerRef.current) {
+        clearTimeout(stealAutoTimerRef.current);
+        stealAutoTimerRef.current = null;
+      }
       if (tugTimerIntervalRef.current) {
         clearInterval(tugTimerIntervalRef.current);
         tugTimerIntervalRef.current = null;
@@ -649,31 +670,47 @@ export const BuzzerHost: React.FC = () => {
   };
 
   // Steal Buzzer: Re-open buzzer for remaining teams after a wrong answer
-  const handleResetBuzzerForSteal = () => {
+  const handleResetBuzzerForSteal = (customLocked?: string[]) => {
     buzzerWinnerLockedRef.current = false;
+    if (stealAutoTimerRef.current) {
+      clearTimeout(stealAutoTimerRef.current);
+      stealAutoTimerRef.current = null;
+    }
     if (tugTimerIntervalRef.current) {
       clearInterval(tugTimerIntervalRef.current);
       tugTimerIntervalRef.current = null;
     }
 
-    let nextLocked = lockedTeamIds;
-    if (activeBuzzTeamId && !lockedTeamIds.includes(activeBuzzTeamId)) {
-      nextLocked = [...lockedTeamIds, activeBuzzTeamId];
-      setLockedTeamIds(nextLocked);
+    let nextLocked = customLocked || stateRef.current.lockedTeamIds;
+    if (activeBuzzTeamId && !nextLocked.includes(activeBuzzTeamId)) {
+      nextLocked = [...nextLocked, activeBuzzTeamId];
     }
+    setLockedTeamIds(nextLocked);
+    stateRef.current.lockedTeamIds = nextLocked;
+
     setActiveBuzzTeamId(null);
+    stateRef.current.activeBuzzTeamId = null;
+
     setSelectedOptionByPhone(null);
+    stateRef.current.selectedOptionByPhone = null;
+
     setIsCorrectAnswer(null);
+    stateRef.current.isCorrectAnswer = null;
+
     setTugPulls({});
     tugPullsRef.current = {};
+    stateRef.current.tugPulls = {};
 
     const now = Date.now();
     setBuzzerOpenTimestamp(now);
+    stateRef.current.buzzerOpenTimestamp = now;
 
     const nextState = buzzerMode === 'TUG_OF_WAR' ? 'TUG_OF_WAR' : 'OPEN';
+    setBuzzerState(nextState);
+    stateRef.current.buzzerState = nextState;
+
     if (buzzerMode === 'TUG_OF_WAR') {
       audio.playTugWhistle();
-      setBuzzerState('TUG_OF_WAR');
       setTugTimeLeft(tugDuration);
 
       const startTime = now;
@@ -692,7 +729,6 @@ export const BuzzerHost: React.FC = () => {
       }, 100);
     } else {
       audio.playBuzzerOpen();
-      setBuzzerState('OPEN');
     }
 
     buzzerNetwork.publish('HOST_OPEN_BUZZER', {
@@ -704,22 +740,39 @@ export const BuzzerHost: React.FC = () => {
       tugTimeLeft: tugDuration,
       lockedTeamIds: nextLocked,
     });
+
+    setTimeout(() => {
+      broadcastSyncState();
+    }, 50);
   };
 
   // Finish question / view explanation directly
   const handleFinishQuestion = () => {
+    if (stealAutoTimerRef.current) {
+      clearTimeout(stealAutoTimerRef.current);
+      stealAutoTimerRef.current = null;
+    }
     audio.playClick();
     setBuzzerState('EXPLAINING');
+    stateRef.current.buzzerState = 'EXPLAINING';
+    broadcastSyncState();
   };
 
-  // Host evaluates answer: Correct or Wrong
-  const handleResolveAnswer = (isCorrect: boolean) => {
-    if (!activeBuzzTeamId) return;
+  // Host evaluates answer: Correct or Wrong (or auto-resolved when phone answers)
+  const handleResolveAnswer = (isCorrect: boolean, overrideTeamId?: string, overrideOptionIndex?: number) => {
+    const currentActiveTeamId = overrideTeamId || activeBuzzTeamId || stateRef.current.activeBuzzTeamId;
+    if (!currentActiveTeamId) return;
 
-    const currentQ = questions[currentQuestionIndex];
+    if (stealAutoTimerRef.current) {
+      clearTimeout(stealAutoTimerRef.current);
+      stealAutoTimerRef.current = null;
+    }
+
+    const currentQ = questions[currentQuestionIndex] || stateRef.current.questions[stateRef.current.currentQuestionIndex];
     if (!currentQ) return;
 
-    const activeTeam = teams.find(t => t.id === activeBuzzTeamId);
+    const currentTeams = stateRef.current.teams.length > 0 ? stateRef.current.teams : teams;
+    const activeTeam = currentTeams.find(t => t.id === currentActiveTeamId);
 
     // Base points (default 100) * question multiplier
     let pointsToAdd = (currentQ.points || 100) * multiplier;
@@ -731,26 +784,32 @@ export const BuzzerHost: React.FC = () => {
       ? pointsToAdd 
       : (activeTeam?.shieldActive ? 0 : -30);
 
+    const chosenOption = overrideOptionIndex !== undefined 
+      ? overrideOptionIndex 
+      : (selectedOptionByPhone !== null ? selectedOptionByPhone : stateRef.current.selectedOptionByPhone);
+
     const resultRecord: AnswerResultRecord = {
-      teamId: activeBuzzTeamId,
+      teamId: currentActiveTeamId,
       teamName: activeTeam?.name || 'Đội chơi',
       teamColor: activeTeam?.color || '#9E1B32',
       teamIcon: activeTeam?.icon || '🏆',
       isCorrect,
       pointsDelta,
-      optionIndex: selectedOptionByPhone,
-      optionLetter: selectedOptionByPhone !== null && selectedOptionByPhone >= 0 ? ['A', 'B', 'C', 'D'][selectedOptionByPhone] : undefined,
-      optionText: selectedOptionByPhone !== null && selectedOptionByPhone >= 0 && currentQ.options ? currentQ.options[selectedOptionByPhone] : undefined,
+      optionIndex: chosenOption,
+      optionLetter: chosenOption !== null && chosenOption !== undefined && chosenOption >= 0 ? ['A', 'B', 'C', 'D'][chosenOption] : undefined,
+      optionText: chosenOption !== null && chosenOption !== undefined && chosenOption >= 0 && currentQ.options ? currentQ.options[chosenOption] : undefined,
       timestamp: Date.now(),
     };
     setLastAnswerResult(resultRecord);
+    stateRef.current.lastAnswerResult = resultRecord;
 
     if (isCorrect) {
       audio.playCorrect();
       setIsCorrectAnswer(true);
+      stateRef.current.isCorrectAnswer = true;
 
       setTeams(prev => prev.map(t => {
-        if (t.id === activeBuzzTeamId) {
+        if (t.id === currentActiveTeamId) {
           return {
             ...t,
             score: t.score + pointsToAdd,
@@ -769,16 +828,21 @@ export const BuzzerHost: React.FC = () => {
       }
 
       setBuzzerState('EXPLAINING');
+      stateRef.current.buzzerState = 'EXPLAINING';
+      broadcastSyncState();
     } else {
       audio.playWrong();
       setIsCorrectAnswer(false);
+      stateRef.current.isCorrectAnswer = false;
 
       // Lock out this team for the current question
-      const nextLocked = lockedTeamIds.includes(activeBuzzTeamId) ? lockedTeamIds : [...lockedTeamIds, activeBuzzTeamId];
+      const currentLocked = stateRef.current.lockedTeamIds;
+      const nextLocked = currentLocked.includes(currentActiveTeamId) ? currentLocked : [...currentLocked, currentActiveTeamId];
       setLockedTeamIds(nextLocked);
+      stateRef.current.lockedTeamIds = nextLocked;
 
       setTeams(prev => prev.map(t => {
-        if (t.id === activeBuzzTeamId) {
+        if (t.id === currentActiveTeamId) {
           if (t.shieldActive) {
             // Shield protects team from losing points
             return { ...t, shieldActive: false };
@@ -789,12 +853,23 @@ export const BuzzerHost: React.FC = () => {
         return t;
       }));
 
+      broadcastSyncState();
+
       // If all teams locked, show explanation
-      if (nextLocked.length >= teams.length) {
+      if (nextLocked.length >= currentTeams.length) {
         setBuzzerState('EXPLAINING');
+        stateRef.current.buzzerState = 'EXPLAINING';
+        setTimeout(() => broadcastSyncState(), 100);
+      } else {
+        // Tự động nhường quyền cho nhóm khác và mở cướp chuông sau 2s
+        stealAutoTimerRef.current = setTimeout(() => {
+          stealAutoTimerRef.current = null;
+          handleResetBuzzerForSteal(nextLocked);
+        }, 2000);
       }
     }
   };
+  handleResolveAnswerRef.current = handleResolveAnswer;
 
   // Direct manual score adjustment by Host (+50, +100, -50)
   const handleAdjustScore = (teamId: string, delta: number) => {

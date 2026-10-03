@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { Question } from '@/types/game';
 import type { BuzzerTeam, BuzzerState, AnswerResultRecord } from '@/types/buzzer';
 import { audio } from '@/utils/audio';
@@ -83,6 +83,10 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
   isLight = true,
 }) => {
   const [answerTimeLeft, setAnswerTimeLeft] = useState(10);
+  const isCorrectAnswerRef = useRef(isCorrectAnswer);
+  isCorrectAnswerRef.current = isCorrectAnswer;
+  const onResolveAnswerRef = useRef(onResolveAnswer);
+  onResolveAnswerRef.current = onResolveAnswer;
 
   // 10s countdown for answering once a team buzzes
   useEffect(() => {
@@ -93,6 +97,10 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
         setAnswerTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(interval);
+            // If answer not yet resolved, auto resolve as wrong upon timeout
+            if (isCorrectAnswerRef.current === null) {
+              onResolveAnswerRef.current(false);
+            }
             return 0;
           }
           audio.playCountdown();
@@ -703,21 +711,28 @@ export const BuzzerPlayArena: React.FC<BuzzerPlayArenaProps> = ({
                         <span>{activeBuzzTeam.name} ĐÃ TRẢ LỜI SAI! (-30Đ)</span>
                       </div>
                       <p className={`text-xs mb-3 ${isLight ? 'text-rose-700' : 'text-rose-200/80'}`}>
-                        Đội này bị khóa chuông câu này. Host có thể mở cướp chuông cho các đội khác hoặc xem giải thích!
+                        Đội này bị khóa chuông câu này. Hệ thống sẽ tự động nhường cướp chuông cho các đội còn lại!
                       </p>
 
                       <div className="flex flex-col gap-2">
                         {lockedTeamIds.length < teams.length && (
-                          <button
-                            onClick={() => {
-                              audio.playClick();
-                              onResetBuzzerForSteal();
-                            }}
-                            className="w-full py-3 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-600 to-red-600 hover:from-amber-400 hover:to-rose-500 text-white font-extrabold text-xs tracking-wide shadow-lg flex items-center justify-center gap-1.5 cursor-pointer border border-white/20 transition-all uppercase"
-                          >
-                            <Zap className="w-4 h-4 text-white" />
-                            <span>⚡ MỞ CƯỚP CHUÔNG CHO CÁC ĐỘI CÒN LẠI</span>
-                          </button>
+                          <div className="flex flex-col gap-2">
+                            <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-400 flex items-center justify-center gap-2 text-xs font-bold text-amber-900 dark:text-amber-200 animate-pulse">
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
+                              <span>⚡ Đang tự động mở cướp chuông cho các đội còn lại...</span>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                audio.playClick();
+                                onResetBuzzerForSteal();
+                              }}
+                              className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-600 to-red-600 hover:from-amber-400 hover:to-rose-500 text-white font-extrabold text-xs tracking-wide shadow-lg flex items-center justify-center gap-1.5 cursor-pointer border border-white/20 transition-all uppercase"
+                            >
+                              <Zap className="w-4 h-4 text-white" />
+                              <span>⚡ MỞ CƯỚP CHUÔNG NGAY (HOẶC CHỜ TỰ ĐỘNG)</span>
+                            </button>
+                          </div>
                         )}
 
                         {onFinishQuestion && (

@@ -1523,14 +1523,23 @@ export const BuzzerPlayer: React.FC = () => {
 
               return (
                 <div className="w-full space-y-2 mt-1">
-                  {selectedOption !== null && (
+                  {isCorrectAnswer === false ? (
+                    <div className="p-3 rounded-xl bg-rose-500/20 border-2 border-rose-500 text-rose-800 dark:text-rose-200 text-xs font-black flex flex-col items-center justify-center gap-1 animate-shake">
+                      <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 font-extrabold text-sm">
+                        <span>✕ ĐÁP ÁN CHƯA CHÍNH XÁC (-30Đ)</span>
+                      </div>
+                      <span className="text-[11px] font-normal opacity-90">
+                        Đang nhường quyền cướp chuông cho các đội còn lại...
+                      </span>
+                    </div>
+                  ) : selectedOption !== null ? (
                     <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-800 dark:text-emerald-300 text-xs font-black flex items-center justify-center gap-2 animate-pulse">
                       <span>✓ ĐÃ BẤM CHỌN ĐÁP ÁN: </span>
                       <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white font-black text-sm">
                         {letters[selectedOption]}
                       </span>
                     </div>
-                  )}
+                  ) : null}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {optionsToDisplay.slice(0, 4).map((opt: string, idx: number) => {
@@ -1610,6 +1619,17 @@ export const BuzzerPlayer: React.FC = () => {
                 {buzzerMode === 'TUG_OF_WAR' 
                   ? `Đạt ${buzzReactionMs} lần bấm lực!` 
                   : `Tốc độ bấm: ${(buzzReactionMs / 1000).toFixed(3)}s`}
+              </div>
+            )}
+
+            {isCorrectAnswer === false && (
+              <div className="w-full mt-3 p-3 rounded-2xl bg-rose-500/20 border-2 border-rose-500 text-rose-800 dark:text-rose-200 text-center animate-shake">
+                <span className="text-xs font-black block uppercase text-rose-600 dark:text-rose-400">
+                  ✕ {activeBuzzTeam ? activeBuzzTeam.name : 'ĐỐI THỦ'} ĐÃ TRẢ LỜI SAI!
+                </span>
+                <span className="text-[11px] font-bold block mt-0.5 text-amber-600 dark:text-amber-300">
+                  ⚡ Chuẩn bị cướp chuông sau 2 giây!
+                </span>
               </div>
             )}
           </motion.div>
