@@ -1,6 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import LiveQuizHostPage from "@/pages/LiveQuiz/LiveQuizHostPage";
-import LiveQuizPlayerPage from "@/pages/LiveQuiz/LiveQuizPlayerPage";
 import BuzzerHost from "@/pages/Buzzer/BuzzerHost";
 import BuzzerPlayer from "@/pages/Buzzer/BuzzerPlayer";
 import GameApp from "@/pages/Game";
@@ -17,17 +15,16 @@ export default function MainRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* HCM202 LIVE QUIZ: Classroom Game Show with QR Code as Primary App */}
-        <Route index element={<LiveQuizHostPage />} />
-        <Route path="/host" element={<LiveQuizHostPage />} />
-        <Route path="/live" element={<LiveQuizHostPage />} />
-        <Route path="/join" element={<LiveQuizPlayerPage />} />
-        <Route path="/play" element={<LiveQuizPlayerPage />} />
-        <Route path="/player" element={<LiveQuizPlayerPage />} />
-
-        {/* Speed Buzzer mode */}
+        {/* HCM202 Speed Buzzer & Tug of War: Primary Classroom Game Show */}
+        <Route index element={<BuzzerHost />} />
         <Route path="/buzzer" element={<BuzzerHost />} />
+        <Route path="/host" element={<BuzzerHost />} />
+        
+        {/* Mobile Player Routes: QR Code scanning directly enters game */}
         <Route path="/buzzer-play" element={<BuzzerPlayer />} />
+        <Route path="/join" element={<BuzzerPlayer />} />
+        <Route path="/play" element={<BuzzerPlayer />} />
+        <Route path="/player" element={<BuzzerPlayer />} />
 
         {/* Supplementary Academic Exploration */}
         <Route path="/game" element={<GameApp />} />

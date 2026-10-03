@@ -60,6 +60,14 @@ export const BuzzerPlayer: React.FC = () => {
 
   const [inputRoom, setInputRoom] = useState(roomParam.toUpperCase());
   const [roomId, setRoomId] = useState(roomParam.toUpperCase());
+
+  useEffect(() => {
+    if (roomParam) {
+      const clean = roomParam.trim().toUpperCase();
+      setInputRoom(clean);
+      setRoomId(clean);
+    }
+  }, [roomParam]);
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedTeam, setSelectedTeam] = useState<BuzzerTeam | null>(null);
 
