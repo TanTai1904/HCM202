@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
-import { Play, HelpCircle, Info, BookOpen, Volume2, VolumeX, Sparkles, Users, Award } from 'lucide-react';
+import { HelpCircle, Info, BookOpen, Sparkles, Users, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { audio } from '@/utils/audio';
 
 interface LiveQuizHostHomeProps {
-  onStart: () => void;
+  onStart?: () => void;
 }
 
-export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) => {
+export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = () => {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
-  const [soundOn, setSoundOn] = useState(audio.isSoundOn());
-
-  const handleToggleSound = () => {
-    const newState = audio.toggleSound();
-    setSoundOn(newState);
-    if (newState) audio.playClick();
-  };
 
   return (
     <div className="min-h-screen bg-ivory-stage flex flex-col justify-between items-center p-6 sm:p-12 select-none font-display relative overflow-hidden">
@@ -24,40 +16,8 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 sm:w-[500px] sm:h-[500px] bg-[#9E1B32]/5 rounded-full blur-3xl pointer-events-none animate-radar" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-[#D9A441]/5 rounded-full blur-2xl pointer-events-none" />
 
-      {/* Top Brand Tag & Sound Toggle */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-4xl flex items-center justify-between text-xs sm:text-sm font-semibold text-[#172033]/60 uppercase tracking-widest relative z-10"
-      >
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#9E1B32] animate-pulse" />
-          <span>ĐẤU TRƯỜNG TRẮC NGHIỆM TRỰC TIẾP TẠI LỚP</span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <a
-            href="/buzzer"
-            onClick={() => audio.playClick()}
-            className="flex items-center gap-1.5 py-1 px-3 rounded-full bg-gradient-to-r from-amber-500 to-rose-600 text-white shadow-md hover:brightness-110 transition-all cursor-pointer text-xs font-black uppercase tracking-wider border border-white/30 animate-pulse"
-          >
-            <span>🪢 ĐẤU CHUÔNG & KÉO CO</span>
-          </a>
-
-          <button
-            onClick={handleToggleSound}
-            className="flex items-center gap-1.5 py-1 px-3 rounded-full bg-white/80 border border-[#172033]/10 hover:border-[#9E1B32] hover:text-[#9E1B32] transition-colors cursor-pointer text-xs font-bold"
-            title="Bật/Tắt âm thanh hiệu ứng"
-          >
-            {soundOn ? <Volume2 className="w-3.5 h-3.5 text-[#3F7D5A]" /> : <VolumeX className="w-3.5 h-3.5 text-[#B84A4A]" />}
-            <span>{soundOn ? 'ÂM THANH: BẬT' : 'ÂM THANH: TẮT'}</span>
-          </button>
-          <span className="hidden sm:inline">BỘ GD&ĐT 2021 • ĐẠI HỌC</span>
-        </div>
-      </motion.div>
-
       {/* Main Center Stage */}
-      <div className="w-full max-w-4xl text-center my-auto py-6 relative z-10">
+      <div className="w-full max-w-4xl text-center my-auto py-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -67,129 +27,72 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
             HỌC PHẦN TƯ TƯỞNG HỒ CHÍ MINH • HCM202
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-[#172033] tracking-tight leading-none mb-2">
+          <h1 className="text-4xl sm:text-6xl font-black text-[#172033] tracking-tight leading-none mb-3">
             ĐẤU TRÍ TRỰC TIẾP
           </h1>
 
-          <p className="text-sm sm:text-lg text-[#172033]/70 font-medium max-w-lg mx-auto mb-8 leading-relaxed font-body">
-            Chọn hình thức thi đấu đối kháng trực tiếp tại lớp học
+          <p className="text-sm sm:text-base text-[#172033]/70 font-medium max-w-lg mx-auto mb-8 leading-relaxed font-body">
+            Đấu chuông phản xạ & Kéo co tranh quyền trả lời câu hỏi môn học
           </p>
 
-          {/* TWO MAIN GAME MODES CARDS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
-            {/* Mode 1: KÉO CO & ĐẤU CHUÔNG */}
+          {/* MAIN GAME MODE CARD: KÉO CO & ĐẤU CHUÔNG */}
+          <div className="max-w-xl mx-auto text-left">
             <motion.div
               whileHover={{ y: -4, scale: 1.01 }}
               transition={{ duration: 0.2 }}
-              className="p-6 sm:p-7 rounded-[2rem] bg-white border-2 border-amber-500/25 hover:border-amber-500/60 shadow-[0_15px_40px_rgba(245,158,11,0.12)] flex flex-col justify-between relative overflow-hidden group"
+              className="p-6 sm:p-8 rounded-[2rem] bg-white border-2 border-amber-500/25 hover:border-amber-500/60 shadow-[0_20px_50px_rgba(245,158,11,0.15)] flex flex-col justify-between relative overflow-hidden group"
             >
               {/* Subtle ambient corner glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-500/12 via-orange-500/6 to-transparent rounded-full blur-2xl pointer-events-none group-hover:from-amber-500/20 transition-all" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-500/15 via-orange-500/8 to-transparent rounded-full blur-2xl pointer-events-none group-hover:from-amber-500/25 transition-all" />
 
               <div>
                 {/* Header Row: Icon + Badge */}
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-13 h-13 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-2xl shadow-xs text-amber-600 group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-3xl shadow-xs text-amber-600 group-hover:scale-105 transition-transform">
                     🪢
                   </div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-800 border border-amber-500/25 text-[11px] font-black uppercase tracking-wider shadow-xs animate-pulse">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-800 border border-amber-500/25 text-xs font-black uppercase tracking-wider shadow-xs animate-pulse">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
                     CÓ KÉO CO TRANH QUYỀN
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-black text-[#172033] tracking-tight flex items-center gap-2">
+                <h3 className="text-2xl sm:text-3xl font-black text-[#172033] tracking-tight flex items-center gap-2">
                   <span>ĐẤU CHUÔNG & KÉO CO</span>
                 </h3>
                 
                 <p className="text-xs sm:text-sm text-[#172033]/70 font-body leading-relaxed mt-2.5">
-                  Cơ chế <strong className="text-amber-600 font-bold">KÉO CO</strong>: các đội bấm liên tục trên điện thoại để kéo qua vạch đích, đội kéo nhanh nhất giành quyền trả lời! Có cộng điểm trực tiếp.
+                  Cơ chế <strong className="text-amber-600 font-bold">KÉO CO</strong>: các đội bấm liên tục trên điện thoại để kéo qua vạch đích, đội kéo nhanh nhất giành quyền trả lời! Có mở chuông cướp quyền (Steal) và cộng điểm thời gian thực.
                 </p>
 
                 {/* Feature Chips */}
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <span className="px-3 py-1.5 rounded-xl bg-[#172033]/5 border border-[#172033]/10 text-xs font-semibold text-[#172033]/80">
                     ⚡ Phản xạ 1 chạm
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
+                  <span className="px-3 py-1.5 rounded-xl bg-[#172033]/5 border border-[#172033]/10 text-xs font-semibold text-[#172033]/80">
                     🪢 Kéo co P2P
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] font-bold text-amber-700">
-                    👥 2 - 8 Đội
+                  <span className="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs font-bold text-amber-700">
+                    👥 2 - 8 Đội chơi
+                  </span>
+                  <span className="px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs font-bold text-rose-700">
+                    🎁 Hộp quà & Hệ số x2/x3
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#172033]/10 flex flex-col gap-2">
+              <div className="mt-8 pt-5 border-t border-[#172033]/10 flex flex-col gap-2">
                 <a
                   href="/buzzer"
                   onClick={() => audio.playClick()}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-black text-sm tracking-wider shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all border border-white/20 text-center uppercase active:scale-[0.98]"
+                  className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-black text-base tracking-wider shadow-xl shadow-orange-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all border border-white/20 text-center uppercase active:scale-[0.98]"
                 >
-                  <span>VÀO ĐẤU CHUÔNG & KÉO CO</span>
-                  <span className="text-base font-bold">➔</span>
+                  <span>BẮT ĐẦU ĐẤU CHUÔNG & KÉO CO</span>
+                  <span className="text-lg font-bold">➔</span>
                 </a>
-                <span className="text-[10px] text-[#172033]/50 text-center font-mono">
+                <span className="text-xs text-[#172033]/50 text-center font-mono">
                   URL Host: /buzzer • Điện thoại: /buzzer-play
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Mode 2: LIVE QUIZ 4 ĐỘI */}
-            <motion.div
-              whileHover={{ y: -4, scale: 1.01 }}
-              transition={{ duration: 0.2 }}
-              className="p-6 sm:p-7 rounded-[2rem] bg-white border-2 border-[#172033]/15 hover:border-[#9E1B32]/40 shadow-[0_15px_40px_rgba(23,32,51,0.08)] flex flex-col justify-between relative overflow-hidden group"
-            >
-              {/* Subtle ambient corner glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#9E1B32]/10 via-[#D9A441]/5 to-transparent rounded-full blur-2xl pointer-events-none group-hover:from-[#9E1B32]/15 transition-all" />
-
-              <div>
-                {/* Header Row: Icon + Badge */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-13 h-13 rounded-2xl bg-[#9E1B32]/10 border border-[#9E1B32]/25 flex items-center justify-center text-2xl shadow-sm text-[#9E1B32] group-hover:scale-105 transition-transform">
-                    🏆
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9E1B32]/10 text-[#9E1B32] border border-[#9E1B32]/20 text-[11px] font-black uppercase tracking-wider shadow-xs">
-                    TRẮC NGHIỆM ĐỒNG LOẠT
-                  </span>
-                </div>
-
-                <h3 className="text-2xl font-black text-[#172033] tracking-tight">
-                  LIVE QUIZ 4 ĐỘI
-                </h3>
-
-                <p className="text-xs sm:text-sm text-[#172033]/70 font-body leading-relaxed mt-2.5">
-                  Trắc nghiệm đồng loạt chuẩn lớp học. Cả lớp quét QR, tự động chia 4 đội (Đỏ, Xanh, Vàng, Lục) và cùng chọn A, B, C, D trên điện thoại.
-                </p>
-
-                {/* Feature Chips */}
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
-                    📊 Chia 4 đội tự động
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#172033]/80">
-                    📝 Đáp án A, B, C, D
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-[#172033]/5 border border-[#172033]/10 text-[11px] font-semibold text-[#9E1B32]">
-                    🎯 Bảng xếp hạng live
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-[#172033]/10 flex flex-col gap-2">
-                <button
-                  onClick={() => {
-                    audio.playClick();
-                    onStart();
-                  }}
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#9E1B32] hover:bg-[#851629] text-white font-black text-sm tracking-wider shadow-lg shadow-[#9E1B32]/20 flex items-center justify-center gap-2 cursor-pointer transition-all border-2 border-white/20 uppercase active:scale-[0.98]"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>BẮT ĐẦU LIVE QUIZ (4 ĐỘI)</span>
-                </button>
-                <span className="text-[10px] text-[#172033]/50 text-center font-mono">
-                  URL Host: / • Điện thoại: /join
                 </span>
               </div>
             </motion.div>
@@ -228,11 +131,11 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
             >
               <div className="flex items-center justify-between pb-3 border-b border-[#172033]/10">
                 <h3 className="text-lg sm:text-xl font-black text-[#172033] flex items-center gap-2">
-                  <HelpCircle className="w-5 h-5 text-[#9E1B32]" />
-                  <span>Hướng dẫn & Thể lệ thi đấu</span>
+                  <HelpCircle className="w-5 h-5 text-amber-600" />
+                  <span>Hướng dẫn: Đấu Chuông & Kéo Co</span>
                 </h3>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#9E1B32] bg-[#9E1B32]/10 px-2.5 py-1 rounded-full">
-                  Live Quiz 4 Đội
+                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                  Chuông Bấm & Kéo Co
                 </span>
               </div>
 
@@ -244,9 +147,9 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
                     <span>1. Mục tiêu</span>
                   </div>
                   <ul className="list-disc list-inside space-y-1 text-xs sm:text-sm text-[#172033]/80 font-medium">
-                    <li>Ôn tập, củng cố kiến thức môn học <strong>Tư tưởng Hồ Chí Minh (HCM202)</strong> sinh động, trực quan.</li>
-                    <li>Gắn kết tinh thần đồng đội, tạo không khí học tập và thi đua sôi nổi giữa các nhóm.</li>
-                    <li>Đưa đội vươn lên dẫn đầu bảng xếp hạng tổng sắp để giành ngôi Quán quân!</li>
+                    <li>Ôn tập, củng cố kiến thức môn học <strong>Tư tưởng Hồ Chí Minh (HCM202)</strong> qua hình thức đối kháng trực quan, kịch tính.</li>
+                    <li>Rèn luyện phản xạ nhanh nhạy và tinh thần đồng đội giữa các nhóm trong lớp.</li>
+                    <li>Giành quyền trả lời nhiều câu hỏi nhất để đạt điểm cao nhất và vinh danh trên bục chiến thắng.</li>
                   </ul>
                 </div>
 
@@ -257,9 +160,9 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
                     <span>2. Cách chơi</span>
                   </div>
                   <div className="space-y-1.5 text-xs sm:text-sm text-[#172033]/80 font-medium">
-                    <p><strong>• Bước 1 - Quét QR:</strong> Dùng camera điện thoại quét mã QR trên màn chiếu để vào phòng (không cần tải app).</p>
-                    <p><strong>• Bước 2 - Vào đội:</strong> Nhập họ tên, hệ thống tự động xếp đều vào 4 đội (Đỏ, Xanh, Vàng, Lục).</p>
-                    <p><strong>• Bước 3 - Chọn đáp án:</strong> Đọc câu hỏi trên máy chiếu và bấm chọn A, B, C hoặc D trên điện thoại trước khi hết giờ.</p>
+                    <p><strong>• Bước 1 - Quét QR:</strong> Sinh viên dùng camera điện thoại quét mã QR chiếu trên máy chiếu để vào phòng đấu ngay.</p>
+                    <p><strong>• Bước 2 - Tham gia đội:</strong> Chọn đội thi đấu (2 - 8 đội). Màn hình điện thoại biến thành nút bấm chuông & nút kéo co siêu nhạy.</p>
+                    <p><strong>• Bước 3 - Kéo co / Bấm chuông:</strong> Khi câu hỏi hiển thị, cả đội bấm liên tục trên điện thoại để kéo dây co về vạch đích của mình hoặc bấm chuông giật quyền trả lời!</p>
                   </div>
                 </div>
 
@@ -270,10 +173,10 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
                     <span>3. Luật chơi</span>
                   </div>
                   <ul className="list-disc list-inside space-y-1 text-xs sm:text-sm text-[#172033]/80 font-medium">
-                    <li><strong>Thời gian:</strong> 15s – 30s/câu. Hết giờ hệ thống tự động khóa nhận đáp án.</li>
-                    <li><strong>Điểm đồng đội:</strong> Mỗi cá nhân trả lời đúng cộng <strong>+200 điểm</strong> vào quỹ điểm của đội (càng nhiều bạn đúng, đội càng nhiều điểm).</li>
-                    <li><strong>Không phạt:</strong> Trả lời sai hoặc không kịp chọn không bị trừ điểm.</li>
-                    <li><strong>Chiến thắng:</strong> Đội có tổng điểm tích lũy cao nhất sau tất cả các câu hỏi sẽ giành chiến thắng chung cuộc!</li>
+                    <li><strong>Quyền trả lời:</strong> Đội kéo dây qua vạch đích trước hoặc bấm chuông nhanh nhất (mili-giây) sẽ giành quyền trả lời trong 15s.</li>
+                    <li><strong>Tính điểm:</strong> Trả lời <strong>ĐÚNG</strong> nhận trọn điểm câu hỏi (kèm hệ số x2, x3 hoặc hộp quà may mắn).</li>
+                    <li><strong>Mở cướp chuông (Steal):</strong> Nếu đội giành quyền trả lời SAI, Host mở chuông cho các đội còn lại tiếp tục giật quyền cướp điểm!</li>
+                    <li><strong>Bục vinh quang:</strong> Kết thúc trận đấu, Top 3 đội xuất sắc nhất sẽ được vinh danh trên bục Podium!</li>
                   </ul>
                 </div>
               </div>
@@ -301,10 +204,10 @@ export const LiveQuizHostHome: React.FC<LiveQuizHostHomeProps> = ({ onStart }) =
             >
               <h3 className="text-xl font-black text-[#172033] mb-3 flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-[#9E1B32]" />
-                <span>Về nền tảng HCM202 LIVE QUIZ</span>
+                <span>Về nền tảng Đấu Trí Trực Tiếp HCM202</span>
               </h3>
               <p className="text-sm text-[#172033]/80 font-body leading-relaxed mb-4">
-                Hệ thống gameshow trắc nghiệm tương tác thời gian thực phục vụ giảng dạy và ôn tập học phần <strong>Tư tưởng Hồ Chí Minh (HCM202)</strong>.
+                Hệ thống gameshow đối kháng bấm chuông & kéo co thời gian thực phục vụ giảng dạy và ôn tập học phần <strong>Tư tưởng Hồ Chí Minh (HCM202)</strong>.
               </p>
               <p className="text-xs text-[#172033]/60 font-body leading-relaxed mb-6">
                 Toàn bộ ngân hàng 146 câu hỏi được biên soạn bám sát giáo trình chuẩn của Bộ Giáo dục & Đào tạo (2021).

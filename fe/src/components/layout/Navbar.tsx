@@ -118,28 +118,11 @@ export const Navbar: React.FC<NavbarProps> = ({ theme: propTheme, onToggleTheme 
               )}
             </button>
 
-            {/* Quick Switch to Live Quiz 4 Đội */}
-            <button
-              onClick={() => {
-                audio.playClick();
-                navigate('/');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 border ${
-                isLight
-                  ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
-                  : 'bg-white/[0.06] hover:bg-white/[0.12] text-slate-200 hover:text-white border-white/[0.1]'
-              }`}
-              title="Chuyển sang chế độ Live Quiz 4 đội"
-            >
-              <span>🎯 Live Quiz</span>
-            </button>
-
             {/* Quick Mobile Player Simulator */}
             <button
               onClick={() => {
                 audio.playClick();
-                const playUrl = location.pathname.includes('/buzzer') ? '/buzzer-play' : '/join';
-                window.open(playUrl, '_blank');
+                window.open('/buzzer-play', '_blank');
               }}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 border ${
                 isLight
