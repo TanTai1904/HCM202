@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HelpCircle, Info, BookOpen, Sparkles, Users, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { audio } from '@/utils/audio';
 
 interface LiveQuizHostHomeProps {
   onStart?: () => void;
